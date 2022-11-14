@@ -6,7 +6,7 @@
 /*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/12 17:40:54 by mfagri            #+#    #+#             */
-/*   Updated: 2022/11/12 21:53:02 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/11/14 22:19:54 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include <sys/socket.h>
 // #include <in.h>
 #include <libc.h>
+#include "request.hpp"
 
 /////////////////////////////////
 //Application Layer/////////////
@@ -76,7 +77,7 @@
 int main()
 {
     std::cout<<"mfagri server\n";
-    
+    char **t;
     int socketfd;
     struct sockaddr_in sockAddress,cl;// in internet
     
@@ -91,7 +92,7 @@ int main()
     }
     memset(&sockAddress,0,sizeof(sockAddress)); // intit to 0
     sockAddress.sin_family = AF_INET; //define domine
-    sockAddress.sin_port = htons(1337);// port
+    sockAddress.sin_port = htons(3002);// port
     sockAddress.sin_addr.s_addr = htonl(INADDR_ANY);/////// any incoming IP addres
     // sockAddress.sin_addr.s_addr  = inet_addr("127.0.0.1");
 
@@ -117,11 +118,12 @@ int main()
     }
     else
         std::cout<<"hi client\n";
+
     char buf[1024];
     recv(n,buf,1024,0);
-    std::cout<<buf<<std::endl;
-    //std::string s = buf;
-    // char **ss = s.
+    // t = ft_split(buf,'\n');
+    Request a(buf);
+    // std::cout<<t[0]<<std::endl;
     memset(buf,0,1024);
     strcpy(buf,"HTTP/1.1 200 OK\nContent-Type: text/plain\nContent-Length: 7\n\nMfagri!");
     send(n,buf,1024,0);
