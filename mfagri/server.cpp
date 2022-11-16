@@ -6,16 +6,39 @@
 /*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/12 17:40:54 by mfagri            #+#    #+#             */
-/*   Updated: 2022/11/14 22:19:54 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/11/15 00:42:36 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <iostream>
 #include <sys/socket.h>
+#include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <unistd.h>	   //close
+#include <arpa/inet.h> //close
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <sys/time.h> //FD_SET, FD_ISSET, FD_ZERO macros
+#include <iostream>
+#include <cstring>
+#include <fcntl.h>
+#include <vector>
+#include <map>
+#include <fstream>
+
+#include <sstream>
 // #include <in.h>
-#include <libc.h>
+// #include <libc.h>
 #include "request.hpp"
 
+#define PORT 3004
 /////////////////////////////////
 //Application Layer/////////////
 ////////////////////////////////
@@ -92,7 +115,7 @@ int main()
     }
     memset(&sockAddress,0,sizeof(sockAddress)); // intit to 0
     sockAddress.sin_family = AF_INET; //define domine
-    sockAddress.sin_port = htons(3002);// port
+    sockAddress.sin_port = htons(PORT);// port
     sockAddress.sin_addr.s_addr = htonl(INADDR_ANY);/////// any incoming IP addres
     // sockAddress.sin_addr.s_addr  = inet_addr("127.0.0.1");
 
@@ -123,6 +146,7 @@ int main()
     recv(n,buf,1024,0);
     // t = ft_split(buf,'\n');
     Request a(buf);
+    a.get_methode();
     // std::cout<<t[0]<<std::endl;
     memset(buf,0,1024);
     strcpy(buf,"HTTP/1.1 200 OK\nContent-Type: text/plain\nContent-Length: 7\n\nMfagri!");

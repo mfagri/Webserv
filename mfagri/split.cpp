@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   split.c                                            :+:      :+:    :+:   */
+/*   split.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 17:36:48 by mfagri            #+#    #+#             */
-/*   Updated: 2022/11/14 17:38:28 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/11/15 00:22:32 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ static char	*ft_mem_word(char const *s, char c)
 	tab = (char *)malloc(sizeof(char) * (i + 1));
 	if (!tab)
 		return (NULL);
-	strlcpy(tab, s, i + 1);
+	tab = strncpy(tab, s, i + 1);
 	return (tab);
 }
 
