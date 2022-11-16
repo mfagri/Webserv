@@ -6,7 +6,7 @@
 /*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:06:56 by mfagri            #+#    #+#             */
-/*   Updated: 2022/11/14 22:39:37 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/11/16 02:31:04 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ class Request{
     std::string request_line;
     std::string methode;
     std::string http_version;
-    std::string file;
+    std::string Request_uri;
     ////////////////////////////////
     std::string request_header;
     std::string host;
