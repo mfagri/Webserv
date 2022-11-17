@@ -6,7 +6,7 @@
 /*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/12 17:40:54 by mfagri            #+#    #+#             */
-/*   Updated: 2022/11/16 22:51:38 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/11/17 21:20:51 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@
 // #include <libc.h>
 #include "request.hpp"
 
-#define PORT 3001
+#define PORT 3003
 /////////////////////////////////
 //Application Layer/////////////
 ////////////////////////////////
@@ -114,8 +114,8 @@ int main()
     memset(&sockAddress,0,sizeof(sockAddress)); // intit to 0
     sockAddress.sin_family = AF_INET; //define domine
     sockAddress.sin_port = htons(PORT);// port
-    sockAddress.sin_addr.s_addr = htonl(INADDR_ANY);/////// any incoming IP addres
-    // sockAddress.sin_addr.s_addr  = inet_addr("127.0.0.1");
+    //sockAddress.sin_addr.s_addr = htonl(INADDR_ANY);/////// any incoming IP addres
+    sockAddress.sin_addr.s_addr  = inet_addr("0.0.0.0");
 
     if(bind(socketfd,(struct sockaddr *)&sockAddress,sizeof(sockAddress)) < 0)
     {
@@ -144,11 +144,7 @@ int main()
     recv(n,buf,1024,0);
     // t = ft_split(buf,'\n');
     Request a(buf);
-    // a.get_methode();
-    // a.get_header();
-    // a.print_request();
-    // std::cout<<t[0]<<std::endl;
     memset(buf,0,1024);
-    strcpy(buf,"HTTP/1.1 200 OK\nContent-Type: text/plain\nContent-Length: 7\n\nMfagri!");
+    strcpy(buf,"HTTP/1.1 404 OK\nContent-Type: text/plain\nContent-Length: 9\n\nNot found");
     send(n,buf,1024,0);
 }

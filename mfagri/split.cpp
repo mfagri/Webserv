@@ -6,7 +6,7 @@
 /*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 17:36:48 by mfagri            #+#    #+#             */
-/*   Updated: 2022/11/15 00:22:32 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/11/17 17:15:25 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,27 @@
 #include <stdlib.h>
 #include <string.h>
 
+size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize)
+{
+	size_t	i;
+	size_t	j;
+
+	i = 0;
+	j = 0;
+	while (src[i])
+	{
+		i++;
+	}
+	if (dstsize == 0)
+		return (i);
+	while (j < dstsize - 1 && src[j])
+	{
+		dst[j] = src[j];
+		j++;
+	}
+	dst[j] = '\0';
+	return (i);
+}
 static size_t	ft_count(char const *s, char c)
 {
 	size_t	i;
@@ -34,7 +55,7 @@ static size_t	ft_count(char const *s, char c)
 
 static char	*ft_mem_word(char const *s, char c)
 {
-	int		i;
+	size_t		i;
 	char	*tab;
 
 	i = 0;
@@ -44,7 +65,7 @@ static char	*ft_mem_word(char const *s, char c)
 	tab = (char *)malloc(sizeof(char) * (i + 1));
 	if (!tab)
 		return (NULL);
-	tab = strncpy(tab, s, i + 1);
+	ft_strlcpy(tab, s, i + 1);
 	return (tab);
 }
 
