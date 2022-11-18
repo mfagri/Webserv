@@ -6,7 +6,7 @@
 /*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:06:56 by mfagri            #+#    #+#             */
-/*   Updated: 2022/11/17 23:17:08 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/11/18 20:29:49 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,29 +15,22 @@
 
 #include <iostream>
 #include <string>
+#include <map>
 
 class Request{
   private:
+    //////request_line///////
     std::string request_line;
     std::string methode;///method
-    std::string http_version;
-    std::string Request_uri;
+    std::string Request_uri;//uri
+    float http_version;//uri
     ////////////////////////////////
     std::string request_header;
-    std::string Transfer_Encoding;//
-    std::string host;//host
-    std::string Content_Length;//
-    std::string Content_Type;//
-    std::string User_agent;//maybe
-    std::string browser;
-    // std::string systype;
-    std::string Accept;///
-    std::string Accept_Language;///maybe
-    std::string Accept_Encoding;///
-    std::string Connection;///
+    ///////////////////////////////
     std::string Body;
     //////////////////////////////////
  public:
+    std::map<std::string,std::string> headers;
     Request();
     Request(char * buf);
     ~Request();
