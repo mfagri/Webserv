@@ -6,7 +6,7 @@
 /*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/12 17:40:54 by mfagri            #+#    #+#             */
-/*   Updated: 2022/11/18 19:59:23 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/11/18 21:07:06 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,8 +144,8 @@ int main()
     recv(n,buf,1024,0);
     // t = ft_split(buf,'\n');
     Request a(buf);
-    std::cout<<a.headers["Host"]<<std::endl;
     memset(buf,0,1024);
     strcpy(buf,"HTTP/1.1 404 OK\nContent-Type: text/plain\nContent-Length: 9\n\nNot found");
     send(n,buf,1024,0);
+    while (1);  
 }
