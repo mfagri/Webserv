@@ -6,7 +6,7 @@
 /*   By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/18 15:14:28 by mmardi            #+#    #+#             */
-/*   Updated: 2022/11/18 16:08:03 by mmardi           ###   ########.fr       */
+/*   Updated: 2022/11/18 20:46:30 by mmardi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ class Parser {
         Parser();
         Parser(char **av);
         void readFile();
+        std::string trimS(std::string str);
         ~Parser();
 };
 
