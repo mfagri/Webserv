@@ -3,7 +3,7 @@ NAME = 	server
 CFLAGS = -Wall -Wextra -Werror
 CC = c++
 
-SRCS = main.cpp config.cpp
+SRCS = main.cpp config.cpp socket.cpp server.cpp
 OBJS = $(SRCS:.cpp=.o)
 
 $(NAME) : $(OBJS)
@@ -11,7 +11,7 @@ $(NAME) : $(OBJS)
 
 all : $(NAME)
 
-%.o:%.cpp config.hpp
+%.o:%.cpp config.hpp socket.hpp server.hpp
 	@$(CC) $(CFLAGS) -c $< -o $@
 
 clean :
