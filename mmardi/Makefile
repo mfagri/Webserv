@@ -3,34 +3,35 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+         #
+#    By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2022/11/14 17:48:48 by mfagri            #+#    #+#              #
-#    Updated: 2022/11/19 22:25:36 by mfagri           ###   ########.fr        #
+#    Created: 2022/11/18 15:24:55 by mmardi            #+#    #+#              #
+#    Updated: 2022/11/18 15:36:50 by mmardi           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME = request
+NAME = webserv
 
-SRC	= server.cpp request.cpp split.cpp
+CXXFLAGS = -Wall -Wextra -Werror -std=c++98
 
-CXX = c++
+SRC = main.cpp Parser.cpp
 
-CFLAGS = -Wall -Wextra -Werror
-DFLAGS = -std=c++98
+HEADERS = Parser.cpp
+
 OBJ = $(SRC:.cpp=.o)
 
 all: $(NAME)
 
-%.o: %.cpp request.hpp
-	$(CXX) -c -o $@ -c $<
+%.o: %.cpp $(HEADERS)
+	c++ $(CXXFLAGS) -c $< -o $@
 
 $(NAME): $(OBJ)
-	$(CXX) $(SRC) -o $(NAME)
-
+	c++ $(CXXFLAGS) $(SRC) -o $(NAME)
 
 clean:
-	rm -rf $(OBJ)
+	@rm -rf $(OBJ);
 
 fclean: clean
-	rm -rf $(NAME)
+	@rm -rf $(NAME)
+
+re: fclean all

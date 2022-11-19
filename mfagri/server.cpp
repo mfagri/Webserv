@@ -6,7 +6,7 @@
 /*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/12 17:40:54 by mfagri            #+#    #+#             */
-/*   Updated: 2022/11/16 22:51:38 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/11/19 23:06:26 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,8 +114,8 @@ int main()
     memset(&sockAddress,0,sizeof(sockAddress)); // intit to 0
     sockAddress.sin_family = AF_INET; //define domine
     sockAddress.sin_port = htons(PORT);// port
-    sockAddress.sin_addr.s_addr = htonl(INADDR_ANY);/////// any incoming IP addres
-    // sockAddress.sin_addr.s_addr  = inet_addr("127.0.0.1");
+    //sockAddress.sin_addr.s_addr = htonl(INADDR_ANY);/////// any incoming IP addres
+    sockAddress.sin_addr.s_addr  = inet_addr("0.0.0.0");
 
     if(bind(socketfd,(struct sockaddr *)&sockAddress,sizeof(sockAddress)) < 0)
     {
@@ -142,13 +142,29 @@ int main()
 
     char buf[1024];
     recv(n,buf,1024,0);
+    
     // t = ft_split(buf,'\n');
     Request a(buf);
-    // a.get_methode();
-    // a.get_header();
-    // a.print_request();
-    // std::cout<<t[0]<<std::endl;
+    std::string sss;
+    if(a.get_status_code() == 200)
+        sss = "ok.html";
+    else
+        sss = "not_found.html";
+    std::ifstream f(sss.c_str());
+    std::string str;
+    std::ostringstream ss;
+    ss << f.rdbuf(); // reading data
+    str = ss.str();
+    std::cout<<str<<std::endl;
     memset(buf,0,1024);
-    strcpy(buf,"HTTP/1.1 200 OK\nContent-Type: text/plain\nContent-Length: 7\n\nMfagri!");
+    strcpy(buf,"HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: "); //9\n\n"
+    int lenght;
+    lenght = str.length();
+    std::cout<<"lenght:"<<lenght<<std::endl;
+    std::string v = ft_itoa(lenght);
+    std::string final = v+"\n\n"+str;
+    strcat(buf,final.c_str());
     send(n,buf,1024,0);
+    printf("response sended\n");
+    // while (1);  
 }

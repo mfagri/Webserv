@@ -6,14 +6,27 @@
 /*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:06:24 by mfagri            #+#    #+#             */
-/*   Updated: 2022/11/17 00:56:44 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/11/19 23:06:52 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "request.hpp"
 #include <string>
 #include <string.h>
+
+
 /// methods// post | get | delete | connect | put
+char *ft_delet_char(char *s,char c)
+{
+	int i = 0;
+	while(s[i])
+	{
+		if(s[i] == c)
+			s[i] = ' ';
+		i++;
+	}
+	return (s);
+}
 void ft_free2(char **s)
 {
     int i = 0;
@@ -43,117 +56,134 @@ int find_important_request(char **t,std::string s,int size)
 Request::Request()
 {
     
-};
+}
 
 Request::Request(char *buf)
 {
-    // std::cout<<"*****************************\n";
-    // std::cout<<buf;
-    // std::cout<<"*****************************\n";
-    int table_index[7];
-    //choise six element i my request 
-    std::string the_six_request[7] = {"GET","Host:","User-Agent:","Accept-Language:","Accept-Encoding:","Connection:","Accept:"};
-    std::cout<<"request class\n";
-    char **t;
-    t = ft_split(buf,'\n');// all six elements
-    //method//host//user-Agent//accept_encoding//connection
-    
-    for(int j =0;j < 7;j++)
-        table_index[j] = find_important_request(t,the_six_request[j],the_six_request[j].length());
+    //request_line
+    //header_fields
+    //body
+    int in = 0;
     int i = 0;
-    while(t[i])
-        i++;
-    request_line = t[table_index[0]];
-    std::cout<<request_line<<"\n";
-    ////////////////
-    host = t[table_index[1]];
-    User_agent = t[table_index[2]];
-    Accept_Language = t[table_index[3]];
-    Accept_Encoding = t[table_index[4]];
-    Connection = t[table_index[5]];
-    Accept = t[table_index[6]];
-    get_methode();
-    get_header();
-    print_request();
-};
-
-Request::~Request()
-{
-    
-};
-
-void Request::get_methode()
-{
-    //first line//
-    char **three_var;
-    three_var = ft_split(request_line.c_str(),' ');
-    methode = three_var[0];//Get//Post//Delete//Connect
-    Request_uri = three_var[1];//path//uri//etc..
-    http_version = three_var[2];
-    //need to free three_var ....
-    /////host//////
-    char **s = ft_split(host.c_str(),' ');
-    host = s[1];
-    //////need to free s //////
-}
-
-void Request::get_header()
-{
-    //////////User-Agent////////////////
-    char **s = ft_split(User_agent.c_str(),' ');
-    browser = s[1];
-    ft_free2(s);
-    //////////Accept-Languge///////////////
-    s = ft_split(Accept_Language.c_str(),' ');
-    Accept_Language = s[1];
-    ft_free2(s);
-    ////////Accept-Encoding///////////////
-    int i =0 ;
-    while(Accept_Encoding[i])
+    while(i < (int)strlen(buf) - 2)
     {
-        if(Accept_Encoding[i] == ',')
-            Accept_Encoding[i]  = ' ';
-        i++;
-    }
-    s = ft_split(Accept_Encoding.c_str(),' ');
-    i = size_2(s);
-    std::string types[i];
-    i = 0;
-    while(s[i])
-    {
-        Accept_Encoding = "";
-        types[i] = s[i];
-        std::cout<<types[i];
-        if(i != 0)
+        if(buf[i] == '\r' && buf[i + 1] == '\n' && buf[i+2] == '\r' && buf[i + 3] == '\n')
         {
-            
-            std::cout<<i<<"\n";
-            Accept_Encoding += types[i] + " ";
+            buf[i + 3] = '|';
+            // std::cout<<buf[i + 3]<<std::endl;
+            //  std::cout<<buf[i + 4]<<std::endl;
+            // std::cout<<buf[i + 5]<<std::endl;
+            // std::cout<<buf[i + 5]<<std::endl;
+            if(buf[i + 4])
+                in = 1;
+            // std::cout<<"dfgdfgdfdfgfgf\n";
         }
         i++;
     }
-    /////types strats from 1////    
-    ft_free2(s);
+    //request Line
+    // std::cout<<in<<std::endl;
+    request_line = strtok(buf,"\n");
+    request_header = strtok(NULL,"|");
+    //////if body in request //////////////
+    if(in)
+        Body = strtok(NULL,"|");
+    ////////////////////////////////////////
+    methode = strtok((char *)request_line.c_str()," ");
+    // std::cout<<"methode : "<<methode<<std::endl;
+    Request_uri = strtok(NULL," ");
+    // check query string 
+    // std::cout<<"uri : "<<Request_uri<<std::endl;
+    char * s= strtok(NULL," ");
+    s = strtok(s,"/");
+    http_version = strtok(NULL,"/");
+    http_version = ft_strtrim(http_version.c_str(),"\r");
+    //printf("{%s}\n",http_version.c_str());
+    // std::cout<<"http version : "<<http_version<<std::endl;
+
+    //////////////////////////////////////////////////////////////
+    i = 0;
+    char **ss = ft_split(request_header.c_str(),'\n');
+    int j = 0;
+    while(ss[j])
+    {
+        ss[j]= ft_strtrim(ss[j],"\r");
+        j++;
+    }
+    //printf("j = %d\n",j);
+    //printf("ss 9= %s\n",ss[8]);
+    // if(strcmp(ss[8],"") == 0)
+    //      printf("ss 9= %s\n",ss[8]);
+    //puts(request_header.c_str());
+    while(i < j - 1)
+    {
+        // puts("hna2");
+        char *key = strtok(ss[i],":");
+        char *vallue = strtok(NULL,"\0");
+        headers.insert(std::pair<std::string, std::string>(key, ft_strtrim(vallue," ")));
+        i++;
+    }
+    ft_free2(ss);
+    std::cout<<methode<<std::endl;
+    std::cout<<Request_uri<<std::endl;
     
-    s = ft_split(Connection.c_str(),' ');
-    Connection = s[1];
-    ft_free2(s);
-    s = ft_split(Accept.c_str(),' ');
-    Accept = s[1];
-    ft_free2(s);
+    std::map<std::string, std::string>::iterator itr;
+    for (itr = headers.begin(); itr != headers.end(); ++itr) {
+        std::cout << '\t' <<"{"<<itr->first <<"}"<< '\t' <<"{"<<itr->second
+             <<"}"<< '\n';
+    }
+    printf("{%s}\n",Body.c_str());
+    ft_check_request();
 }
 
-void Request::print_request()
+Request::~Request()
 {
-    std::cout<<"//////////////////////////////////////\n";
-    std::cout<<"methode: "<<methode<<"\n";
-    std::cout<<"http version: "<<http_version<<"\n";
-    std::cout<<"request uri: "<<Request_uri<<"\n";
-    std::cout<<"host: "<<host<<"\n";
-    std::cout<<"browser: "<<browser<<"\n";
-    std::cout<<"language: "<<Accept_Language<<"\n";
-    std::cout<<"accept encoding: "<<Accept_Encoding<<"\n";
-    std::cout<<"Connection: "<<Connection<<"\n";
-    std::cout<<"accept: "<<Accept<<"\n";
-    std::cout<<"//////////////////////////////////////\n";
+    headers.clear();
+}
+
+int Request::ft_check_request()
+{
+    status_code = 200;
+    // std::cout<<http_version<<std::endl;
+    if(Request_uri.at(0) != '/')
+    {
+        std::cout<<"BAD request"<<std::endl;
+        status_code = 400;
+    }
+    if(http_version[0] != '1' && http_version[1] != '.' && http_version[2] != '1')
+    {
+        std::cout<<"505 HTTP Version Not Supported"<<std::endl;
+        status_code = 505;
+        return (1);
+    }
+    //////////////////////////////
+    // 503 Service Unavailable////
+    /////check size of packge/////
+    /////////////////////////////
+    if(methode != "GET" && methode != "POST" && methode != "DELETE")
+    {
+        std::cout<<"501 Not Implemented"<<std::endl;
+        status_code = 501;
+        return (1);
+    }
+    if(methode == "POST")
+    {
+        if(atoi(headers["Content-Length"].c_str()) <= 0 )
+        {
+            std::cout<<"anime\n";
+            status_code = 411;
+            return (1);
+        }
+        if( !headers["Transfer-Encoding"].c_str() && atoi(headers["Content-Length"].c_str()) <= 0 )
+        {
+            std::cout<<"fdsfdsfsdf\n";
+            status_code = 411;
+            return (1);
+        }
+    }
+    return (0);
+}
+
+int Request::get_status_code()
+{
+    return (status_code);
 }
