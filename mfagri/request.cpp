@@ -6,7 +6,7 @@
 /*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:06:24 by mfagri            #+#    #+#             */
-/*   Updated: 2022/11/19 23:06:52 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/11/19 23:29:26 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,6 +91,7 @@ Request::Request(char *buf)
     methode = strtok((char *)request_line.c_str()," ");
     // std::cout<<"methode : "<<methode<<std::endl;
     Request_uri = strtok(NULL," ");
+   
     // check query string 
     // std::cout<<"uri : "<<Request_uri<<std::endl;
     char * s= strtok(NULL," ");
@@ -99,7 +100,21 @@ Request::Request(char *buf)
     http_version = ft_strtrim(http_version.c_str(),"\r");
     //printf("{%s}\n",http_version.c_str());
     // std::cout<<"http version : "<<http_version<<std::endl;
-
+    if(strchr(Request_uri.c_str(),'?'))
+    {
+        i = 0;
+        char *s_query = ft_strtrim(Request_uri.c_str(),"/?");
+        char **t = ft_split(s_query,'&');
+        while(t[i])
+        {
+            puts("here");
+            char *key = strtok(t[i],"=");
+            char *value = strtok(NULL,"\0");
+            query.insert(std::pair<std::string, std::string>(key, value));
+            i++;
+            
+        }
+    }
     //////////////////////////////////////////////////////////////
     i = 0;
     char **ss = ft_split(request_header.c_str(),'\n');
@@ -118,8 +133,8 @@ Request::Request(char *buf)
     {
         // puts("hna2");
         char *key = strtok(ss[i],":");
-        char *vallue = strtok(NULL,"\0");
-        headers.insert(std::pair<std::string, std::string>(key, ft_strtrim(vallue," ")));
+        char *value = strtok(NULL,"\0");
+        headers.insert(std::pair<std::string, std::string>(key, ft_strtrim(value," ")));
         i++;
     }
     ft_free2(ss);
@@ -129,6 +144,11 @@ Request::Request(char *buf)
     std::map<std::string, std::string>::iterator itr;
     for (itr = headers.begin(); itr != headers.end(); ++itr) {
         std::cout << '\t' <<"{"<<itr->first <<"}"<< '\t' <<"{"<<itr->second
+             <<"}"<< '\n';
+    }
+     std::map<std::string, std::string>::iterator it;
+    for (it = query.begin(); it != query.end(); ++it) {
+        std::cout << '\t' <<"{"<<it->first <<"}"<< '\t' <<"{"<<it->second
              <<"}"<< '\n';
     }
     printf("{%s}\n",Body.c_str());
