@@ -6,7 +6,7 @@
 /*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:06:56 by mfagri            #+#    #+#             */
-/*   Updated: 2022/11/19 22:55:36 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/11/19 23:16:44 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ class Request{
     std::string methode;///method
     std::string Request_uri;//uri
     std::map<std::string,std::string> headers;
+    std::map<std::string,std::string> query;
     std::string http_version;//uri
     ////////////////////////////////
     std::string request_header;
