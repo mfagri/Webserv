@@ -6,7 +6,7 @@
 /*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/12 17:40:54 by mfagri            #+#    #+#             */
-/*   Updated: 2022/11/18 21:07:06 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/11/19 23:06:26 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,10 +142,29 @@ int main()
 
     char buf[1024];
     recv(n,buf,1024,0);
+    
     // t = ft_split(buf,'\n');
     Request a(buf);
+    std::string sss;
+    if(a.get_status_code() == 200)
+        sss = "ok.html";
+    else
+        sss = "not_found.html";
+    std::ifstream f(sss.c_str());
+    std::string str;
+    std::ostringstream ss;
+    ss << f.rdbuf(); // reading data
+    str = ss.str();
+    std::cout<<str<<std::endl;
     memset(buf,0,1024);
-    strcpy(buf,"HTTP/1.1 404 OK\nContent-Type: text/plain\nContent-Length: 9\n\nNot found");
+    strcpy(buf,"HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: "); //9\n\n"
+    int lenght;
+    lenght = str.length();
+    std::cout<<"lenght:"<<lenght<<std::endl;
+    std::string v = ft_itoa(lenght);
+    std::string final = v+"\n\n"+str;
+    strcat(buf,final.c_str());
     send(n,buf,1024,0);
-    while (1);  
+    printf("response sended\n");
+    // while (1);  
 }

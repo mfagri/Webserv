@@ -6,7 +6,7 @@
 /*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:06:56 by mfagri            #+#    #+#             */
-/*   Updated: 2022/11/18 21:04:00 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/11/19 22:55:36 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ class Request{
     std::string methode;///method
     std::string Request_uri;//uri
     std::map<std::string,std::string> headers;
-    float http_version;//uri
+    std::string http_version;//uri
     ////////////////////////////////
     std::string request_header;
     ///////////////////////////////
@@ -38,10 +38,12 @@ class Request{
     //////////check methed/////////
     int ft_check_request();
     void ft_parse_body();
+    int get_status_code();
     //////////////////////////////
     
 };
 
 char	**ft_split(char const *s, char c);
-
+char	*ft_strtrim(char const *s1, char const *set);
+char	*ft_itoa(int n);
 #endif
