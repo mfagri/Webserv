@@ -6,7 +6,7 @@
 /*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:06:24 by mfagri            #+#    #+#             */
-/*   Updated: 2022/11/19 23:29:26 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/11/20 22:49:56 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,8 @@ Request::Request(char *buf)
     //request_line
     //header_fields
     //body
+    chunked = 0;
+    std::cout<<buf<<std::endl;
     int in = 0;
     int i = 0;
     while(i < (int)strlen(buf) - 2)
@@ -71,9 +73,9 @@ Request::Request(char *buf)
         {
             buf[i + 3] = '|';
             // std::cout<<buf[i + 3]<<std::endl;
-            //  std::cout<<buf[i + 4]<<std::endl;
-            // std::cout<<buf[i + 5]<<std::endl;
-            // std::cout<<buf[i + 5]<<std::endl;
+            std::cout<<buf[i + 4]<<std::endl;
+            std::cout<<buf[i + 5]<<std::endl;
+            std::cout<<buf[i + 6]<<std::endl;
             if(buf[i + 4])
                 in = 1;
             // std::cout<<"dfgdfgdfdfgfgf\n";
@@ -86,7 +88,8 @@ Request::Request(char *buf)
     request_header = strtok(NULL,"|");
     //////if body in request //////////////
     if(in)
-        Body = strtok(NULL,"|");
+        Body = strtok(NULL,"\0");
+    std::cout<<"Body"<<Body<<"end\n";
     ////////////////////////////////////////
     methode = strtok((char *)request_line.c_str()," ");
     // std::cout<<"methode : "<<methode<<std::endl;
@@ -175,6 +178,11 @@ int Request::ft_check_request()
         status_code = 505;
         return (1);
     }
+    if(headers["Content-Type"].c_str() == NULL)
+    {
+        std::cout<<"Missing Content-Type"<<std::endl;
+        status_code = 400;
+    }
     //////////////////////////////
     // 503 Service Unavailable////
     /////check size of packge/////
@@ -187,17 +195,22 @@ int Request::ft_check_request()
     }
     if(methode == "POST")
     {
-        if(atoi(headers["Content-Length"].c_str()) <= 0 )
+        // if(atoi(headers["Content-Length"].c_str()) <= 0 )
+        // {
+        //     status_code = 411;
+        //     return (1);
+        // }
+        // printf("eco : %d\n",atoi(headers["Content-Length"].c_str()));
+        // printf("TE: {%s} \n",headers["Transfer-Encoding"].c_str());
+        if( headers["Transfer-Encoding"] == "" && atoi(headers["Content-Length"].c_str()) <= 0 )
         {
-            std::cout<<"anime\n";
             status_code = 411;
             return (1);
         }
-        if( !headers["Transfer-Encoding"].c_str() && atoi(headers["Content-Length"].c_str()) <= 0 )
+        if( headers["Transfer-Encoding"] == "chunked")
         {
-            std::cout<<"fdsfdsfsdf\n";
-            status_code = 411;
-            return (1);
+            chunked = 16;
+            status_code = 200;
         }
     }
     return (0);

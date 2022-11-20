@@ -6,7 +6,7 @@
 /*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:06:56 by mfagri            #+#    #+#             */
-/*   Updated: 2022/11/19 23:16:44 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/11/20 22:49:23 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ class Request{
     std::string request_header;
     ///////////////////////////////
     std::string Body;
+    int chunked;
     //////////////////////////////////
     int status_code;
  public:
