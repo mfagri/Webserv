@@ -6,7 +6,7 @@
 /*   By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 17:34:23 by mmardi            #+#    #+#             */
-/*   Updated: 2022/11/18 15:21:46 by mmardi           ###   ########.fr       */
+/*   Updated: 2022/11/20 18:32:24 by mmardi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ int main(int ac, char **av) {
     try
     {
         Parser parser(av);
+        std::cout << parser.getElementByServer(0, "methods") << std::endl;
     }
     catch(const std::exception& e)
     {

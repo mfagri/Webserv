@@ -6,7 +6,7 @@
 /*   By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/18 15:33:32 by mmardi            #+#    #+#             */
-/*   Updated: 2022/11/19 01:15:26 by mmardi           ###   ########.fr       */
+/*   Updated: 2022/11/20 18:17:32 by mmardi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,8 +36,6 @@ void Parser::readFile() {
             }
         }
     }
-    // for (std::vector<std::string>::iterator ptr = this->lines.begin(); ptr != lines.end(); ptr++)
-    //     std::cout << *ptr + "\n";
 }
 
 std::string Parser::trimS(std::string str) {
@@ -54,17 +52,41 @@ std::string Parser::trimS(std::string str) {
 
 void Parser::parsElements() {
     std::map<std::string, std::string> element;
+    
     for (size_t i = 0; i < lines.size(); i++) {
-        if (strncmp(lines[i].c_str(), "server", 6) == 0) {
-            i++;
-            if (strncmp(lines[i].c_str(), "listen", 6) == 0) {
-                strtok((char *)lines[i].c_str(), " ");
-                char *p = strtok(NULL, " ;");
-                puts(p);      
+        if (strncmp(lines[i].c_str(), "server ", 7) == 0) {
+                i++;
+            while(lines[i][0] != '}') {
+                if (lines[i][lines[i].length() - 1] != ';')
+                    throw MissingSemicolon();
+                char *key = strtok((char *)lines[i].c_str(), " ");
+                char *value = strtok(NULL, ";");
+                if (!value)
+                    throw NoValueFound();
+                element.insert(std::pair<std::string, std::string>(key,value));
+                i++;
             }
+        servers.push_back(element);
+        element.clear();
         }
+    }
+    if(servers.size() == 0) {
+        throw NoSeverfound();
     }
 }
 
+std::string Parser::getElementByServer(unsigned int index, std::string _name) {
+    
+    if (index >= getNumberOfservers()) {
+        std::cerr << "index out of bound a Nour Eddine\n";
+        exit (1);
+    }
+    return this->servers[index].at(_name);
+}
 
-Parser::~Parser(){}
+size_t Parser::getNumberOfservers() {
+    
+    return servers.size();
+}
+
+Parser::~Parser() {}
