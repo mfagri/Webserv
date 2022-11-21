@@ -6,7 +6,7 @@
 /*   By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/18 15:33:32 by mmardi            #+#    #+#             */
-/*   Updated: 2022/11/21 01:37:05 by mmardi           ###   ########.fr       */
+/*   Updated: 2022/11/21 14:33:58 by mmardi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,6 @@ std::vector<ServerData> Parser::getServers() {
         ServerData s;
         s.setData(servers[i]);
         servs.push_back(s);
-        s.~ServerData();
     }
     return servs;
 }

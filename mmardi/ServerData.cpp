@@ -6,7 +6,7 @@
 /*   By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/20 23:00:22 by mmardi            #+#    #+#             */
-/*   Updated: 2022/11/21 01:44:26 by mmardi           ###   ########.fr       */
+/*   Updated: 2022/11/21 14:11:34 by mmardi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,7 @@ ServerData::ServerData() {
 
 void ServerData::setData(std::map<std::string, std::string> server) {
 	
-	try
-	{
+	if (server.count("listen") > 0) {
 		std ::string hp = server.at("listen");
 		if (strrchr(hp.c_str(), ':')) {
 			char *h = strtok((char *)hp.c_str(), ":");
@@ -32,19 +31,16 @@ void ServerData::setData(std::map<std::string, std::string> server) {
 			port = std::stoi(p);
 			host = h;
 		}
-		
 	}
-	catch(const std::exception& e)
-	{
-	}
-	
 }
 
 std::string ServerData::getHost(void) {
+	
 	return host;
 }
 
 int ServerData::getPort() {
+	
 	return port;
 }
 
