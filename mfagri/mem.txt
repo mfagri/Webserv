@@ -8,3 +8,27 @@ https://docs.imperva.com/bundle/on-premises-knowledgebase-reference-guide/page/p
 Invicti detected a missing Content-Type header which means that this website could be at risk of a MIME-sniffing attacks.
 
 if lenght == 0 and !Transfer Encoding => ERROR
+
+parse request line -> if no error -> parse headers -> if no error -> parse body 
+
+parse headers
+
+content type ,content lenght , Transfer Encoding ,host,
+
+if(chuned)
+{
+    body => chunked;
+    (Content_Type)
+    {
+        if(multipart/form-data; boundary=--------------------------381898572940245678379138)
+            search(Content-Disposition: form-data; name="mfagri")
+        if(application/x-www-form-urlencoded)
+            search(n=v&nn=vv)
+    }
+}
+//////////////
+9
+n=v&nn=vv
+0
+|
+//////////////

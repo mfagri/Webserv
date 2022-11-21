@@ -6,7 +6,7 @@
 /*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:06:24 by mfagri            #+#    #+#             */
-/*   Updated: 2022/11/20 22:49:56 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/11/21 07:59:51 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,8 +63,9 @@ Request::Request(char *buf)
     //request_line
     //header_fields
     //body
+    status_code = 200;
     chunked = 0;
-    std::cout<<buf<<std::endl;
+    // std::cout<<buf<<std::endl;
     int in = 0;
     int i = 0;
     while(i < (int)strlen(buf) - 2)
@@ -72,90 +73,55 @@ Request::Request(char *buf)
         if(buf[i] == '\r' && buf[i + 1] == '\n' && buf[i+2] == '\r' && buf[i + 3] == '\n')
         {
             buf[i + 3] = '|';
-            // std::cout<<buf[i + 3]<<std::endl;
-            std::cout<<buf[i + 4]<<std::endl;
-            std::cout<<buf[i + 5]<<std::endl;
-            std::cout<<buf[i + 6]<<std::endl;
             if(buf[i + 4])
                 in = 1;
-            // std::cout<<"dfgdfgdfdfgfgf\n";
+            break;
         }
         i++;
     }
-    //request Line
-    // std::cout<<in<<std::endl;
     request_line = strtok(buf,"\n");
     request_header = strtok(NULL,"|");
     //////if body in request //////////////
     if(in)
         Body = strtok(NULL,"\0");
-    std::cout<<"Body"<<Body<<"end\n";
+
+    if(parse_request_line(request_line))
+    {
+        printf("in line\n");
+        return;
+    }
+    if(parse_headers(request_header))
+    {
+        printf("%d\n",status_code);
+        printf("in headres\n");
+        return;
+    }
+    //printf("{%s}\n",Body.c_str());
+    if(chunked)
+        ft_chunked();
+    ft_parse_body();
     ////////////////////////////////////////
-    methode = strtok((char *)request_line.c_str()," ");
-    // std::cout<<"methode : "<<methode<<std::endl;
-    Request_uri = strtok(NULL," ");
-   
-    // check query string 
-    // std::cout<<"uri : "<<Request_uri<<std::endl;
-    char * s= strtok(NULL," ");
-    s = strtok(s,"/");
-    http_version = strtok(NULL,"/");
-    http_version = ft_strtrim(http_version.c_str(),"\r");
-    //printf("{%s}\n",http_version.c_str());
-    // std::cout<<"http version : "<<http_version<<std::endl;
-    if(strchr(Request_uri.c_str(),'?'))
-    {
-        i = 0;
-        char *s_query = ft_strtrim(Request_uri.c_str(),"/?");
-        char **t = ft_split(s_query,'&');
-        while(t[i])
-        {
-            puts("here");
-            char *key = strtok(t[i],"=");
-            char *value = strtok(NULL,"\0");
-            query.insert(std::pair<std::string, std::string>(key, value));
-            i++;
-            
-        }
-    }
     //////////////////////////////////////////////////////////////
-    i = 0;
-    char **ss = ft_split(request_header.c_str(),'\n');
-    int j = 0;
-    while(ss[j])
-    {
-        ss[j]= ft_strtrim(ss[j],"\r");
-        j++;
-    }
-    //printf("j = %d\n",j);
-    //printf("ss 9= %s\n",ss[8]);
-    // if(strcmp(ss[8],"") == 0)
-    //      printf("ss 9= %s\n",ss[8]);
-    //puts(request_header.c_str());
-    while(i < j - 1)
-    {
-        // puts("hna2");
-        char *key = strtok(ss[i],":");
-        char *value = strtok(NULL,"\0");
-        headers.insert(std::pair<std::string, std::string>(key, ft_strtrim(value," ")));
-        i++;
-    }
-    ft_free2(ss);
-    std::cout<<methode<<std::endl;
-    std::cout<<Request_uri<<std::endl;
+    std::cout<<"{"<<methode<<"}"<<std::endl;
+    std::cout<<"{"<<Request_uri<<"}"<<std::endl;
     
-    std::map<std::string, std::string>::iterator itr;
-    for (itr = headers.begin(); itr != headers.end(); ++itr) {
-        std::cout << '\t' <<"{"<<itr->first <<"}"<< '\t' <<"{"<<itr->second
-             <<"}"<< '\n';
-    }
-     std::map<std::string, std::string>::iterator it;
-    for (it = query.begin(); it != query.end(); ++it) {
-        std::cout << '\t' <<"{"<<it->first <<"}"<< '\t' <<"{"<<it->second
-             <<"}"<< '\n';
-    }
-    printf("{%s}\n",Body.c_str());
-    ft_check_request();
+    // std::map<std::string, std::string>::iterator itr;
+    // for (itr = headers.begin(); itr != headers.end(); ++itr) {
+    //     std::cout << '\t' <<"{"<<itr->first <<"}"<< '\t' <<"{"<<itr->second
+    //          <<"}"<< '\n';
+    // }
+    //  std::map<std::string, std::string>::iterator it;
+    // for (it = body_query.begin(); it != body_query.end(); ++it) {
+    //     std::cout << '\t' <<"{"<<it->first <<"}"<< '\t' <<"{"<<it->second
+    //          <<"}"<< '\n';
+    // }
+    printf("{%s}\n",methode.c_str());
+    printf("{%s}\n",headers["Content-Type"].c_str());
+    printf("{%s}\n",headers["Content-Length"].c_str());
+    printf("{%s}\n",headers["Transfer-Encoding"].c_str());
+    // printf("{%s}\n",headers[].c_str());
+    //printf("{%s}\n",Body.c_str());
+    //ft_check_request();
 }
 
 Request::~Request()
@@ -165,58 +131,244 @@ Request::~Request()
 
 int Request::ft_check_request()
 {
-    status_code = 200;
-    // std::cout<<http_version<<std::endl;
-    if(Request_uri.at(0) != '/')
-    {
-        std::cout<<"BAD request"<<std::endl;
-        status_code = 400;
-    }
-    if(http_version[0] != '1' && http_version[1] != '.' && http_version[2] != '1')
-    {
-        std::cout<<"505 HTTP Version Not Supported"<<std::endl;
-        status_code = 505;
-        return (1);
-    }
     if(headers["Content-Type"].c_str() == NULL)
     {
         std::cout<<"Missing Content-Type"<<std::endl;
         status_code = 400;
+        return (1);
+    }
+    if(headers["Host"].empty())
+    {
+        status_code = 400;
+        return (1);
+    }
+    if(headers["Connection"].empty())
+    {
+        status_code = 400;
+        return (1);
     }
     //////////////////////////////
     // 503 Service Unavailable////
     /////check size of packge/////
     /////////////////////////////
+    if( headers["Transfer-Encoding"] == "chunked")
+    {
+        chunked = 16;
+        status_code = 200;
+    }
+    else
+    {
+        if(atoi(headers["Content-Length"].c_str()) <= 0 && methode == "POST")
+        {
+            status_code = 411;
+            return (1);
+        }
+    }
+    return (0);
+}
+int Request::parse_request_line(std::string req)
+{
+    int status = 0;
+    int i = 0;
+    std::string Http;
+    methode = strtok((char *)req.c_str()," ");
     if(methode != "GET" && methode != "POST" && methode != "DELETE")
     {
         std::cout<<"501 Not Implemented"<<std::endl;
         status_code = 501;
         return (1);
     }
-    if(methode == "POST")
+    Request_uri = strtok(NULL," ");
+    if(Request_uri.at(0) != '/')
     {
-        // if(atoi(headers["Content-Length"].c_str()) <= 0 )
-        // {
-        //     status_code = 411;
-        //     return (1);
-        // }
-        // printf("eco : %d\n",atoi(headers["Content-Length"].c_str()));
-        // printf("TE: {%s} \n",headers["Transfer-Encoding"].c_str());
-        if( headers["Transfer-Encoding"] == "" && atoi(headers["Content-Length"].c_str()) <= 0 )
-        {
-            status_code = 411;
-            return (1);
-        }
-        if( headers["Transfer-Encoding"] == "chunked")
-        {
-            chunked = 16;
-            status_code = 200;
-        }
+        std::cout<<"BAD request"<<std::endl;
+        status_code = 400;
+        return (1);
     }
-    return (0);
+    char * s = strtok(NULL," ");
+    s = strtok(s,"/");
+    Http = s;
+    if(Http != "HTTP")
+    {
+        
+        std::cout<<"Not Supported"<<std::endl;
+        status_code = 400;
+        return (1);
+    }
+    http_version = strtok(NULL,"/");
+    http_version = ft_strtrim(http_version.c_str(),"\r");
+    if(http_version[0] != '1' && http_version[1] != '.' && http_version[2] != '1')
+    {
+        std::cout<<"505 HTTP Version Not Supported"<<std::endl;
+        status_code = 505;
+        return (1);
+    }
+    // check query string 
+    if(strchr(Request_uri.c_str(),'?'))
+    {
+        i = 0;
+        char *s_query = ft_strtrim(Request_uri.c_str(),"/?");
+        char **t = ft_split(s_query,'&');
+        while(t[i])
+        {
+            char *key = strtok(t[i],"=");
+            char *value = strtok(NULL,"\0");
+            query.insert(std::pair<std::string, std::string>(key, value));
+            i++;
+        }
+        ft_free2(t);
+    }
+    return (status);
 }
+int Request::parse_headers(std::string headres_)
+{
+    int i;
+    int j;
+    int status = 0;
 
+    char **ss = ft_split(headres_.c_str(),'\n');
+    j = 0;
+    while(ss[j])
+    {
+        ss[j]= ft_strtrim(ss[j],"\r");
+        j++;
+    }
+    i = 0;
+    while(i < j - 1)
+    {
+        char *key = strtok(ss[i],":");
+        char *value = strtok(NULL,"\0");
+        headers.insert(std::pair<std::string, std::string>(key, ft_strtrim(value," ")));
+        i++;
+    }
+    ft_free2(ss);
+    status = ft_check_request();
+    return (status);
+}
 int Request::get_status_code()
 {
     return (status_code);
+}
+
+int Request::ft_chunked(void)
+{
+    // char **s = ft_split(Body.c_str(),'\n');
+    // std::vector<int> indexint;
+    // std::vector<std::string> stringes;
+    std::string sbody;
+    int k = 0;
+    int i = 0;
+    i = 0;
+    k = 0;
+    while(Body[i])
+    {
+        std::string integr;
+        if((Body[i] =='\r' && Body[i+1] == '\n'))
+        {
+            // printf("dd\n");
+            i+=2;
+        }
+        if(isdigit(Body[i]) || isalpha(Body[i]))
+        {
+            while (Body[i] !='\r' && Body[i+1] != '\n')
+            {
+                // printf("here");
+                integr += Body[i];
+                i++;
+            }
+            k = (int)strtol(integr.c_str(), NULL, 16);
+        }
+        if((Body[i] =='\r' && Body[i+1] == '\n'))
+        {
+            i+=2;
+        }
+        while (k)
+        {
+            // printf("{%c}\n",Body[i]);
+            sbody += Body[i];
+            k--;
+            i++;
+        }
+    }
+    Body.clear();
+    Body = sbody;
+    sbody.clear();
+    //printf("my final body: {%s}\n",sbody.c_str());
+    return (0);
+}
+int Request::ft_parse_body()
+{
+    std::string body;
+    int index;
+    int i = 0;
+    if(strncmp(headers["Content-Type"].c_str(),"multipart/form-data; boundary",strlen("multipart/form-data; boundary")) == 0)
+    {
+        printf("from-data\n");
+        char **ss = ft_split(Body.c_str(),'\n');
+        int i = 0;
+        int k = 0;
+        while (ss[i])
+        { 
+            ss[i] = ft_strtrim(ss[i],"\r");
+            if(i%2 != 0)
+            {
+                if(k == 1)
+                    body +="=";
+                else if(k == 2)
+                {
+                    body +="&";
+                    k=0;
+                }
+                body+=ss[i];
+                k++;
+            }
+            i++;
+        }
+        
+        index = 0;
+        while (index < body.length())
+        {
+            
+            if(body.compare(index,strlen("Content-Disposition: form-data; name="),"Content-Disposition: form-data; name=") == 0)
+            {
+                body.erase(index,strlen("Content-Disposition: form-data; name="));
+                body.insert(index,"");
+            }
+            index += strlen("|");
+        }
+        index = 0;
+        while (index < body.length())
+        {
+            
+            if(body.compare(index,strlen("\""),"\"") == 0)
+            {
+                body.erase(index,strlen("\""));
+                body.insert(index,"");
+            }
+            index += 1;
+        }   
+    }
+    // else if(strncmp(headers["Content-Type"].c_str(),"text/",strlen("text/")) == 0)
+    // {
+    //     //printf("text/\n");
+    //     printf("{%s}\n",Body.c_str());
+    // }
+    if(strncmp(headers["Content-Type"].c_str(),"application/x-www-form-urlencoded",strlen("application/x-www-form-urlencoded")) == 0)
+    {
+        printf("application/x-www-form-urlencoded\n");
+        body = Body;
+    }
+    if(strncmp(headers["Content-Type"].c_str(),"text/",strlen("text/")) != 0)
+    {
+        char **t = ft_split(body.c_str(),'&');
+        while(t[i])
+        {
+            char *key = strtok(t[i],"=");
+            char *value = strtok(NULL,"\0");
+            body_query.insert(std::pair<std::string, std::string>(key, value));
+            i++;
+        }
+        ft_free2(t);
+    }
+    return (0);
 }

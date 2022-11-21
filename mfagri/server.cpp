@@ -6,7 +6,7 @@
 /*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/12 17:40:54 by mfagri            #+#    #+#             */
-/*   Updated: 2022/11/20 20:12:55 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/11/21 07:17:40 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,12 +155,14 @@ int main()
     std::ostringstream ss;
     ss << f.rdbuf(); // reading data
     str = ss.str();
-    std::cout<<str<<std::endl;
+    //std::cout<<str<<std::endl;
     memset(buf,0,1024);
-    strcpy(buf,"HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: "); //9\n\n"
+    strcpy(buf,"HTTP/1.1 ");
+    strcat(buf,ft_itoa(a.get_status_code()));
+    strcat(buf," OK\nContent-Type: text/html\nContent-Length: "); //9\n\n"
     int lenght;
     lenght = str.length();
-    std::cout<<"lenght:"<<lenght<<std::endl;
+    //std::cout<<"lenght:"<<lenght<<std::endl;
     std::string v = ft_itoa(lenght);
     std::string final = v+"\n\n"+str;
     strcat(buf,final.c_str());
