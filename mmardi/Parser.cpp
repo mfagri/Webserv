@@ -6,7 +6,7 @@
 /*   By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/18 15:33:32 by mmardi            #+#    #+#             */
-/*   Updated: 2022/11/20 18:17:32 by mmardi           ###   ########.fr       */
+/*   Updated: 2022/11/21 01:37:05 by mmardi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,11 +75,24 @@ void Parser::parsElements() {
     }
 }
 
+std::vector<ServerData> Parser::getServers() {
+    
+    std::vector<ServerData> servs;
+    for (size_t i = 0; i < getNumberOfservers(); i++) {
+        ServerData s;
+        s.setData(servers[i]);
+        servs.push_back(s);
+        s.~ServerData();
+    }
+    return servs;
+}
+
+
 std::string Parser::getElementByServer(unsigned int index, std::string _name) {
     
     if (index >= getNumberOfservers()) {
         std::cerr << "index out of bound a Nour Eddine\n";
-        exit (1);
+        throw NoSeverfound();
     }
     return this->servers[index].at(_name);
 }

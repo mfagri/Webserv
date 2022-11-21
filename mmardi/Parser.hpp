@@ -6,13 +6,14 @@
 /*   By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/18 15:14:28 by mmardi            #+#    #+#             */
-/*   Updated: 2022/11/20 16:09:41 by mmardi           ###   ########.fr       */
+/*   Updated: 2022/11/21 01:19:12 by mmardi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PARSER_HPP
 # define PARSER_HPP
 
+# include "ServerData.hpp"
 # include <iostream>
 # include <fstream>
 # include <map>
@@ -34,6 +35,7 @@ class Parser {
         Parser();
         Parser(char **av);
         std::string getElementByServer(unsigned int index, std::string _name);
+        std::vector<ServerData> getServers();
         ~Parser();
         class NoValueFound : public std::exception {
             const char *what(void) const throw(){
