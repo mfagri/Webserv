@@ -6,7 +6,7 @@
 /*   By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 17:34:23 by mmardi            #+#    #+#             */
-/*   Updated: 2022/11/21 14:10:05 by mmardi           ###   ########.fr       */
+/*   Updated: 2022/11/21 18:49:50 by mmardi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ int main(int ac, char **av) {
         std::vector<ServerData> servers;
         Parser parser(av);
         servers = parser.getServers();
-        std::cout << servers[1].getHost() << std::endl;
+        std::cout << servers[2].getbodySize() << std::endl;
     }
     catch(const std::exception& e)
     {
