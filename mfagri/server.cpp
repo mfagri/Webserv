@@ -6,7 +6,7 @@
 /*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/12 17:40:54 by mfagri            #+#    #+#             */
-/*   Updated: 2022/11/23 08:46:52 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/11/23 09:39:37 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,7 +145,6 @@ int main()
     
     // t = ft_split(buf,'\n');
     Request a(buf);
-    puts("khraj");
     std::string sss;
     if(a.get_status_code() == 200)
         sss = "ok.html";
@@ -169,5 +168,7 @@ int main()
     strcat(buf,final.c_str());
     send(n,buf,1024,0);
     printf("response sended\n");
+    close(n);
+    close(socketfd);
     // while (1);  
 }

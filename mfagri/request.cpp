@@ -6,7 +6,7 @@
 /*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:06:24 by mfagri            #+#    #+#             */
-/*   Updated: 2022/11/23 08:56:34 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/11/23 09:40:22 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,13 +116,12 @@ Request::Request(char *buf)
     //          <<"}"<< '\n';
     // }
     // printf("{%s}\n",methode.c_str());
-    printf("{%s}\n",headers["Content-Type"].c_str());
-    printf("{%s}\n",headers["Content-Length"].c_str());
+    // printf("{%s}\n",headers["Content-Type"].c_str());
+    // printf("{%s}\n",headers["Content-Length"].c_str());
     // printf("{%s}\n",headers["Transfer-Encoding"].c_str());
     // printf("{%s}\n",headers[].c_str());
     //printf("{%s}\n",Body.c_str());
     //ft_check_request();
-    puts("ala");
 }
 
 Request::~Request()
@@ -297,16 +296,16 @@ int Request::ft_chunked(void)
     //printf("my final body: {%s}\n",sbody.c_str());
     return (0);
 }
-int findfile(std::string s)
-{
-    int i;
-    i = 0;
-    i = s.find("filename");
-    printf("{%d}\n",i);
-    if(i != -1)
-        return (1);
-    return (0);
-}
+// int findfile(std::string s)
+// {
+//     int i;
+//     i = 0;
+//     i = s.find("filename");
+//     printf("{%d}\n",i);
+//     if(i != -1)
+//         return (1);
+//     return (0);
+// }
 int datanumber(char **bodyendl)
 {
     //int d=0;
@@ -353,7 +352,6 @@ int Request::ft_parse_body()
         char **bodyendl = ft_split(body.c_str(),'*');
         i = 0;
         int d = datanumber(bodyendl)-1;
-        printf("num = %d\n",d);
         Data *data = new Data[d];
         while(bodyendl[i])
         {
@@ -363,7 +361,8 @@ int Request::ft_parse_body()
         i = 0;
         while(bodyendl[i])
         {
-            printf("{%s}\n",bodyendl[i]);
+            if(bodyendl[i+1]==NULL)
+                break;
             std::string body3;
             std::string test = strtok(bodyendl[i],"\r\n\r\n");
             body3 = strtok(NULL,"\0");
@@ -381,6 +380,8 @@ int Request::ft_parse_body()
                 names = ft_strtrim(strrchr(test.c_str(),'='),"\"=");
                 body_query.insert(std::pair<std::string,std::string>(names,body3));
             }
+            names.clear();
+            body3.clear();
             i++;
         }
     }
