@@ -1,4 +1,4 @@
-#include "socket.hpp"
+#include "general_info.hpp"
 
 DIY_socket::DIY_socket()
 {
@@ -22,19 +22,22 @@ int DIY_socket::Launch_sk(int port, std::string host)
     if(this->socket_FD < 0)
     {
         std::cerr << "error !" << std::endl;
-        return -1;
+        return 0;
     }
-    this->address_sk_len = sizeof(this->address_sk);
     Bind_sk(port, host);
     fcntl(this->socket_FD, F_SETFL, O_NONBLOCK);
+    return this->socket_FD;
 }
 
 
 void DIY_socket::Bind_sk(int port, std::string interface)
 {
+    (void)interface;
+    memset(&this->address_sk, 0, sizeof(this->address_sk));
     this->address_sk.sin_family = AF_INET;
     this->address_sk.sin_port = htons(port);
     this->address_sk.sin_addr.s_addr = htonl(INADDR_ANY);
+    this->address_sk_len = sizeof(this->address_sk);
     int opt = 1;
     test_cnx_sk(setsockopt(this->socket_FD, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)));
     test_cnx_sk(bind(this->socket_FD, (struct sockaddr *)& this->address_sk, this->address_sk_len));

@@ -25,8 +25,14 @@
 #include <set>
 #include <string>
 #include <iostream>
+#include <sys/socket.h>
+#include <cstring>
 
 #include "socket.hpp"
 #include "server.hpp"
+#include "Parser.hpp"
+#include "ServerData.hpp"
+
+#define BUFFSIZE 1024
 
 #endif

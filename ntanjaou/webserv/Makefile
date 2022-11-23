@@ -1,4 +1,3 @@
-
 NAME = 	server
 CFLAGS = -Wall -Wextra -Werror
 CC = c++

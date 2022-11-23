@@ -1,15 +1,6 @@
 #ifndef SOCKET_HPP
 #define SOCKET_HPP
 
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <iostream>
-#include <cstring>
-#include <string>
-#include <unistd.h>
-#include <fcntl.h>
-
 #include "general_info.hpp"
 
 
