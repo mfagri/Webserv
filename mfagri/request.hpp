@@ -6,7 +6,7 @@
 /*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:06:56 by mfagri            #+#    #+#             */
-/*   Updated: 2022/11/21 07:09:19 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/11/23 03:12:56 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,15 @@
 #include <string>
 #include <map>
 #include <vector>
+
+
+class Data{
+  public:
+    std::string file;
+    std::string datafile;
+    std::string keyvaldata;
+  
+};
 
 class Request{
   private:
