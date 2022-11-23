@@ -6,7 +6,7 @@
 /*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:06:24 by mfagri            #+#    #+#             */
-/*   Updated: 2022/11/23 03:12:18 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/11/23 08:56:34 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,6 +122,7 @@ Request::Request(char *buf)
     // printf("{%s}\n",headers[].c_str());
     //printf("{%s}\n",Body.c_str());
     //ft_check_request();
+    puts("ala");
 }
 
 Request::~Request()
@@ -308,20 +309,20 @@ int findfile(std::string s)
 }
 int datanumber(char **bodyendl)
 {
-    int d=0;
+    //int d=0;
     int i = 0;
     while(bodyendl[i])
     {
-        if(bodyendl[i][0] != '\0')
-        {
-            if(strchr(bodyendl[i],'=')&&strnstr(bodyendl[i],"form-data",strlen(bodyendl[i])))
-            {
-                d++;
-            }
-        }
+        // if(bodyendl[i][0] != '\0')
+        // {
+        //     if(strchr(bodyendl[i],'=')&&strnstr(bodyendl[i],"form-data",strlen(bodyendl[i])))
+        //     {
+        //         d++;
+        //     }
+        // }
         i++;
     }
-    return (d);
+    return (i);
 }
 int Request::ft_parse_body()
 {
@@ -330,16 +331,13 @@ int Request::ft_parse_body()
         std::string body = Body;
         std::string b;
         std::string names;
-        std::string values;
+        int i = 0;
+        int index;
         char *bounday;
-        int n= -1;
-        int filen = -1;
-        int isfile = 0;;
         bounday = (char *)strchr(headers["Content-Type"].c_str(),'=');
         bounday = bounday+1;
         b = "--";
         b += bounday;
-        int index;
     
         index = 0;
         while (index < body.length())
@@ -348,15 +346,14 @@ int Request::ft_parse_body()
             if(body.compare(index,strlen(b.c_str()),b) == 0)
             {
                 body.erase(index,strlen(b.c_str()));
-                body.insert(index,"");
+                body.insert(index,"*");
             }
             index ++;
         }
-        int i = 0;
-        int nams= 0;
-        char **bodyendl = ft_split(body.c_str(),'\n');
+        char **bodyendl = ft_split(body.c_str(),'*');
         i = 0;
-        int d = datanumber(bodyendl);
+        int d = datanumber(bodyendl)-1;
+        printf("num = %d\n",d);
         Data *data = new Data[d];
         while(bodyendl[i])
         {
@@ -366,66 +363,24 @@ int Request::ft_parse_body()
         i = 0;
         while(bodyendl[i])
         {
-            if(strncmp(bodyendl[i],"--",2) == 0)
-                break;
-            std::string c;
-            if(bodyendl[i][0] != '\0')
+            printf("{%s}\n",bodyendl[i]);
+            std::string body3;
+            std::string test = strtok(bodyendl[i],"\r\n\r\n");
+            body3 = strtok(NULL,"\0");
+            body3 = ft_strtrim(body3.c_str(),"\r\n");
+            if(strnstr(test.c_str(),"filename",strlen(test.c_str())))
             {
-                if(strchr(bodyendl[i],'=') &&strnstr(bodyendl[i],"form-data",strlen(bodyendl[i])) )
-                {
-                    n++;
-                    char *temp;
-                    temp = ft_strtrim(bodyendl[i],"Content-Disposition:");
-                    free(bodyendl[i]);
-                    bodyendl[i] = ft_strtrim(temp," form-data;");
-                    free(temp);
-                    if(strnstr(bodyendl[i],"filename",strlen(bodyendl[i])))
-                    {
-                        filen = n;
-                        isfile = 1;
-                        data[n].file = ft_strtrim(strrchr(bodyendl[i],'='),"\"=");
-                    }
-                    else
-                    {
-                        isfile = 0;
-                        std::string remov;
-                        remov = bodyendl[i];
-                        index = 0;
-                        while (index < remov.length())
-                        {
-                            
-                            if(remov.compare(index,strlen("name="),"name=") == 0)
-                            {
-                                remov.erase(index,strlen("name="));
-                                remov.insert(index,"");
-                            }
-                            index ++;
-                        }
-                        free(bodyendl[i]);
-                        bodyendl[i] = strdup(remov.c_str());
-                        bodyendl[i] = ft_strtrim(bodyendl[i],"\"");
-                        data[n].keyvaldata += bodyendl[i];
-                    }
-                }
-                else if(isfile)
-                {
-                    data[n].datafile += bodyendl[i];
-                    data[n].datafile +="\n";
-                }
-                else
-                {
-                    data[n].keyvaldata += "=";
-                    data[n].keyvaldata += bodyendl[i];
-                }
+                names = ft_strtrim(strrchr(test.c_str(),'='),"\"=");
+                data[i].file = names;
+                data[i].datafile = body3;
+                std::fstream file(names.c_str());
+                file<<body3;
             }
-            i++;
-        }
-        i = 0;
-        while (i < d)
-        {
-            std::cout<<data[i].datafile<<std::endl;
-            std::cout<<data[i].file<<std::endl;
-            std::cout<<data[i].keyvaldata<<std::endl;
+            else
+            {
+                names = ft_strtrim(strrchr(test.c_str(),'='),"\"=");
+                body_query.insert(std::pair<std::string,std::string>(names,body3));
+            }
             i++;
         }
     }

@@ -6,7 +6,7 @@
 /*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/12 17:40:54 by mfagri            #+#    #+#             */
-/*   Updated: 2022/11/21 07:17:40 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/11/23 08:46:52 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@
 // #include <libc.h>
 #include "request.hpp"
 
-#define PORT 3001
+#define PORT 80
 /////////////////////////////////
 //Application Layer/////////////
 ////////////////////////////////
@@ -145,6 +145,7 @@ int main()
     
     // t = ft_split(buf,'\n');
     Request a(buf);
+    puts("khraj");
     std::string sss;
     if(a.get_status_code() == 200)
         sss = "ok.html";
