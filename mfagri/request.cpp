@@ -6,7 +6,7 @@
 /*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:06:24 by mfagri            #+#    #+#             */
-/*   Updated: 2022/11/23 12:06:11 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/11/24 22:13:01 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,9 @@
 #include <string>
 #include <string.h>
 
-
+#include <fcntl.h>
+#include <unistd.h>
+//414 URI Too Long
 /// methods// post | get | delete | connect | put
 char *ft_delet_char(char *s,char c)
 {
@@ -63,9 +65,11 @@ Request::Request(char *buf)
     //request_line
     //header_fields
     //body
+    max_body = 5000000;
+    // max_body = 1024;
     status_code = 200;
     chunked = 0;
-    //std::cout<<buf<<std::endl;
+    std::cout<<buf<<std::endl;
     int in = 0;
     int i = 0;
     while(i < (int)strlen(buf) - 2)
@@ -97,9 +101,12 @@ Request::Request(char *buf)
         return;
     }
     //printf("{%s}\n",Body.c_str());
-    if(chunked)
-        ft_chunked();
-    ft_parse_body();
+    if(in)
+    {
+        if(chunked)
+            ft_chunked();
+        ft_parse_body();
+    }
     ////////////////////////////////////////
     //////////////////////////////////////////////////////////////
     // std::cout<<"{"<<methode<<"}"<<std::endl;
@@ -134,6 +141,12 @@ int Request::ft_check_request()
     if(headers["Content-Type"].c_str() == NULL)
     {
         std::cout<<"Missing Content-Type"<<std::endl;
+        status_code = 400;
+        return (1);
+    }
+    if(atol(headers["Content-Length"].c_str()) > max_body)
+    {
+        std::cout<<" max Content-Lenght size has been reached ! "<<std::endl;
         status_code = 400;
         return (1);
     }
@@ -185,6 +198,12 @@ int Request::parse_request_line(std::string req)
         status_code = 400;
         return (1);
     }
+    //////////////////////////////////
+    //if(open(path+uri) = -1)
+    //{
+    //  error  
+    //}
+    //////////////////////////////////
     char * s = strtok(NULL," ");
     s = strtok(s,"/");
     Http = s;
@@ -345,11 +364,11 @@ int Request::ft_parse_body()
             if(body.compare(index,strlen(b.c_str()),b) == 0)
             {
                 body.erase(index,strlen(b.c_str()));
-                body.insert(index,"*");
+                body.insert(index,"\v");
             }
             index ++;
         }
-        char **bodyendl = ft_split(body.c_str(),'*');
+        char **bodyendl = ft_split(body.c_str(),'\v');
         i = 0;
         int d = datanumber(bodyendl)-1;
         Data *data = new Data[d];
@@ -372,8 +391,20 @@ int Request::ft_parse_body()
                 names = ft_strtrim(strrchr(test.c_str(),'='),"\"=");
                 data[i].file = names;
                 data[i].datafile = body3;
-                std::fstream file(names.c_str());
-                file<<body3;
+                // puts("sds");
+                // printf("%s\n",names.c_str());
+                // std::fstream file;
+                // file.open(names.c_str());
+                // file<<body3;
+                int fdf = open(names.c_str(),O_CREAT|O_RDWR,777);
+                if(fdf < 0)
+                {
+                   puts("errrrrro"); 
+                }
+                write(fdf,body3.c_str(),body3.length());
+                // std::ostringstream ss;
+                // ss << file.rdbuf();
+                // std::cout<<ss<<"\n";
             }
             else
             {

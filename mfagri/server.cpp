@@ -6,7 +6,7 @@
 /*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/12 17:40:54 by mfagri            #+#    #+#             */
-/*   Updated: 2022/11/23 09:39:37 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/11/24 19:36:21 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,8 +140,8 @@ int main()
     else
         std::cout<<"hi client\n";
 
-    char buf[1024];
-    recv(n,buf,1024,0);
+    char buf[3000];
+    recv(n,buf,3000,0);
     
     // t = ft_split(buf,'\n');
     Request a(buf);
@@ -156,17 +156,18 @@ int main()
     ss << f.rdbuf(); // reading data
     str = ss.str();
     //std::cout<<str<<std::endl;
-    memset(buf,0,1024);
+    memset(buf,0,3000);
     strcpy(buf,"HTTP/1.1 ");
     strcat(buf,ft_itoa(a.get_status_code()));
-    strcat(buf," OK\nContent-Type: text/html\nContent-Length: "); //9\n\n"
+    strcat(buf," OK\nDate: Thu, 24 Nov 2022 14:37:49 GMT\nContent-Type: text/html\nContent-Length: "); //9\n\n"
     int lenght;
     lenght = str.length();
     //std::cout<<"lenght:"<<lenght<<std::endl;
     std::string v = ft_itoa(lenght);
     std::string final = v+"\n\n"+str;
-    strcat(buf,final.c_str());
-    send(n,buf,1024,0);
+    strlcat(buf,final.c_str(),3000);
+    //send(n,buf,3000,0);
+    write(n,buf,3000);
     printf("response sended\n");
     close(n);
     close(socketfd);

@@ -6,7 +6,7 @@
 /*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:06:56 by mfagri            #+#    #+#             */
-/*   Updated: 2022/11/23 04:43:00 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/11/24 19:49:04 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,18 +18,20 @@
 #include <map>
 #include <vector>
 #include <fstream>
+#include <sstream>
 
 class Data{
   public:
     std::string file;
     std::string datafile;
     std::string keyvaldata;
-  
+    
 };
 
 class Request{
   private:
-    //////request_line///////
+    //////request_line//////
+    long max_body;
     std::string request_line;
     std::string methode;///method
     std::string Request_uri;//uri
