@@ -6,6 +6,7 @@
 class DIY_server
 {
 private:
+    int test;
     //--> create later obj of request
     std::vector<ServerData> SV_data;
     std::vector<DIY_socket> sk_list;

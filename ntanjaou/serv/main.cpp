@@ -1,4 +1,4 @@
-# include "ServerData.hpp"
+#include "general_info.hpp"
 
 int main(int ac, char **av) 
 {

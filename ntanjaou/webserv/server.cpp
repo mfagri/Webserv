@@ -56,7 +56,7 @@ void Serv::Launcher()
         Accepter();
         test_connection(this->new_sock);
         Handler();
-        Responder();
+        // Responder();
         std::cout << "--- Done ---" << std::endl;
     }
 }

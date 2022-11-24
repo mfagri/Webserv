@@ -28,10 +28,10 @@
 #include <sys/socket.h>
 #include <cstring>
 
+#include "ServerData.hpp"
+#include "Parser.hpp"
 #include "socket.hpp"
 #include "server.hpp"
-#include "Parser.hpp"
-#include "ServerData.hpp"
 
 #define BUFFSIZE 1024
 
