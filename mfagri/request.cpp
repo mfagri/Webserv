@@ -6,7 +6,7 @@
 /*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:06:24 by mfagri            #+#    #+#             */
-/*   Updated: 2022/11/24 22:13:01 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/11/24 22:27:40 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -393,10 +393,12 @@ int Request::ft_parse_body()
                 data[i].datafile = body3;
                 // puts("sds");
                 // printf("%s\n",names.c_str());
-                // std::fstream file;
-                // file.open(names.c_str());
+                // std::ofstream file;
+                // // file.open(names.c_str());
+                std::string path = "./files/"+names;
+                // file.open(path);
                 // file<<body3;
-                int fdf = open(names.c_str(),O_CREAT|O_RDWR,777);
+                int fdf = open(path.c_str(),O_CREAT|O_RDWR,777);
                 if(fdf < 0)
                 {
                    puts("errrrrro"); 
