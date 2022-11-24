@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/18 15:14:28 by mmardi            #+#    #+#             */
-/*   Updated: 2022/11/21 01:19:12 by mmardi           ###   ########.fr       */
+/*   Updated: 2022/11/24 16:48:45 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ class Parser {
         Parser();
         Parser(char **av);
         std::string getElementByServer(unsigned int index, std::string _name);
-        // std::vector<ServerData> getServers();
+        std::vector<ServerData> getServers();
         ~Parser();
         class NoValueFound : public std::exception {
             const char *what(void) const throw(){

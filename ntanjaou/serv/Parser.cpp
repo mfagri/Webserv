@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/18 15:33:32 by mmardi            #+#    #+#             */
-/*   Updated: 2022/11/21 14:33:58 by mmardi           ###   ########.fr       */
+/*   Updated: 2022/11/24 16:48:37 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,16 +75,16 @@ void Parser::parsElements() {
     }
 }
 
-// std::vector<ServerData> Parser::getServers() {
+std::vector<ServerData> Parser::getServers() {
     
-//     std::vector<ServerData> servs;
-//     for (size_t i = 0; i < getNumberOfservers(); i++) {
-//         ServerData s;
-//         s.setData(servers[i]);
-//         servs.push_back(s);
-//     }
-//     return servs;
-// }
+    std::vector<ServerData> servs;
+    for (size_t i = 0; i < getNumberOfservers(); i++) {
+        ServerData s;
+        s.setData(servers[i]);
+        servs.push_back(s);
+    }
+    return servs;
+}
 
 
 std::string Parser::getElementByServer(unsigned int index, std::string _name) {

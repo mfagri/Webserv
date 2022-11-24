@@ -2,7 +2,6 @@
 #define SERVER_HPP
 
 #include "general_info.hpp"
-#include "ServerData.hpp"
 
 class DIY_server
 {

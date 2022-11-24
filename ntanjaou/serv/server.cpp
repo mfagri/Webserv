@@ -100,6 +100,7 @@ void DIY_server::Manager_I(int fd_plfdlist, int pos)
     this->poll_list.push_back(lst_pollfd);
     this->fd_sk_num++;
     str_req = Req_buf_reader(fd_plfdlist, &pos_sockfd);
+    
     //call request class
 }
 
