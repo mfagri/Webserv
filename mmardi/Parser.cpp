@@ -6,7 +6,7 @@
 /*   By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/18 15:33:32 by mmardi            #+#    #+#             */
-/*   Updated: 2022/11/21 14:33:58 by mmardi           ###   ########.fr       */
+/*   Updated: 2022/11/25 19:10:48 by mmardi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ void Parser::readFile() {
                 this->lines.push_back(element);
             }
         }
+        this->lines.push_back("The End");
     }
 }
 
@@ -42,31 +43,71 @@ std::string Parser::trimS(std::string str) {
     
     for (int i = 0; str[i]; i++) {
         if (str[i] == '\t' || str[i] == ' '  || str[i] == '\n') {
-            str.erase(i, 1);
+           str.erase(i, 1);
+           i = -1;
         }
-        else
+        else{
             break ;
+        }
     }
     return (str);
 }
 
 void Parser::parsElements() {
     std::map<std::string, std::string> element;
+    std::vector<std::map<std::string, std::string>> locations;
     
     for (size_t i = 0; i < lines.size(); i++) {
-        if (strncmp(lines[i].c_str(), "server ", 7) == 0) {
-                i++;
+        if (strncmp(lines[i++].c_str(), "server", 6) == 0) {
+            if (lines[i++][0] != '{')
+                throw MissingBrackets();
+            i++;
             while(lines[i][0] != '}') {
-                if (lines[i][lines[i].length() - 1] != ';')
-                    throw MissingSemicolon();
-                char *key = strtok((char *)lines[i].c_str(), " ");
-                char *value = strtok(NULL, ";");
-                if (!value)
-                    throw NoValueFound();
-                element.insert(std::pair<std::string, std::string>(key,value));
+                if (strncmp(lines[i].c_str(), "location", 8) == 0) {
+                    std::map<std::string, std::string> lElements;
+                    strtok((char *)lines[i].c_str(), " ");
+                    char *path = strtok(NULL, " ");
+                    if (!path)
+                        throw NoValueFound();
+                    lElements.insert(std::pair<std::string, std::string>("location-path", path));
+                    i++;
+                    if (lines[i][0] != '[') {
+                        std::cerr << "Missing location brackets\n";
+                        exit (1);
+                    }
+                    i++;
+                    while(lines[i][0] != ']') {
+                        if (lines[i][lines[i].length() - 1] != ';')
+                            throw MissingSemicolon();
+                        char *key = strtok((char *)lines[i].c_str(), " ");
+                        char *value = strtok(NULL, ";");
+                         if (!value)
+                             throw NoValueFound();
+                        lElements.insert(std::pair<std::string, std::string>(key,value));
+                        i++;
+                    }
+                    locations.push_back(lElements);
+                    lElements.clear();
+                    if (lines[i][0] == '}' && lines[i].length() == 1)
+                        break;
+                }
+                else {
+                    if (lines[i][lines[i].length() - 1] != ';') {
+                            throw MissingSemicolon();
+                    }
+                    if (lines[i][0] != '}' && (strncmp(lines[i +1 ].c_str(), "server ", 7) == 0 || lines[i + 1] == "The End"))
+                        throw MissingBrackets();
+                    char *key = strtok((char *)lines[i].c_str(), " ");
+                    char *value = strtok(NULL, ";");
+                    if (!value)
+                        throw NoValueFound();
+                    element.insert(std::pair<std::string, std::string>(key,value));
+                }
                 i++;
             }
         servers.push_back(element);
+        serversLocation.push_back(locations);
+        locations.clear();
         element.clear();
         }
     }
@@ -80,7 +121,7 @@ std::vector<ServerData> Parser::getServers() {
     std::vector<ServerData> servs;
     for (size_t i = 0; i < getNumberOfservers(); i++) {
         ServerData s;
-        s.setData(servers[i]);
+        s.setData(servers[i], serversLocation[i]);
         servs.push_back(s);
     }
     return servs;

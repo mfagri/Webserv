@@ -6,7 +6,7 @@
 /*   By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/18 15:14:28 by mmardi            #+#    #+#             */
-/*   Updated: 2022/11/21 01:19:12 by mmardi           ###   ########.fr       */
+/*   Updated: 2022/11/25 19:11:22 by mmardi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ class Parser {
         std::string path;
         std::vector<std::string> lines;
         std::vector<std::map<std::string, std::string> > servers;
+        std::vector<std::vector<std::map<std::string, std::string>>> serversLocation;
         void readFile();
         void check_conf();
         std::string trimS(std::string str);
@@ -48,9 +49,14 @@ class Parser {
                 return "No Server found";
             }
         };
-         class MissingSemicolon : public std::exception {
+        class MissingSemicolon : public std::exception {
             const char *what(void) const throw(){
                 return "Messing semicolon at the and of the line";
+            }
+        };
+        class MissingBrackets : public std::exception {
+            const char *what(void) const throw(){
+                return "Messing brackets for openin or closing a server";
             }
         };
 };

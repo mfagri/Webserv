@@ -6,7 +6,7 @@
 /*   By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/20 23:00:22 by mmardi            #+#    #+#             */
-/*   Updated: 2022/11/21 17:46:16 by mmardi           ###   ########.fr       */
+/*   Updated: 2022/11/25 19:15:45 by mmardi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,8 @@ ServerData::ServerData() {
 	body_size = 1024;
 }
 
-void ServerData::setData(std::map<std::string, std::string> server) {
-	
+void ServerData::setData(std::map<std::string, std::string> server, std::vector<std::map<std::string, std::string>> _locations) {
+	locations = _locations;
 	if (server.count("listen") > 0) {
 		std::string hp = server.at("listen");
 		if (strrchr(hp.c_str(), ':')) {
@@ -88,6 +88,11 @@ int ServerData::getbodySize(void) {
 std::vector<std::string> ServerData::getMethods(void) {
 
 	return methods;
+}
+
+std::vector<std::map<std::string, std::string>> ServerData::getLocations(void) {
+	
+	return locations;
 }
 
 ServerData::~ServerData() {}
