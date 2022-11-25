@@ -6,7 +6,7 @@
 /*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/25 18:53:30 by mfagri            #+#    #+#             */
-/*   Updated: 2022/11/25 22:32:19 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/11/25 23:38:39 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,46 +31,75 @@ Response::Response(Request &req)
     uri = req.get_uri();
     printf("{%s}\n",uri.c_str());
     status = req.get_status_code();
-    std::string testlocation= "/zoro";
-    std::string testmodifier ="^~";
-    if(status == 200)
+    std::string location_match= "/zoro";
+    char *optional_modifier[]= {"=","^~","~","*~"};
+    if(find_option(optional_modifier,"=") != 404 && location_match == uri);
     {
+        //get the file
+    }
+    if(find_option(optional_modifier,"^~") != 404 && location_match == uri);
+    {
+        //get the file
+    }
+    if(find_option(optional_modifier,"*~") != 404 && location_match == uri);
+    {
+        //get the file
+    }  
+    if(find_option(optional_modifier,"~") != 404 && location_match == uri);
+    {
+        //get the file
+    }
+    // if(status == 200)
+    // {
        //location
        //methode
-       if(testmodifier == "=")
-       {
-           if(testlocation == uri)
-           {
-               std::cout<<"location\n";
-           }
-       }
-       else if(testmodifier == "^~")
-       {
-           if(strcmp(testlocation.c_str(),uri.c_str()) == 0)
-           {
-               std::cout<<"per\n";
-           }
-       }
-       else if(testmodifier == "*~")
-       {
-           if(strcmp(testlocation.c_str(),uri.c_str())== 0)
-           {
-               /* code */
-               std::cout<<"*~\n";
-           }
+    //    if(testmodifier == "=")
+    //    {
+    //        if(testlocation == uri)
+    //        {
+    //            std::cout<<"location\n";
+    //        }
+    //    }
+    //    else if(testmodifier == "^~")
+    //    {
+    //        if(strcmp(testlocation.c_str(),uri.c_str()) == 0)
+    //        {
+    //            std::cout<<"per\n";
+    //        }
+    //    }
+    //    else if(testmodifier == "*~")
+    //    {
+    //        if(strcmp(testlocation.c_str(),uri.c_str())== 0)
+    //        {
+    //            /* code */
+    //            std::cout<<"*~\n";
+    //        }
            
-       }
-       else if(testmodifier == "~")
-       {
-           if(strcmp(testlocation.c_str(),uri.c_str())== 0)
-           {
-               /* code */
-               std::cout<<"~\n";
-           }
-       }
-    }
-    else
+    //    }
+    //    else if(testmodifier == "~")
+    //    {
+    //        if(strcmp(testlocation.c_str(),uri.c_str())== 0)
+    //        {
+    //            /* code */
+    //            std::cout<<"~\n";
+    //        }
+    //    }
+    // }
+    // else
+    // {
+    //     std::cout<<"errors pages";
+    // }
+}
+
+int find_option(char *s[],std::string op)
+{
+    int i;
+    i = 0;
+    while(s[i])
     {
-        std::cout<<"errors pages";
+        if(strcmp(s[i],op.c_str()) == 0)
+            return (i);
+        i++;
     }
+    return (404);
 }
