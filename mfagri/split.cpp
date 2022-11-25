@@ -6,13 +6,57 @@
 /*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 17:36:48 by mfagri            #+#    #+#             */
-/*   Updated: 2022/11/19 22:34:48 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/11/25 18:04:10 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 // #include "request.hpp"
 #include <stdlib.h>
 #include <string.h>
+
+char	*ft_strnstr(const char *d, const char *s, size_t len)
+{
+	size_t	i;
+	size_t	j;
+	char	*dst;
+
+	i = 0;
+	dst = (char *)d;
+	if (!s[i] || dst == s)
+		return ((char *)dst);
+	while (dst[i] && len > i)
+	{
+		j = 0;
+		while (s[j] && i + j < len && dst[i + j] == s[j])
+		{
+			if (s[j + 1] == '\0')
+				return (dst + i);
+			j++;
+		}
+		i++;
+	}
+	return (NULL);
+}
+
+size_t	ft_strlcat(char *dst, const char *src, size_t dstsize)
+{
+	size_t	i;
+	size_t	i1;
+
+	if (dstsize <= strlen(dst))
+		return (dstsize + strlen(src));
+	i = strlen(dst);
+	i1 = 0;
+	while (src[i1] != '\0' && i + 1 < dstsize)
+	{
+		dst[i] = src[i1];
+		i++;
+		i1++;
+	}
+	dst[i] = '\0';
+	return (strlen(dst) + strlen(&src[i1]));
+}
+
 static	long int	ft_len(long n)
 {
 	int	i;

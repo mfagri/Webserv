@@ -6,7 +6,7 @@
 /*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/12 17:40:54 by mfagri            #+#    #+#             */
-/*   Updated: 2022/11/24 19:36:21 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/11/25 22:26:21 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,8 +37,9 @@
 // #include <in.h>
 // #include <libc.h>
 #include "request.hpp"
+#include "response.hpp"
 
-#define PORT 80
+#define PORT 3000
 /////////////////////////////////
 //Application Layer/////////////
 ////////////////////////////////
@@ -145,9 +146,13 @@ int main()
     
     // t = ft_split(buf,'\n');
     Request a(buf);
+    Response b(a);
     std::string sss;
     if(a.get_status_code() == 200)
-        sss = "ok.html";
+        if(a.get_uri() == "/zoro")
+            sss = "googleview.html";
+        else
+            sss = "ok.html";
     else
         sss = "not_found.html";
     std::ifstream f(sss.c_str());
@@ -165,7 +170,7 @@ int main()
     //std::cout<<"lenght:"<<lenght<<std::endl;
     std::string v = ft_itoa(lenght);
     std::string final = v+"\n\n"+str;
-    strlcat(buf,final.c_str(),3000);
+    ft_strlcat(buf,final.c_str(),3000);
     //send(n,buf,3000,0);
     write(n,buf,3000);
     printf("response sended\n");

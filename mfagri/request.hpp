@@ -6,7 +6,7 @@
 /*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:06:56 by mfagri            #+#    #+#             */
-/*   Updated: 2022/11/24 19:49:04 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/11/25 22:14:34 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 #include <iostream>
 #include <string>
+#include <string.h>
 #include <map>
 #include <vector>
 #include <fstream>
@@ -59,12 +60,15 @@ class Request{
     int parse_headers(std::string headres_);
     int ft_chunked(void);
     int ft_parse_body(void);
+    std::string get_uri();
     //////////////////////////////
     
 };
 
 char	**ft_split(char const *s, char c);
 char	*ft_strtrim(char const *s1, char const *set);
+size_t	ft_strlcat(char *dst, const char *src, size_t dstsize);
+char	*ft_strnstr(const char *d, const char *s, size_t len);
 char	*ft_itoa(int n);
 int check_key(char *s);
 #endif

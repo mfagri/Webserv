@@ -6,7 +6,7 @@
 /*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:06:24 by mfagri            #+#    #+#             */
-/*   Updated: 2022/11/24 22:27:40 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/11/25 18:11:11 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -386,7 +386,7 @@ int Request::ft_parse_body()
             std::string test = strtok(bodyendl[i],"\r\n\r\n");
             body3 = strtok(NULL,"\0");
             body3 = ft_strtrim(body3.c_str(),"\r\n");
-            if(strnstr(test.c_str(),"filename",strlen(test.c_str())))
+            if(ft_strnstr(test.c_str(),"filename",strlen(test.c_str())))
             {
                 names = ft_strtrim(strrchr(test.c_str(),'='),"\"=");
                 data[i].file = names;
@@ -425,4 +425,9 @@ int Request::ft_parse_body()
         body_query.insert(std::pair<std::string,std::string>(key,value));
     }
     return (0);
+}
+
+std::string Request::get_uri()
+{
+    return (Request_uri);
 }
