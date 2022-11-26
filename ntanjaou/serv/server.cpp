@@ -3,7 +3,6 @@
 DIY_server::DIY_server(std::vector<ServerData> SV_d) : SV_data(SV_d)
 {
     this->fd_sk_num = 0;
-    this->test = 0;
     this->sk_adr_len = sizeof(this->sk_address);
 }
 
@@ -57,52 +56,52 @@ int DIY_server::list_polls()
     return num_pollfd;
 }
 
-// void DIY_server::del_sock(int sk_fd)
-// {
-//     int fd = this->poll_list[sk_fd].fd;
-//     close(fd);
-//     this->poll_list.erase(this->poll_list.begin() + sk_fd);
-//     this->fd_sk_num--;
-// }
+void DIY_server::del_sock(int sk_fd)
+{
+    int fd = this->poll_list[sk_fd].fd;
+    close(fd);
+    this->poll_list.erase(this->poll_list.begin() + sk_fd);
+    this->fd_sk_num--;
+}
 
-// std::string DIY_server::Req_buf_reader(int fd, int *n)
-// {
-//     int num_data_readed;
-//     int i = *n;
-//     *n = 0;
-//     char buffer[BUFFSIZE] = {0};
-//     std::string str_req;
+std::string DIY_server::Req_buf_reader(int fd, int *n)
+{
+    int num_data_readed;
+    int i = *n;
+    *n = 0;
+    char buffer[BUFFSIZE] = {0};
+    std::string str_req;
 
-//     memset(buffer, 0, sizeof(buffer));
-//     num_data_readed = recv(fd, buffer, BUFFSIZE - 1, 0);
-//     if(num_data_readed == 0)
-//     {
-//         this->del_sock(i);
-//         *n = 0;
-//     }
-//     else if(num_data_readed == -1)
-//     {
-//         this->del_sock(i);
-//         *n = -1;
-//     }
-//     else
-//     {
-//         str_req.append(buffer, num_data_readed);
-//         *n += num_data_readed;
-//     }
-//     return (str_req);
-// }
+    memset(buffer, 0, sizeof(buffer));
+    num_data_readed = recv(fd, buffer, BUFFSIZE, 0);
+    if(num_data_readed == 0)
+    {
+        this->del_sock(i);
+        *n = 0;
+    }
+    else if(num_data_readed == -1)
+    {
+        this->del_sock(i);
+        *n = -1;
+    }
+    else
+    {
+        str_req.append(buffer, num_data_readed);
+        *n += num_data_readed;
+    }
+    return (str_req);
+}
 
 void DIY_server::Manager_I(int fd_plfdlist, int pos)
 {
-    (void)pos;
+    // (void)pos;
     int sock_accept;
-    // int pos_sockfd = pos;
+    int pos_sockfd = pos;
     std::string str_req;
     struct pollfd lst_pollfd;
-    char buff[1024] = {0};
+    // char buff[1024] = {0};
 
-    if (test == 0)
+    if (std::find(this->sk_fd.begin(), this->sk_fd.end(), fd_plfdlist) != this->sk_fd.end())
     {
         sock_accept = accept(fd_plfdlist, (struct sockaddr *)&this->sk_address, (socklen_t *)&this->sk_adr_len);
         if (sock_accept < 0)
@@ -117,14 +116,15 @@ void DIY_server::Manager_I(int fd_plfdlist, int pos)
         lst_pollfd.revents = 0;
         this->poll_list.push_back(lst_pollfd);
         this->fd_sk_num++;
-        this->test = 1;
-    } else {
-
-    std::cout << read(fd_plfdlist, buff, BUFFSIZE);
-    std::cout << buff << std::endl;
+    } 
+    else 
+    {
+        // std::cout << read(fd_plfdlist, buff, BUFFSIZE);
+        // std::cout << buff << std::endl;
+        str_req = Req_buf_reader(fd_plfdlist, &pos_sockfd);
+        std::cout << str_req << std::endl;
+        // call request class here to process str_req
     }
-    // str_req = Req_buf_reader(fd_plfdlist, &pos_sockfd);
-    // call request class
 }
 
 void DIY_server::Manager_IO()
