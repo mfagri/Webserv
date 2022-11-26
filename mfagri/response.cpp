@@ -6,7 +6,7 @@
 /*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/25 18:53:30 by mfagri            #+#    #+#             */
-/*   Updated: 2022/11/25 23:38:39 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/11/26 19:07:07 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,69 +29,49 @@ Response::Response()
 Response::Response(Request &req)
 {
     uri = req.get_uri();
+    int pos;
+    pos = 0;
     printf("{%s}\n",uri.c_str());
+    if(uri.length() == 1)
+        uri = "/index.html";
+    std::string root = "/Users/mfagri/Desktop/Webserv/pages";/////root
     status = req.get_status_code();
-    std::string location_match= "/zoro";
-    char *optional_modifier[]= {"=","^~","~","*~"};
-    if(find_option(optional_modifier,"=") != 404 && location_match == uri);
-    {
-        //get the file
-    }
-    if(find_option(optional_modifier,"^~") != 404 && location_match == uri);
-    {
-        //get the file
-    }
-    if(find_option(optional_modifier,"*~") != 404 && location_match == uri);
-    {
-        //get the file
-    }  
-    if(find_option(optional_modifier,"~") != 404 && location_match == uri);
-    {
-        //get the file
-    }
-    // if(status == 200)
+    std::string method = "GET";
+    std::string location_match= "/ok.html";///location
+    char **optional_modifier = (char **)malloc(sizeof(char *)*5);
+    optional_modifier[0] ="=";
+    optional_modifier[1] ="^~";
+    optional_modifier[2] ="*~";
+    optional_modifier[3] ="~";
+    optional_modifier[4] = NULL;
+    // if(find_option(optional_modifier,"=") != 404 && location_match == uri && pos == 0)
     // {
-       //location
-       //methode
-    //    if(testmodifier == "=")
-    //    {
-    //        if(testlocation == uri)
-    //        {
-    //            std::cout<<"location\n";
-    //        }
-    //    }
-    //    else if(testmodifier == "^~")
-    //    {
-    //        if(strcmp(testlocation.c_str(),uri.c_str()) == 0)
-    //        {
-    //            std::cout<<"per\n";
-    //        }
-    //    }
-    //    else if(testmodifier == "*~")
-    //    {
-    //        if(strcmp(testlocation.c_str(),uri.c_str())== 0)
-    //        {
-    //            /* code */
-    //            std::cout<<"*~\n";
-    //        }
-           
-    //    }
-    //    else if(testmodifier == "~")
-    //    {
-    //        if(strcmp(testlocation.c_str(),uri.c_str())== 0)
-    //        {
-    //            /* code */
-    //            std::cout<<"~\n";
-    //        }
-    //    }
+            root+=uri;
+            if(req.get_methode() == method)
+            {
+                std::cout<<"creat response\n";
+                ft_creat_file(root,0);
+                pos = 1;
+            }
+            else
+                ft_creat_file(root,1);
+                
     // }
-    // else
+    // if(find_option(optional_modifier,"^~") != 404 && location_match == uri && pos == 0)
     // {
-    //     std::cout<<"errors pages";
+    //     //get the file
+    // }
+    // if(find_option(optional_modifier,"*~") != 404 && location_match == uri && pos == 0)
+    // {
+    //     //get the file
+    // }  
+    // if(find_option(optional_modifier,"~") != 404 && location_match == uri && pos == 0)
+    // {
+    //     //get the file
     // }
 }
 
-int find_option(char *s[],std::string op)
+int find_option(char **s,std::string op)
 {
     int i;
     i = 0;
@@ -102,4 +82,56 @@ int find_option(char *s[],std::string op)
         i++;
     }
     return (404);
+}
+
+void Response::ft_creat_file(std::string root,int ok)
+{
+    char buf[3000];
+    int i = open(root.c_str(),O_RDWR,777);
+    std::string str;
+    char ss[3000] = {0};
+    if(i != -1 && ok == 0)
+    {
+        ///puts("ffffff");
+        read(i,ss,3000);
+        //puts(ss);
+        str = ss;
+        memset(buf,0,3000);
+        strcpy(buf,"HTTP/1.1 ");
+        strcat(buf,ft_itoa(status));
+        strcat(buf," OK\nDate: Thu, 24 Nov 2022 14:37:49 GMT\nContent-Type: text/html\nContent-Length: "); //9\n\n"
+        int lenght;
+        lenght = str.length();
+        //std::cout<<"lenght:"<<lenght<<std::endl;
+        std::string v = ft_itoa(lenght);
+        std::string final = v+"\n\n"+str;
+        ft_strlcat(buf,final.c_str(),3000);
+    }
+    else
+    {
+        //std::ifstream f("/Users/mfagri/Desktop/Webserv/pages/not_found.html");
+        int i = open("/Users/mfagri/Desktop/Webserv/pages/not_found.html",O_RDWR,777);
+        read(i,ss,3000);
+        str = ss;
+        memset(buf,0,3000);
+        strcpy(buf,"HTTP/1.1 ");
+        strcat(buf,ft_itoa(404));
+        strcat(buf," OK\nDate: Thu, 24 Nov 2022 14:37:49 GMT\nContent-Type: text/html\nContent-Length: "); //9\n\n"
+        int lenght;
+        lenght = str.length();
+        strcat(buf,ft_itoa(lenght));
+        //std::cout<<"lenght:"<<lenght<<std::endl;
+        //std::string v = ft_itoa(lenght);
+        strcat(buf,"\n\n");
+        strcat(buf,ss);
+        //std::string final = v+"\n\n"+str;
+        // ft_strlcat(buf,final.c_str(),3000);
+    }
+    res = buf;
+    //puts(res);
+}
+
+char * Response::get_res()
+{
+    return res;
 }

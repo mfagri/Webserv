@@ -6,16 +6,12 @@
 /*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:06:24 by mfagri            #+#    #+#             */
-/*   Updated: 2022/11/25 18:11:11 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/11/26 18:03:29 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "request.hpp"
-#include <string>
-#include <string.h>
 
-#include <fcntl.h>
-#include <unistd.h>
 //414 URI Too Long
 /// methods// post | get | delete | connect | put
 char *ft_delet_char(char *s,char c)
@@ -69,7 +65,7 @@ Request::Request(char *buf)
     // max_body = 1024;
     status_code = 200;
     chunked = 0;
-    std::cout<<buf<<std::endl;
+    //std::cout<<buf<<std::endl;
     int in = 0;
     int i = 0;
     while(i < (int)strlen(buf) - 2)
@@ -430,4 +426,8 @@ int Request::ft_parse_body()
 std::string Request::get_uri()
 {
     return (Request_uri);
+}
+std::string Request::get_methode()
+{
+    return (methode);
 }

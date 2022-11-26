@@ -6,7 +6,7 @@
 /*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:06:56 by mfagri            #+#    #+#             */
-/*   Updated: 2022/11/25 22:14:34 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/11/26 16:40:46 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@
 #include <vector>
 #include <fstream>
 #include <sstream>
+#include <fcntl.h>
+#include <unistd.h>
 
 class Data{
   public:
@@ -61,6 +63,7 @@ class Request{
     int ft_chunked(void);
     int ft_parse_body(void);
     std::string get_uri();
+    std::string get_methode();
     //////////////////////////////
     
 };

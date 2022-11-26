@@ -6,7 +6,7 @@
 /*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/12 17:40:54 by mfagri            #+#    #+#             */
-/*   Updated: 2022/11/25 22:26:21 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/11/26 19:02:54 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@
 #include "request.hpp"
 #include "response.hpp"
 
-#define PORT 3000
+#define PORT 5000
 /////////////////////////////////
 //Application Layer/////////////
 ////////////////////////////////
@@ -147,34 +147,36 @@ int main()
     // t = ft_split(buf,'\n');
     Request a(buf);
     Response b(a);
-    std::string sss;
-    if(a.get_status_code() == 200)
-        if(a.get_uri() == "/zoro")
-            sss = "googleview.html";
-        else
-            sss = "ok.html";
-    else
-        sss = "not_found.html";
-    std::ifstream f(sss.c_str());
-    std::string str;
-    std::ostringstream ss;
-    ss << f.rdbuf(); // reading data
-    str = ss.str();
-    //std::cout<<str<<std::endl;
-    memset(buf,0,3000);
-    strcpy(buf,"HTTP/1.1 ");
-    strcat(buf,ft_itoa(a.get_status_code()));
-    strcat(buf," OK\nDate: Thu, 24 Nov 2022 14:37:49 GMT\nContent-Type: text/html\nContent-Length: "); //9\n\n"
-    int lenght;
-    lenght = str.length();
-    //std::cout<<"lenght:"<<lenght<<std::endl;
-    std::string v = ft_itoa(lenght);
-    std::string final = v+"\n\n"+str;
-    ft_strlcat(buf,final.c_str(),3000);
+    // std::string sss;
+    // if(a.get_status_code() == 200)
+    //     if(a.get_uri() == "/zoro")
+    //         sss = "googleview.html";
+    //     else
+    //         sss = "ok.html";
+    // else
+    //     sss = "not_found.html";
+    // std::ifstream f(sss.c_str());
+    // std::string str;
+    // std::ostringstream ss;
+    // ss << f.rdbuf(); // reading data
+    // str = ss.str();
+    // //std::cout<<str<<std::endl;
+    // memset(buf,0,3000);
+    // strcpy(buf,"HTTP/1.1 ");
+    // strcat(buf,ft_itoa(a.get_status_code()));
+    // strcat(buf," OK\nDate: Thu, 24 Nov 2022 14:37:49 GMT\nContent-Type: text/html\nContent-Length: "); //9\n\n"
+    // int lenght;
+    // lenght = str.length();
+    // //std::cout<<"lenght:"<<lenght<<std::endl;
+    // std::string v = ft_itoa(lenght);
+    // std::string final = v+"\n\n"+str;
+   // puts(b.get_res().c_str());
+    strlcpy(buf,(const char *)b.get_res(),3000);
     //send(n,buf,3000,0);
     write(n,buf,3000);
     printf("response sended\n");
     close(n);
     close(socketfd);
-    // while (1);  
+    // while (1);
+    return (0);
 }
