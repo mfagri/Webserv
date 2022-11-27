@@ -6,7 +6,7 @@
 /*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:06:24 by mfagri            #+#    #+#             */
-/*   Updated: 2022/11/26 18:03:29 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/11/27 11:28:39 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -430,4 +430,9 @@ std::string Request::get_uri()
 std::string Request::get_methode()
 {
     return (methode);
+}
+
+std::map<std::string,std::string> Request::get_headers()
+{
+    return (headers);
 }

@@ -6,7 +6,7 @@
 /*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 17:36:48 by mfagri            #+#    #+#             */
-/*   Updated: 2022/11/25 18:04:10 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/11/27 12:12:31 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,6 +128,25 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 	s1[b] = '\0';
 	return (s1);
 }
+
+char	*ft_strjoin(char const *s1, char const *s2)
+{
+	char	*a;
+	int		b;
+	int		c;
+
+	if (!s1 || !s2)
+		return (NULL);
+	b = strlen(s1);
+	c = strlen(s2);
+	a = (char *)malloc((b + c + 1) * sizeof(char));
+	if (!a)
+		return (NULL);
+	strlcpy(a, s1, b + 1);
+	ft_strlcat(&a[strlen(a)], s2, c + 1);
+	return (a);
+}
+
 char	*ft_strtrim(char const *s1, char const *set)
 {
 	size_t	j;
