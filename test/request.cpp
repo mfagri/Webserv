@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ntanjaou <ntanjaou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:06:24 by mfagri            #+#    #+#             */
-/*   Updated: 2022/11/27 20:21:30 by ntanjaou         ###   ########.fr       */
+/*   Updated: 2022/11/29 16:07:41 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -399,6 +399,8 @@ int Request::ft_parse_body()
             {
                 names = ft_strtrim(strrchr(test.c_str(),'='),"\"=");
                 data[i].file = names;
+                int pos = body3.find("\r\n\r\n");
+                body3 = body3.substr(pos+strlen("\r\n\r\n"));
                 data[i].datafile = body3;
                 // puts("sds");
                 // printf("%s\n",names.c_str());
