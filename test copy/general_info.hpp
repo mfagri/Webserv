@@ -36,6 +36,6 @@
 #include "response.hpp"
 #include "request.hpp"
 
-#define BUFFSIZE 1024
+#define BUFFSIZE 3000
 
 #endif

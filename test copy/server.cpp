@@ -1,5 +1,7 @@
 #include "general_info.hpp"
 
+std::string test2;
+
 DIY_server::DIY_server(std::vector<ServerData> SV_d) : SV_data(SV_d)
 {
     this->fd_sk_num = 0;
@@ -203,7 +205,7 @@ bool check_request(DIY_req_data rd_request)
         pos = request.find("0\r\n\r\n");
         if(pos != std::string::npos)
         {
-            if(pos == 0 || (rq_body[pos - 2] == '\r' && rq_body[pos - 1] == '\n')){
+            if(pos){
                 return true;
             }
         }
@@ -267,13 +269,19 @@ void DIY_server::Manager_I(int fd_plfdlist, int curr_req)
         }
         else if(num_data_readed > 0)
         {
-            this->RD_sock_accepted[index].rd_append(buff);
+            this->RD_sock_accepted[index].rd_append(buff, num_data_readed);
             this->RD_sock_accepted[index].set_rdgotreq(check_request(this->RD_sock_accepted[index]));
             if(this->RD_sock_accepted[index].get_rd_rdgotreq() == true)
             {
-                std::cout << this->RD_sock_accepted[index].get_rd_request() << std::endl;
-                // call request class here !
-                Request a((char *)this->RD_sock_accepted[index].get_rd_request().c_str());
+               // std::cout << this->RD_sock_accepted[index].get_rd_request() << std::endl;
+                // // call request class here !
+                // std::string path = "./files/test";
+                // int fdf = open(path.c_str(),O_CREAT|O_RDWR,777);
+                // write(fdf,(char *)this->RD_sock_accepted[index].get_rd_request().c_str(),strlen((char *)this->RD_sock_accepted[index].get_rd_request().c_str()));
+                Request a(this->RD_sock_accepted[index].get_rd_request());
+               // Request b;
+                Response b(a);
+                test2 = b.get_res();
             }
         }
     }

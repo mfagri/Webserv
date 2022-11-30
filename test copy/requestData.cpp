@@ -37,9 +37,9 @@ void DIY_req_data::set_rd_numdata_readed(int value)
     this->rd_numdata_readed = value;
 }
 
-void DIY_req_data::rd_append(char *str)
+void DIY_req_data::rd_append(char *str, size_t i)
 {
-    this->rd_request.append(str);
+    this->rd_request.append(str, i);
 }
 
 const std::string & DIY_req_data::get_rd_request()

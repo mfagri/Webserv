@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   ServerData.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ntanjaou <ntanjaou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/20 23:00:22 by mmardi            #+#    #+#             */
-/*   Updated: 2022/11/27 18:45:36 by ntanjaou         ###   ########.fr       */
+/*   Updated: 2022/11/30 16:40:26 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "general_info.hpp"
 
 ServerData::ServerData() {
-	port = 80;
+	port = 30;
 	host = "0.0.0.0";
 	body_size = 1024;
 }

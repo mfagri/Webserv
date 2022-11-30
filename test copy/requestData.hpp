@@ -25,7 +25,7 @@ public:
     int get_rd_acceptfd() const;
     const std::string &get_rd_request();
     void set_rd_numdata_readed(int value);
-    void rd_append(char *str);
+    void rd_append(char *str, size_t i);
     void set_rdgotreq(bool value);
 
 
