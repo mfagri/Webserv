@@ -6,7 +6,7 @@
 /*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:06:24 by mfagri            #+#    #+#             */
-/*   Updated: 2022/11/30 22:18:23 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/12/01 00:30:16 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,6 @@ Request::Request()
 Request::Request(std::string buf)
 {
    //std::cout<<buf<<std::endl;
-   //puts("asdasdasd");
     //exit(1);
     //request_line
     //header_fields
@@ -254,9 +253,11 @@ int Request::parse_headers(std::string headres_)
 {
     size_t i;
     size_t j;
+    size_t tmp;
     j = 0;
     int status = 0;
     std::string tohelp;
+    std::cout<<headres_  << std::endl << std::endl;
     std::vector<std::string> hedss;
     j = 0;
     while (j < headres_.length())
@@ -264,24 +265,36 @@ int Request::parse_headers(std::string headres_)
 			j = headres_.find("\r\n")+2;
 			if (j > headres_.length())
 				break ;
-            hedss.push_back(headres_.substr(j, headres_.substr(j).find("\r\n")));
+            tmp = headres_.substr(j).find("\r\n");
+            if (tmp == std::string::npos)
+            {
+                hedss.push_back(headres_.substr(j, headres_.length() - 1));
+                break ;
+            }
+            hedss.push_back(headres_.substr(j, tmp));
 			headres_ = headres_.substr(j);
 	}
-    hedss.push_back(headres_.substr(0,headres_.find("\r\n")));
+    // hedss.push_back(headres_.substr(0,headres_.find("\r\n")));
+    // std::cout<<headres_<<std::endl;
+    // puts("sdsd");
     i = 0;
     while(i < hedss.size())
     {
         char *key = strtok((char *)hedss[i].c_str(),":");
         char *value = strtok(NULL,"\0");
-        headers.insert(std::pair<std::string, std::string>(key, ft_strtrim(value," ")));
+        if(key && value)
+        {
+            headers.insert(std::pair<std::string, std::string>(key, ft_strtrim(value," ")));
+        }
         i++;
     }
-    // i = 0;
-    // while(i < hedss.size())
-    // {
-    //     std::cout<<"h1{"<<hedss[i]<<"}"<<std::endl;
-    //     i++;
-    // }
+    
+    i = 0;
+    while(i < hedss.size())
+    {
+        std::cout<<"h1{"<<hedss[i]<<"}"<<std::endl;
+        i++;
+    }
     // exit (0);
     status = ft_check_request();
     return (status);
@@ -349,6 +362,7 @@ int Request::ft_chunked(void)
 // }
 int Request::ft_parse_body()
 {
+    //puts("hnaaa");//for binary
     if(strncmp(headers["Content-Type"].c_str(),"multipart/form-data; boundary",strlen("multipart/form-data; boundary")) == 0)
     {
         std::vector<std::string> boundraies;
@@ -406,6 +420,22 @@ int Request::ft_parse_body()
         char *key = strtok((char *)Body.c_str(),"=");
         char *value =strtok(NULL,"\0");
         body_query.insert(std::pair<std::string,std::string>(key,value));
+    }
+    else
+    {
+        //std::cout<<Body<<std::endl;//auther type
+        if(headers["Content-Type"] == "image/png")
+        {
+            std::ofstream file( "./files/binary.png");
+            file << Body;
+            file.close();
+        }
+        else if(headers["Content-Type"] == "application/pdf")
+        {
+            std::ofstream file( "./files/binary.pdf");
+            file << Body;
+            file.close();
+        }
     }
     return (0);
 }
