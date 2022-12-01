@@ -6,7 +6,7 @@
 /*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:06:24 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/01 00:30:16 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/12/01 01:35:57 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -423,19 +423,19 @@ int Request::ft_parse_body()
     }
     else
     {
-        //std::cout<<Body<<std::endl;//auther type
-        if(headers["Content-Type"] == "image/png")
-        {
-            std::ofstream file( "./files/binary.png");
-            file << Body;
-            file.close();
-        }
-        else if(headers["Content-Type"] == "application/pdf")
-        {
-            std::ofstream file( "./files/binary.pdf");
-            file << Body;
-            file.close();
-        }
+        size_t pos = Body.find('\n') + 3;
+        Body=Body.substr(pos);
+        // std::cout << "************************\n";
+        // for (int i = 0; i != 100; i++)
+        // {
+        //     // if( Body[i] == '\n')
+        //     //     Body[i] = '*';
+        //     std::cout << Body[i];
+        // }
+        // std::cout << "\n***************\n" << "./files/" + headers["Content-Type"].replace(headers["Content-Type"].find('/'), 1, ".") << std::endl;
+        std::ofstream file("./files/" + headers["Content-Type"].replace(headers["Content-Type"].find('/'), 1, "."));
+        file << Body;
+        file.close();
     }
     return (0);
 }
