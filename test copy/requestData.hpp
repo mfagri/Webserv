@@ -13,18 +13,21 @@ private:
     bool rd_endreq;
     bool rd_gotreq;
     size_t rd_size;
-    // int sendretsnd;
     int rd_numdata_readed;
+    int rd_numdata_sended;
 public:
     DIY_req_data();
     ~DIY_req_data() {};
     DIY_req_data(int rd_org_skfd ,int rd_sockfd, std::string rd_request, std::string rd_host);
     int get_rd_org_skfd() const;
     size_t get_rd_numdata_readed() const;
+    size_t get_rd_numdata_sended() const;
     bool get_rd_rdgotreq() const;
     int get_rd_acceptfd() const;
     const std::string &get_rd_request();
+    void set_rd_request(std::string str);
     void set_rd_numdata_readed(int value);
+    void set_rd_numdata_sended(int value);
     void rd_append(char *str, size_t i);
     void set_rdgotreq(bool value);
 
