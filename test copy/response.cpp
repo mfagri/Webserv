@@ -6,7 +6,7 @@
 /*   By: ntanjaou <ntanjaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/25 18:53:30 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/03 16:36:52 by ntanjaou         ###   ########.fr       */
+/*   Updated: 2022/12/03 16:53:08 by ntanjaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ Response::Response(Request &req)
     // printf("{%s}\n",uri.c_str());
     if(uri.length() == 1)
         uri = "/index.html";
-    std::string root = "/Users/mfagri/Desktop/Webserv/pages";/////root
+    std::string root = "../links/pages";/////root
     status = req.get_status_code();
     // std::string method[3] = {"GET","POST","DELETE"};
     // std::string location_match= "/ok.html";///location

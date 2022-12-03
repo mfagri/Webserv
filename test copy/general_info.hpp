@@ -32,9 +32,9 @@
 #include "requestData.hpp"
 #include "Parser.hpp"
 #include "request.hpp"
+#include "response.hpp"
 #include "socket.hpp"
 #include "server.hpp"
-#include "response.hpp"
 
 #define BUFFSIZE 3000
 

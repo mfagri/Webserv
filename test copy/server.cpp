@@ -1,7 +1,5 @@
 #include "general_info.hpp"
 
-std::string test2;
-
 DIY_server::DIY_server(std::vector<ServerData> SV_d) : SV_data(SV_d)
 {
     this->fd_sk_num = 0;
@@ -189,13 +187,11 @@ void DIY_server::Manager_I(int fd_plfdlist, int curr_req)
         {
             this->RD_sock_accepted[index].rd_append(buff, num_data_readed);
             this->RD_sock_accepted[index].set_rdgotreq(check_request(this->RD_sock_accepted[index]));
+           // std::cout << " <| " << this->RD_sock_accepted[index].get_rd_request() << " |> " <<  std::endl;
             if(this->RD_sock_accepted[index].get_rd_rdgotreq() == true)
             {
                 Request req(this->RD_sock_accepted[index].get_rd_request());
                 this->sv_request = req;
-                Response resp(this->sv_request);
-                test2 = resp.get_res();
-                this->RD_sock_accepted[index].set_rd_request(test2);
             }
         }
         this->poll_list[curr_req].events = POLLIN | POLLOUT;
@@ -207,32 +203,41 @@ void DIY_server::Manager_O(int fd_plfdlist, int curr_req)
     int index = 0;
     int num_data_sended = 0;
     std::string resp;
+    std::string test2;
 
-    for (size_t i = 0; i < this->RD_sock_accepted.size(); i++)
+    if(this->RD_sock_accepted[index].get_rd_rdgotreq() == true)
     {
-        if (this->RD_sock_accepted[i].get_rd_acceptfd() == fd_plfdlist){   
-            index = i;
-            break;
+        Response respp(this->sv_request);
+        test2 = respp.get_res();
+        this->RD_sock_accepted[index].set_rd_request(test2);
+        for (size_t i = 0; i < this->RD_sock_accepted.size(); i++)
+        {
+            if (this->RD_sock_accepted[i].get_rd_acceptfd() == fd_plfdlist){   
+                index = i;
+                break;
+            }
         }
-    }
-    resp = this->RD_sock_accepted[index].get_rd_request();
-    num_data_sended = send(fd_plfdlist, resp.c_str(), resp.length(), 0);
-    this->RD_sock_accepted[index].set_rd_numdata_sended(this->RD_sock_accepted[index].get_rd_numdata_sended() + num_data_sended);
-    try
-    {
-        this->RD_sock_accepted[index].set_rd_request(this->RD_sock_accepted[index].get_rd_request().substr(num_data_sended));
-    }
-    catch(std::exception &e)
-    {
-        num_data_sended = -1;
-    }
-    if(num_data_sended < 1 || (int)this->RD_sock_accepted[index].get_rd_request().length() == num_data_sended)
-    {
-        std::cout << "This socket has been disconnected : " << fd_plfdlist << std::endl;
-        close(fd_plfdlist);
-        this->poll_list.erase(this->poll_list.begin() + curr_req);
-        this->RD_sock_accepted.erase(this->RD_sock_accepted.begin() + index);
-        this->fd_sk_num--;
+        resp = this->RD_sock_accepted[index].get_rd_request();
+        
+        num_data_sended = send(fd_plfdlist, resp.c_str(), resp.length(), 0);
+        this->RD_sock_accepted[index].set_rd_numdata_sended(this->RD_sock_accepted[index].get_rd_numdata_sended() + num_data_sended);
+        try
+        {
+            this->RD_sock_accepted[index].set_rd_request(this->RD_sock_accepted[index].get_rd_request().substr(num_data_sended));
+        }
+        catch(std::exception &e)
+        {
+            num_data_sended = -1;
+        }
+        if(num_data_sended < 1 || (int)this->RD_sock_accepted[index].get_rd_request().length() == num_data_sended)
+        {
+            std::cout << "This socket has been disconnected : " << fd_plfdlist << std::endl;
+            close(fd_plfdlist);
+            this->poll_list.erase(this->poll_list.begin() + curr_req);
+            this->RD_sock_accepted.erase(this->RD_sock_accepted.begin() + index);
+            this->fd_sk_num--;
+            return ;
+        }
     }
     this->poll_list[curr_req].events = POLLIN;
     this->poll_list[curr_req].revents = 0;

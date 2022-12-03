@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ntanjaou <ntanjaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:06:24 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/01 01:35:57 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/12/03 18:16:11 by ntanjaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,11 +99,12 @@ Request::Request(std::string buf)
     if(parse_request_line(request_line))
     {
         printf("in line\n");
-        exit(1);
+        return ;
     }
     if(parse_headers(request_header))
     {
         printf("%d\n",status_code);
+        status_code = 200;
         printf("in headres\n");
         return;
     }
@@ -257,7 +258,7 @@ int Request::parse_headers(std::string headres_)
     j = 0;
     int status = 0;
     std::string tohelp;
-    std::cout<<headres_  << std::endl << std::endl;
+    //std::cout<<headres_  << std::endl << std::endl;
     std::vector<std::string> hedss;
     j = 0;
     while (j < headres_.length())
@@ -289,12 +290,12 @@ int Request::parse_headers(std::string headres_)
         i++;
     }
     
-    i = 0;
-    while(i < hedss.size())
-    {
-        std::cout<<"h1{"<<hedss[i]<<"}"<<std::endl;
-        i++;
-    }
+    // i = 0;
+    // while(i < hedss.size())
+    // {
+    //     std::cout<<"h1{"<<hedss[i]<<"}"<<std::endl;
+    //     i++;
+    // }
     // exit (0);
     status = ft_check_request();
     return (status);
