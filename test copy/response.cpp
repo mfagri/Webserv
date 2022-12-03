@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ntanjaou <ntanjaou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/25 18:53:30 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/03 16:53:08 by ntanjaou         ###   ########.fr       */
+/*   Updated: 2022/12/03 20:57:09 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,10 @@ Response::Response()
     
 }
 
+Response::~Response()
+{
+    bzero(res,strlen(res)); 
+}
 Response::Response(Request &req)
 {
     uri = req.get_uri();
@@ -186,7 +190,7 @@ char *Response::ft_generat_html()
     char *endhtml = strdup("  </h1>\n</body>\n</html>\n");
     infile = ft_strjoin(infile,msg);
     infile = ft_strjoin(infile,endhtml);
-    puts(infile);
+    //puts(infile);
     free(msg);
     free(endhtml);
     return (infile);

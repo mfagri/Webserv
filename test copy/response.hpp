@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   response.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ntanjaou <ntanjaou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/25 18:53:17 by mfagri            #+#    #+#             */
-/*   Updated: 2022/11/27 17:25:58 by ntanjaou         ###   ########.fr       */
+/*   Updated: 2022/12/03 20:56:04 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,8 @@ class Response{
         std::map<int,std::string>errormsg;
     public:
         Response();
+        
+        ~Response();
         Response(Request &req);
         void ft_creat_file(std::string root,int ok);
         char * get_res();

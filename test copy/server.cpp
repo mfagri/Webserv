@@ -187,7 +187,7 @@ void DIY_server::Manager_I(int fd_plfdlist, int curr_req)
         {
             this->RD_sock_accepted[index].rd_append(buff, num_data_readed);
             this->RD_sock_accepted[index].set_rdgotreq(check_request(this->RD_sock_accepted[index]));
-           // std::cout << " <| " << this->RD_sock_accepted[index].get_rd_request() << " |> " <<  std::endl;
+            // std::cout << " <| " << this->RD_sock_accepted[index].get_rd_request() << " |> " <<  std::endl;
             if(this->RD_sock_accepted[index].get_rd_rdgotreq() == true)
             {
                 Request req(this->RD_sock_accepted[index].get_rd_request());
@@ -205,18 +205,18 @@ void DIY_server::Manager_O(int fd_plfdlist, int curr_req)
     std::string resp;
     std::string test2;
 
+    for (size_t i = 0; i < this->RD_sock_accepted.size(); i++)
+    {
+        if (this->RD_sock_accepted[i].get_rd_acceptfd() == fd_plfdlist){   
+            index = i;
+            break;
+        }
+    }
     if(this->RD_sock_accepted[index].get_rd_rdgotreq() == true)
     {
         Response respp(this->sv_request);
         test2 = respp.get_res();
         this->RD_sock_accepted[index].set_rd_request(test2);
-        for (size_t i = 0; i < this->RD_sock_accepted.size(); i++)
-        {
-            if (this->RD_sock_accepted[i].get_rd_acceptfd() == fd_plfdlist){   
-                index = i;
-                break;
-            }
-        }
         resp = this->RD_sock_accepted[index].get_rd_request();
         
         num_data_sended = send(fd_plfdlist, resp.c_str(), resp.length(), 0);
@@ -236,8 +236,10 @@ void DIY_server::Manager_O(int fd_plfdlist, int curr_req)
             this->poll_list.erase(this->poll_list.begin() + curr_req);
             this->RD_sock_accepted.erase(this->RD_sock_accepted.begin() + index);
             this->fd_sk_num--;
-            return ;
+            // return ;
         }
+        this->RD_sock_accepted[index].set_rdgotreq(false);
+        this->RD_sock_accepted[index].set_rd_request("");
     }
     this->poll_list[curr_req].events = POLLIN;
     this->poll_list[curr_req].revents = 0;
