@@ -71,3 +71,8 @@ int DIY_req_data::get_rd_acceptfd() const
 {
     return this->rd_sockfd;
 }
+
+void DIY_req_data::set_rd_request(std::string str)
+{
+    this->rd_request = str;
+}

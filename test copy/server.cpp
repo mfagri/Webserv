@@ -202,41 +202,41 @@ void DIY_server::Manager_I(int fd_plfdlist, int curr_req)
     }
 }
 
-// void DIY_server::Manager_O(int fd_plfdlist, int curr_req)
-// {
-//     int index = 0;
-//     int num_data_sended = 0;
-//     std::string resp;
+void DIY_server::Manager_O(int fd_plfdlist, int curr_req)
+{
+    int index = 0;
+    int num_data_sended = 0;
+    std::string resp;
 
-//     for (size_t i = 0; i < this->RD_sock_accepted.size(); i++)
-//     {
-//         if (this->RD_sock_accepted[i].get_rd_acceptfd() == fd_plfdlist){   
-//             index = i;
-//             break;
-//         }
-//     }
-//     resp = this->RD_sock_accepted[index].get_rd_request();
-//     num_data_sended = send(fd_plfdlist, resp.c_str(), resp.length(), 0);
-//     this->RD_sock_accepted[index].set_rd_numdata_sended(this->RD_sock_accepted[index].get_rd_numdata_sended() + num_data_sended);
-//     try
-//     {
-//         this->RD_sock_accepted[index].set_rd_request(this->RD_sock_accepted[index].get_rd_request().substr(num_data_sended));
-//     }
-//     catch(std::exception &e)
-//     {
-//         num_data_sended = -1;
-//     }
-//     if(num_data_sended < 1 || this->RD_sock_accepted[index].get_rd_request().length() == num_data_sended)
-//     {
-//         std::cout << "This socket has been disconnected : " << fd_plfdlist << std::endl;
-//         close(fd_plfdlist);
-//         this->poll_list.erase(this->poll_list.begin() + curr_req);
-//         this->RD_sock_accepted.erase(this->RD_sock_accepted.begin() + index);
-//         this->fd_sk_num--;
-//     }
-//     this->poll_list[curr_req].events = POLLIN;
-//     this->poll_list[curr_req].revents = 0;
-// }
+    for (size_t i = 0; i < this->RD_sock_accepted.size(); i++)
+    {
+        if (this->RD_sock_accepted[i].get_rd_acceptfd() == fd_plfdlist){   
+            index = i;
+            break;
+        }
+    }
+    resp = this->RD_sock_accepted[index].get_rd_request();
+    num_data_sended = send(fd_plfdlist, resp.c_str(), resp.length(), 0);
+    this->RD_sock_accepted[index].set_rd_numdata_sended(this->RD_sock_accepted[index].get_rd_numdata_sended() + num_data_sended);
+    try
+    {
+        this->RD_sock_accepted[index].set_rd_request(this->RD_sock_accepted[index].get_rd_request().substr(num_data_sended));
+    }
+    catch(std::exception &e)
+    {
+        num_data_sended = -1;
+    }
+    if(num_data_sended < 1 || (int)this->RD_sock_accepted[index].get_rd_request().length() == num_data_sended)
+    {
+        std::cout << "This socket has been disconnected : " << fd_plfdlist << std::endl;
+        close(fd_plfdlist);
+        this->poll_list.erase(this->poll_list.begin() + curr_req);
+        this->RD_sock_accepted.erase(this->RD_sock_accepted.begin() + index);
+        this->fd_sk_num--;
+    }
+    this->poll_list[curr_req].events = POLLIN;
+    this->poll_list[curr_req].revents = 0;
+}
 
 void DIY_server::Manager_IO()
 {
@@ -256,10 +256,10 @@ void DIY_server::Manager_IO()
             {
                 Manager_I(fd_from_pollfdList, i);
             }
-            // if (this->poll_list[i].revents & POLLOUT)
-            // {
-            //     Manager_O(fd_from_pollfdList, i);
-            // }
+            if (this->poll_list[i].revents & POLLOUT)
+            {
+                Manager_O(fd_from_pollfdList, i);
+            }
         }
         i = -1;
     }
