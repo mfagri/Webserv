@@ -28,9 +28,12 @@ void DIY_server::init_sockets()
         {
             std::cout << "ERROR in socket !" << std::endl;
             shutdown(sk_list[i].get_sk(), SHUT_RDWR);
+            SV_data.erase(SV_data.begin() + i);
         }
         else
+        {
             vec_ports.push_back(SV_data[i].getPort());
+        }
         i++;
     }
 }
@@ -166,7 +169,8 @@ void DIY_server::Manager_I(int fd_plfdlist, int curr_req)
     char buff[BUFFSIZE];
     bzero(buff, sizeof(buff));
     int num_data_readed = 0;
-    if(std::find(this->sk_fd.begin(), this->sk_fd.end(), fd_plfdlist) != this->sk_fd.end()){
+    if(std::find(this->sk_fd.begin(), this->sk_fd.end(), fd_plfdlist) != this->sk_fd.end())
+    {
         Accept_req(fd_plfdlist);
     }
     else
@@ -224,7 +228,7 @@ void DIY_server::Manager_O(int fd_plfdlist, int curr_req)
     if(this->RD_sock_accepted[index].get_rd_rdgotreq() == true)
     {
         //get the index of the server 
-        Response respp(this->sv_request, index);
+        Response respp(this->sv_request, SV_data[index]);
         test2 = respp.get_res();
         this->RD_sock_accepted[index].set_rd_request(test2);
         resp = this->RD_sock_accepted[index].get_rd_request();

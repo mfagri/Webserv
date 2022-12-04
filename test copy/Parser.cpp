@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ntanjaou <ntanjaou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/18 15:33:32 by mmardi            #+#    #+#             */
-/*   Updated: 2022/12/04 16:49:40 by ntanjaou         ###   ########.fr       */
+/*   Updated: 2022/12/04 21:56:20 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -168,7 +168,8 @@ void Parser::parsElements()
             i++;
             if (!checkBrackets(lines[i], lines[i - 1], '{'))
                 throw MissingBrackets();
-            i++;
+            if (lines[i][0] == '{')
+                        i++;
             while(lines[i][0] != '}') {
                 if (strncmp(lines[i].c_str(), "location", 8) == 0) 
                 {
@@ -180,7 +181,8 @@ void Parser::parsElements()
                     if (path.empty())
                         throw NoValueFound();
                     lElements.insert(std::pair<std::string, std::string>("location-path", path));
-                    // i++;
+                    if (lines[i][0] == '{')
+                        i++;
                     while(lines[i][0] != '}') 
                     {
                         if (lines[i][0] != '}' && (strncmp(lines[i].c_str(), "server", 6) == 0 || strncmp(lines[i].c_str(), "location", 8) == 0 || lines[i] == "The End"))

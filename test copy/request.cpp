@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ntanjaou <ntanjaou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:06:24 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/04 19:35:58 by ntanjaou         ###   ########.fr       */
+/*   Updated: 2022/12/04 22:39:47 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -147,7 +147,7 @@ Request::~Request()
 
 int Request::ft_check_request()
 {
-    if(headers["Content-Type"].c_str() == NULL)
+    if(headers["Content-Type"].empty() && methode == "POST")
     {
         std::cout<<"Missing Content-Type"<<std::endl;
         status_code = 400;
