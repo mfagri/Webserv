@@ -76,3 +76,13 @@ void DIY_req_data::set_rd_request(std::string str)
 {
     this->rd_request = str;
 }
+
+size_t DIY_req_data::get_rd_size() const
+{
+    return this->rd_size;
+}
+
+void DIY_req_data::set_rd_size(size_t value)
+{
+    this->rd_size = value;
+}

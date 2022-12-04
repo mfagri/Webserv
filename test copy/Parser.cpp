@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ntanjaou <ntanjaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/18 15:33:32 by mmardi            #+#    #+#             */
-/*   Updated: 2022/12/04 16:33:51 by mmardi           ###   ########.fr       */
+/*   Updated: 2022/12/04 16:49:40 by ntanjaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,7 +121,7 @@ bool Parser::checkBrackets(std::string s1, std::string s2, char c)
 
 std::string Parser::getLocationPath(std::string line) 
 {
-    std::cout << line <<std::endl; 
+    // std::cout << line <<std::endl; 
     line.erase(0, 8);
     while(line[0] && (line[0] == ' '  || line[0] == '\t'))
         line.erase(0, 1);

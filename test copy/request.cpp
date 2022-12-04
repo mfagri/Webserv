@@ -6,7 +6,7 @@
 /*   By: ntanjaou <ntanjaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:06:24 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/03 18:16:11 by ntanjaou         ###   ########.fr       */
+/*   Updated: 2022/12/04 19:35:58 by ntanjaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ Request::Request()
 
 Request::Request(std::string buf)
 {
-   //std::cout<<buf<<std::endl;
+    // std::cout<<buf<<std::endl;
     //exit(1);
     //request_line
     //header_fields

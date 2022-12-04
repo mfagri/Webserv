@@ -12,6 +12,7 @@ private:
     std::vector<struct pollfd> poll_list;
     std::vector<DIY_req_data> RD_sock_accepted;
     Request sv_request;
+    // Response sv_response;
     struct sockaddr_in sk_address;
     int sk_adr_len;
     int poll_sk;

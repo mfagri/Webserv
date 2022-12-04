@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ServerData.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ntanjaou <ntanjaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/20 23:00:22 by mmardi            #+#    #+#             */
-/*   Updated: 2022/12/04 16:27:24 by mmardi           ###   ########.fr       */
+/*   Updated: 2022/12/04 16:48:49 by ntanjaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ int ServerData::checkAllNum(std::string num)
 }
 
 int ServerData::setData(std::map<std::string, std::string> server, std::vector<std::map<std::string, std::string> > _locations) {
-	puts("__________________server:___________________");
+	// puts("__________________server:___________________");
 	locations = _locations;
 	char s[3] = {' ', '\t', '\0'};
 	if (server.count("listen") > 0) 
@@ -43,13 +43,13 @@ int ServerData::setData(std::map<std::string, std::string> server, std::vector<s
 			exit (1);
 		}
 		port = std::stoi(p);
-		std::cout << port << std::endl;
+		// std::cout << port << std::endl;
 	}
 	if (server.count("host") > 0) 
 	{
 		std::string p = strtok((char *)server.at("host").c_str(), s);
 		host = p;
-		std::cout << host << std::endl;
+		// std::cout << host << std::endl;
 	}
 	if (server.count("server_name") > 0) 
 	{
@@ -57,7 +57,7 @@ int ServerData::setData(std::map<std::string, std::string> server, std::vector<s
 		char *name = strtok((char *)names.c_str(), s);
 		while (name)
 		{
-		std::cout << server.at("server_name") << std::endl;
+		// std::cout << server.at("server_name") << std::endl;
 			server_names.push_back(name);
 			name = strtok(NULL, s);
 		}
@@ -71,12 +71,12 @@ int ServerData::setData(std::map<std::string, std::string> server, std::vector<s
 				exit (1);
 			}
 			body_size = std::stoi(num);
-		std::cout << body_size << std::endl;
+		// std::cout << body_size << std::endl;
 	}
 	if (server.count("methods") > 0)
 	{
 		std::string m = strtok((char *)server.at("methods").c_str(), s);;
-		std::cout << m << std::endl;
+		// std::cout << m << std::endl;
 		char *method = strtok((char *)m.c_str(), ",");
 		while (method) 
 		{
@@ -88,7 +88,7 @@ int ServerData::setData(std::map<std::string, std::string> server, std::vector<s
 	if (server.count("root") > 0) 
 	{
 		root = strtok((char *)server.at("root").c_str(), s);
-		std::cout << root << std::endl;
+		// std::cout << root << std::endl;
 	}
 	else 
 	{
@@ -98,12 +98,12 @@ int ServerData::setData(std::map<std::string, std::string> server, std::vector<s
 	if (server.count("index")) 
 	{
 		index = strtok((char *)server.at("index").c_str(), s);
-		std::cout << index << std::endl;
+		// std::cout << index << std::endl;
 	}
 	if (server.count("error_pages") > 0) 
 	{
 		error_pages = strtok((char *)server.at("error_pages").c_str(), s);
-		std::cout << error_pages << std::endl;
+		// std::cout << error_pages << std::endl;
 	}
 	return 1;
 }

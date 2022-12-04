@@ -22,6 +22,8 @@ public:
     int get_rd_org_skfd() const;
     size_t get_rd_numdata_readed() const;
     size_t get_rd_numdata_sended() const;
+    size_t get_rd_size() const;
+    void set_rd_size(size_t value);
     bool get_rd_rdgotreq() const;
     int get_rd_acceptfd() const;
     const std::string &get_rd_request();

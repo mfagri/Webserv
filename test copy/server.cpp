@@ -116,9 +116,14 @@ bool check_request(DIY_req_data rd_request)
     if(req_status == 1)
     {
         rq_body = request.substr(pos + 4, request.length() - (pos + 4));
+        // printf("%lu , %lu \n", rd_request.get_rd_numdata_readed() - (pos + 4), check_content_len(request));
         if(rd_request.get_rd_numdata_readed() - (pos + 4) == check_content_len(request)){
             return true;
         }
+        // if(rd_request.get_rd_numdata_readed() - (pos + 4) >= check_content_len(request))
+        // {
+        //     return true;
+        // }
     }
     if(req_status == 2)
     {
@@ -192,6 +197,10 @@ void DIY_server::Manager_I(int fd_plfdlist, int curr_req)
             {
                 Request req(this->RD_sock_accepted[index].get_rd_request());
                 this->sv_request = req;
+                // Response resp(this->sv_request);
+                // std::string test;
+                // test = resp.get_res();
+                // this->RD_sock_accepted[index].set_rd_request(test);
             }
         }
         this->poll_list[curr_req].events = POLLIN | POLLOUT;
@@ -214,12 +223,14 @@ void DIY_server::Manager_O(int fd_plfdlist, int curr_req)
     }
     if(this->RD_sock_accepted[index].get_rd_rdgotreq() == true)
     {
-        Response respp(this->sv_request);
+        //get the index of the server 
+        Response respp(this->sv_request, index);
         test2 = respp.get_res();
         this->RD_sock_accepted[index].set_rd_request(test2);
         resp = this->RD_sock_accepted[index].get_rd_request();
-        
-        num_data_sended = send(fd_plfdlist, resp.c_str(), resp.length(), 0);
+        // std::cout << "<<<<  \n" << resp << std::endl << " >>>> \n" << std::endl;
+        this->RD_sock_accepted[index].set_rd_size(resp.length());
+        num_data_sended = send(fd_plfdlist, resp.c_str(), this->RD_sock_accepted[index].get_rd_size(), 0);
         this->RD_sock_accepted[index].set_rd_numdata_sended(this->RD_sock_accepted[index].get_rd_numdata_sended() + num_data_sended);
         try
         {
