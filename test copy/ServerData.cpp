@@ -6,7 +6,7 @@
 /*   By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/20 23:00:22 by mmardi            #+#    #+#             */
-/*   Updated: 2022/12/04 16:16:01 by mmardi           ###   ########.fr       */
+/*   Updated: 2022/12/04 16:27:24 by mmardi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,6 +141,10 @@ std::vector<std::string> ServerData::getMethods(void)
 std::vector<std::map<std::string, std::string> > ServerData::getLocations(void) {
 	
 	return locations;
+}
+
+std::string ServerData::getRoot() {
+	return root;
 }
 
 std::string ServerData::getIndex(void) 
