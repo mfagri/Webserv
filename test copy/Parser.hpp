@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ntanjaou <ntanjaou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/18 15:14:28 by mmardi            #+#    #+#             */
-/*   Updated: 2022/11/27 18:35:48 by ntanjaou         ###   ########.fr       */
+/*   Updated: 2022/11/30 18:06:16 by mmardi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,11 @@ class Parser {
         void check_conf();
         std::string trimS(std::string str);
         void parsElements();
+        bool checkLocation(std::string location);
+        bool checkServer(std::string line);
+        bool checkBrackets(std::string s1, std::string s2, char c);
+        std::string getLocationPath(std::string line);
+        bool checkSemicolon(std::string line);
     public:
         Parser();
         Parser(char **av);
@@ -50,6 +55,11 @@ class Parser {
         class MissingBrackets : public std::exception {
             const char *what(void) const throw(){
                 return "Messing brackets for openin or closing a server";
+            }
+        };
+         class MissingLocationBrackets : public std::exception {
+            const char *what(void) const throw(){
+                return "Messing brackets for openin or closing a location";
             }
         };
 };
