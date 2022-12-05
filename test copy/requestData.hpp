@@ -32,8 +32,6 @@ public:
     void set_rd_numdata_sended(int value);
     void rd_append(char *str, size_t i);
     void set_rdgotreq(bool value);
-
-
 };
 
 #endif

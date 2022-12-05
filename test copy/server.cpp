@@ -28,12 +28,9 @@ void DIY_server::init_sockets()
         {
             std::cout << "ERROR in socket !" << std::endl;
             shutdown(sk_list[i].get_sk(), SHUT_RDWR);
-            SV_data.erase(SV_data.begin() + i);
         }
         else
-        {
             vec_ports.push_back(SV_data[i].getPort());
-        }
         i++;
     }
 }
@@ -169,8 +166,7 @@ void DIY_server::Manager_I(int fd_plfdlist, int curr_req)
     char buff[BUFFSIZE];
     bzero(buff, sizeof(buff));
     int num_data_readed = 0;
-    if(std::find(this->sk_fd.begin(), this->sk_fd.end(), fd_plfdlist) != this->sk_fd.end())
-    {
+    if(std::find(this->sk_fd.begin(), this->sk_fd.end(), fd_plfdlist) != this->sk_fd.end()){
         Accept_req(fd_plfdlist);
     }
     else
@@ -199,6 +195,7 @@ void DIY_server::Manager_I(int fd_plfdlist, int curr_req)
             // std::cout << " <| " << this->RD_sock_accepted[index].get_rd_request() << " |> " <<  std::endl;
             if(this->RD_sock_accepted[index].get_rd_rdgotreq() == true)
             {
+                printf("my request lenght is : %lu \n", this->RD_sock_accepted[index].get_rd_request().length());
                 Request req(this->RD_sock_accepted[index].get_rd_request());
                 this->sv_request = req;
                 // Response resp(this->sv_request);
@@ -214,9 +211,6 @@ void DIY_server::Manager_I(int fd_plfdlist, int curr_req)
 void DIY_server::Manager_O(int fd_plfdlist, int curr_req)
 {
     int index = 0;
-    int num_data_sended = 0;
-    std::string resp;
-    std::string test2;
 
     for (size_t i = 0; i < this->RD_sock_accepted.size(); i++)
     {
@@ -227,14 +221,14 @@ void DIY_server::Manager_O(int fd_plfdlist, int curr_req)
     }
     if(this->RD_sock_accepted[index].get_rd_rdgotreq() == true)
     {
-        //get the index of the server 
-        Response respp(this->sv_request, SV_data[index]);
-        test2 = respp.get_res();
-        this->RD_sock_accepted[index].set_rd_request(test2);
+        int num_data_sended = 0;
+        std::string resp;
+        Response respp(this->sv_request, SV_data);
+        this->RD_sock_accepted[index].set_rd_request(respp.get_res());
         resp = this->RD_sock_accepted[index].get_rd_request();
-        // std::cout << "<<<<  \n" << resp << std::endl << " >>>> \n" << std::endl;
         this->RD_sock_accepted[index].set_rd_size(resp.length());
-        num_data_sended = send(fd_plfdlist, resp.c_str(), this->RD_sock_accepted[index].get_rd_size(), 0);
+        int len = this->RD_sock_accepted[index].get_rd_size();
+        num_data_sended = send(fd_plfdlist, resp.c_str(), len, 0);
         this->RD_sock_accepted[index].set_rd_numdata_sended(this->RD_sock_accepted[index].get_rd_numdata_sended() + num_data_sended);
         try
         {
@@ -244,6 +238,7 @@ void DIY_server::Manager_O(int fd_plfdlist, int curr_req)
         {
             num_data_sended = -1;
         }
+        // printf("num data : %d and request lenght : %lu \n", num_data_sended, this->RD_sock_accepted[index].get_rd_size());
         if(num_data_sended < 1 || (int)this->RD_sock_accepted[index].get_rd_request().length() == num_data_sended)
         {
             std::cout << "This socket has been disconnected : " << fd_plfdlist << std::endl;
@@ -251,7 +246,6 @@ void DIY_server::Manager_O(int fd_plfdlist, int curr_req)
             this->poll_list.erase(this->poll_list.begin() + curr_req);
             this->RD_sock_accepted.erase(this->RD_sock_accepted.begin() + index);
             this->fd_sk_num--;
-            // return ;
         }
         this->RD_sock_accepted[index].set_rdgotreq(false);
         this->RD_sock_accepted[index].set_rd_request("");

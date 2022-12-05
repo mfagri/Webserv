@@ -3,15 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ntanjaou <ntanjaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/25 18:53:30 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/05 00:32:08 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/12/05 19:34:32 by ntanjaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-// #include "response.hpp"
-#include "general_info.hpp"
+#include "response.hpp"
+
 
     // (none): If no modifiers are present, the location is interpreted as a prefix match. This means that the location given will be matched against the beginning of the request URI to determine a match.
     // =: If an equal sign is used, this block will be considered a match if the request URI exactly matches the location given.
@@ -29,34 +29,41 @@ Response::Response()
 
 Response::~Response()
 {
-    bzero(res,strlen(res)); 
+    //bzero(res.c_str(),strlen(res)); 
 }
-Response::Response(Request &req, ServerData sv)
+Response::Response(Request &req, std::vector<ServerData> servers)
 {
-    std::vector<std::map<std::string,std::string> > locations = sv.getLocations();
-    std::cout<<locations.size()<<std::endl;
-    // size_t ns = 0;
-    // while (ns < locations.size())
-    // {
-    //    if (locations[ns].count("index") != 0) {
-    //         std::cout<<locations[ns].at("allow_methods")<<std::endl;
-    //    }
-    //    ns++;
-    // }
-    uri = req.get_uri();
     reqheaders = req.get_headers();
     status = req.get_status_code();
-    std::string errors[7] = {"404","400","501","505","411","431","405"};
-    std::string msgs[7] = {"404 Not found",
+    ServerData sv;
+    int port = atoi(reqheaders["Host"].substr(reqheaders["Host"].find(":")+1).c_str());
+    //std::cout<<"{"<<reqheaders["Host"].substr(reqheaders["Host"].find(":")+1)<<"}"<<std::endl;
+    //std::cout<<port<<std::endl;
+    size_t k = 0;
+    while(k < servers.size())
+    {
+        if(port == servers[k].getPort())
+        {
+            sv = servers[k];
+            break;
+        }
+        k++;
+    }
+    std::string root = sv.getRoot();
+    std::vector<std::map<std::string,std::string> > locations = sv.getLocations();
+    //std::cout<< "here loc size : " << locations.size()<<std::endl;
+    //exit(1);
+    uri = req.get_uri();
+    std::string errors[6] = {"404","400","501","505","411","431"};
+    std::string msgs[6] = {"404 Not found",
                            "400 Bad Request",
                            "501 Not Implemented",
                            "505 HTTP Version Not Supported",
                            "411 Length Required",
-                           "431 Request Header Fields Too Large",
-                           "405 Method Not Allowed"};
+                           "431 Request Header Fields Too Large"};
     
     int i = 0;
-    while(i < 7)
+    while(i < 6)
     {
         errormsg.insert(std::pair<int,std::string>(atoi(errors[i].c_str()),msgs[i]));
         i++;
@@ -71,7 +78,7 @@ Response::Response(Request &req, ServerData sv)
     // printf("{%s}\n",uri.c_str());
     // if(uri.length() == 1)
     //     uri = "/index.html";
-    //std::string root = "../links/pages";/////root
+    // std::string root = "../links/pages";/////root
     // status = req.get_status_code();
     // root+=uri;
     // if(!allow_methode(req.get_methode()) && status == 200)
@@ -82,13 +89,9 @@ Response::Response(Request &req, ServerData sv)
     // }
     // else
     //     ft_creat_file(root,1);
-    std::string root = sv.getRoot();
-    std::vector<std::string> serveename = sv.getServerNames();
-    ///methodes in server
-    //std::vector <std::string>methodes;
-    
     if(status != 200)
     {
+        puts("asa\n");
         ft_creat_file(root,1);
     }
     else
@@ -99,7 +102,6 @@ Response::Response(Request &req, ServerData sv)
         {
         size_t ns = 0;
         size_t l = 0;
-        puts("asa\n");
         while (ns < locations.size())
         {
            if (locations[ns].at("location-path") == uri) {
@@ -114,10 +116,10 @@ Response::Response(Request &req, ServerData sv)
         {
             try
             {
-            std::cout<<ns<<std::endl;
-            std::cout<<"not found\n";
-            std::cout<<uri<<std::endl;
-            std::cout<<locations[ns].at("location-path")<<std::endl;
+            // std::cout<<ns<<std::endl;
+            // std::cout<<"not found\n";
+            // std::cout<<uri<<std::endl;
+            std::cout<< "THE LOCATION PATH "<<locations[ns].at("location-path")<<std::endl;
                 
             }
             catch(const std::exception& e)
@@ -170,6 +172,7 @@ Response::Response(Request &req, ServerData sv)
        // puts("hnaa");
     }
     
+                
 }
 int Response::allow_methode(std::string m)
 {
@@ -182,6 +185,7 @@ int Response::allow_methode(std::string m)
     }
     return(1);
 }
+
 int find_option(char **s,std::string op)
 {
     int i;
@@ -220,29 +224,39 @@ void Response::ft_creat_file(std::string root,int ok)
         lenght = str.length();
         //std::cout<<"lenght:"<<lenght<<std::endl;
         std::string v = ft_itoa(lenght);
-        std::string final = v+"\n"+"Connection: close\n"+"\n"+str;
+        std::string final = v+"\n\n"+str;
         ft_strlcat(buf,final.c_str(),3000);
-        //std::cout<<buf<<std::endl;
     }
     else
     {
-        if(status == 200)
-            status = 404;
-        str = ft_generat_html();
-        memset(buf,0,3000);
-        strcpy(buf,"HTTP/1.1 ");
-        strcat(buf,ft_itoa(status));
-        strcat(buf," OK\nDate: Thu, 24 Nov 2022 14:37:49 GMT\nContent-Type: text/html\nContent-Length: "); //9\n\n"
-        int lenght;
-        lenght = str.length();
-        strcat(buf,ft_itoa(lenght));
-        strcat(buf,"\n\n");
-        strcat(buf,(const char *)str.c_str());
+        // if(status == 200)
+        //     status = 404;
+        // //std::ifstream f("/Users/mfagri/Desktop/Webserv/pages/not_found.html");
+        // // int i = open("/Users/mfagri/Desktop/Webserv/pages/not_found.html",O_RDWR,777);
+        // // read(i,ss,3000);
+        // str = ft_generat_html();
+        // memset(buf,0,3000);
+        // strcpy(buf,"HTTP/1.1 ");
+        // strcat(buf,ft_itoa(404));
+        // strcat(buf," OK\nDate: Thu, 24 Nov 2022 14:37:49 GMT\nContent-Type: text/html\nContent-Length: "); //9\n\n"
+        // int lenght;
+        // lenght = str.length();
+        // strcat(buf,ft_itoa(lenght));
+        // //std::cout<<"lenght:"<<lenght<<std::endl;
+        // //std::string v = ft_itoa(lenght);
+        // strcat(buf,"\n\n");
+        // strcat(buf,(const char *)str.c_str());
+        // //std::string final = v+"\n\n"+str;
+        // // ft_strlcat(buf,final.c_str(),3000);
+        //there is a segfault here to be tested by mfagri
+        strcpy(buf,"HTTP/1.1 404 Not found\nContent-Type: text/plain\nContent-Length: 5\n\nNot !");
     }
     res = buf;
+    
+    std::cout<<res<<std::endl;
 }
 
-char * Response::get_res()
+std::string Response::get_res()
 {
     return res;
 }
