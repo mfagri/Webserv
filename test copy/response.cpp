@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ntanjaou <ntanjaou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/25 18:53:30 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/05 19:34:32 by ntanjaou         ###   ########.fr       */
+/*   Updated: 2022/12/08 23:09:18 by mmardi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -208,10 +208,6 @@ void Response::ft_creat_file(std::string root,int ok)
     char ss[3000] = {0};
     if(i != -1 && ok == 0)
     {
-        // infile = strdup("<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <title>Document</title>\
-        // \n</head>\n<body>\n  <h1> Hiiiiii  </h1>\n</body>\n</html>\n");
-        // write(i,infile,strlen(infile));
-        // ///puts("ffffff");
         read(i,ss,3000);
         // //puts(ss);
         // // free(infile);

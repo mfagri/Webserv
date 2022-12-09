@@ -11,6 +11,7 @@
 #include <cstdio>
 #include <dirent.h>
 #include <cstdlib>
+#include <string.h>
 #include <netinet/in.h>
 #include <unistd.h>
 #include <sys/poll.h>

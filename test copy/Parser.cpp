@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ntanjaou <ntanjaou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/18 15:33:32 by mmardi            #+#    #+#             */
-/*   Updated: 2022/12/05 16:31:00 by ntanjaou         ###   ########.fr       */
+/*   Updated: 2022/12/09 00:49:01 by mmardi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,22 @@ bool Parser::checkServer(std::string line)
     return false;
 }
 
-bool Parser::checkBrackets(std::string s1, std::string s2, char c) 
+void Parser::checkElementLocation(std::string key) {
+
+    std::string arr[2] = {"index", "allow_methods"};
+    long unsigned int i = 0;
+    while (i < 2 && arr[i] != key)
+    {
+        i++;
+    }
+    if (i == 2)
+    {
+        std::cerr << "Undefined location element name \"" + key + "\"" << std::endl;
+        exit(1);
+    }
+}
+
+    bool Parser::checkBrackets(std::string s1, std::string s2, char c)
 {
     if (strchr(s1.c_str(), c) && strchr(s2.c_str(), c)) 
         return false;
@@ -125,7 +140,7 @@ std::string Parser::getLocationPath(std::string line)
     line.erase(0, 8);
     while(line[0] && (line[0] == ' '  || line[0] == '\t'))
         line.erase(0, 1);
-    size_t i = line.length() - 1;
+    int i = line.length() - 1;
     while (0 <= i && (line[i] == ' ' || line[i] == '\t'  || line[i] == '{'))
     {
         line.erase(i, 1);
@@ -154,6 +169,20 @@ bool    Parser::checkSemicolon(std::string line)
     if (n > 1)
         return false;
     return true;
+}
+
+void Parser::checkElement(std::string key) {
+
+    std::string arr[7] = {"listen", "host", "server_names", "error", "methods", "root", "body_size"};
+    long unsigned int i = 0;
+    while (i < 7 && arr[i] != key) {
+        i++;
+    }
+    if (i == 7) {
+        std::cerr << "Undefined element name \"" + key + "\"" << std::endl;
+        exit (1);
+    }
+    
 }
 
 void Parser::parsElements() 
@@ -191,6 +220,7 @@ void Parser::parsElements()
                             throw MissingSemicolon();
                         char s[4] = {' ', '\t', ';', '\0'};
                         char *key = strtok((char *)lines[i].c_str(), s);
+                        checkElementLocation(key);
                         char *value = strtok(NULL, ";");
                          if (!value)
                              throw NoValueFound();
@@ -210,6 +240,7 @@ void Parser::parsElements()
                             throw MissingSemicolon();
                     char s[4] = {' ', '\t', ';', '\0'};
                     char *key = strtok((char *)lines[i].c_str(), s);
+                    checkElement(key);
                     char *value = strtok(NULL, ";");
                     if (!value)
                         throw NoValueFound();

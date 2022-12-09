@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ServerData.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ntanjaou <ntanjaou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/20 23:00:22 by mmardi            #+#    #+#             */
-/*   Updated: 2022/12/04 16:48:49 by ntanjaou         ###   ########.fr       */
+/*   Updated: 2022/12/09 01:05:18 by mmardi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,10 @@ int ServerData::setData(std::map<std::string, std::string> server, std::vector<s
 			method = strtok(NULL, ",");
 		}
 	}
-	else {}
+	else {
+		std::cout << "missing allowed methods in a sever\n";
+		exit (1);
+	}
 	if (server.count("root") > 0) 
 	{
 		root = strtok((char *)server.at("root").c_str(), s);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   split.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
+/*   By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 17:36:48 by mfagri            #+#    #+#             */
-/*   Updated: 2022/11/27 12:12:31 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/12/08 23:11:22 by mmardi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,7 +128,6 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 	s1[b] = '\0';
 	return (s1);
 }
-
 char	*ft_strjoin(char const *s1, char const *s2)
 {
 	char	*a;
