@@ -195,8 +195,13 @@ void DIY_server::Manager_I(int fd_plfdlist, int curr_req)
             // std::cout << " <| " << this->RD_sock_accepted[index].get_rd_request() << " |> " <<  std::endl;
             if(this->RD_sock_accepted[index].get_rd_rdgotreq() == true)
             {
-                printf("my request lenght is : %lu \n", this->RD_sock_accepted[index].get_rd_request().length());
+                //printf("my request lenght is : %lu \n", this->RD_sock_accepted[index].get_rd_request().length());
+                //puts("in req");
+                //puts("zbii");
+                std::cout<<this->RD_sock_accepted[index].get_rd_request()<<std::endl;
+                //puts("////////////////////////////////////////////");
                 Request req(this->RD_sock_accepted[index].get_rd_request());
+               // puts("ecoo");
                 this->sv_request = req;
                 // Response resp(this->sv_request);
                 // std::string test;

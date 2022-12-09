@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/25 18:53:30 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/08 23:09:18 by mmardi           ###   ########.fr       */
+/*   Updated: 2022/12/09 19:39:23 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ Response::~Response()
 }
 Response::Response(Request &req, std::vector<ServerData> servers)
 {
+    //puts("HERE1");
     reqheaders = req.get_headers();
     status = req.get_status_code();
     ServerData sv;
@@ -49,6 +50,8 @@ Response::Response(Request &req, std::vector<ServerData> servers)
         }
         k++;
     }
+    //puts("HERE2");
+    // if(sv)
     std::string root = sv.getRoot();
     std::vector<std::map<std::string,std::string> > locations = sv.getLocations();
     //std::cout<< "here loc size : " << locations.size()<<std::endl;
@@ -61,6 +64,7 @@ Response::Response(Request &req, std::vector<ServerData> servers)
                            "505 HTTP Version Not Supported",
                            "411 Length Required",
                            "431 Request Header Fields Too Large"};
+    //puts("HERE3");
     
     int i = 0;
     while(i < 6)
@@ -68,42 +72,24 @@ Response::Response(Request &req, std::vector<ServerData> servers)
         errormsg.insert(std::pair<int,std::string>(atoi(errors[i].c_str()),msgs[i]));
         i++;
     }
-    // std::map<int, std::string>::iterator it;
-    // for (it = errormsg.begin(); it != errormsg.end(); ++it) {
-    //     std::cout << '\t' <<"{"<<it->first <<"}"<< '\t' <<"{"<<it->second
-    //          <<"}"<< '\n';
-    // }
-    // int pos;
-    // pos = 0;
-    // printf("{%s}\n",uri.c_str());
-    // if(uri.length() == 1)
-    //     uri = "/index.html";
-    // std::string root = "../links/pages";/////root
-    // status = req.get_status_code();
-    // root+=uri;
-    // if(!allow_methode(req.get_methode()) && status == 200)
-    // {
-    //     std::cout<<"creat response\n";
-    //     ft_creat_file(root,0);
-    //     // pos = 1;
-    // }
-    // else
-    //     ft_creat_file(root,1);
+    //puts("HERE4");
     if(status != 200)
     {
-        puts("asa\n");
+        //puts("asa\n");
         ft_creat_file(root,1);
+        return;
     }
     else
     {
-        
+        //puts("HERE5");
         
         if(locations.size() != 0)
         {
         size_t ns = 0;
-        size_t l = 0;
+        size_t l;
         while (ns < locations.size())
         {
+            l=0;
            if (locations[ns].at("location-path") == uri) {
                 //std::cout<<ns<<std::endl;
                 //std::cout<<locations[ns].at("location-path")<<std::endl;
@@ -112,30 +98,25 @@ Response::Response(Request &req, std::vector<ServerData> servers)
            }
            ns++;
         }
-        if(!l)
+        //puts("HERE6");
+       // std::cout<<l<<std::endl;
+        if(!l )
         {
-            try
-            {
-            // std::cout<<ns<<std::endl;
-            // std::cout<<"not found\n";
-            // std::cout<<uri<<std::endl;
-            std::cout<< "THE LOCATION PATH "<<locations[ns].at("location-path")<<std::endl;
-                
-            }
-            catch(const std::exception& e)
-            {
-                std::cerr << e.what() << '\n';
-            }
-            
+            //puts("HERE7");
             status = 404;
             ft_creat_file(root,1);
+            //puts("HERE8");
             return;
         }
         /// need check methodes :(
         if(locations[ns].at("allow_methods").empty())
+        {
+            //puts("HERE9");
             methodes = sv.getMethods();
+        }
         else
         {
+            //puts("HERE10");
             //std::cout<<"{"<<locations[ns].at("allow_methods")<<"}"<<std::endl;
             char **s = ft_split(locations[ns].at("allow_methods").c_str(),' ');
             l = 0;
@@ -146,12 +127,15 @@ Response::Response(Request &req, std::vector<ServerData> servers)
         /////////////////////
         //allowed methodes
         //////////////////
+        //puts("HERE11");
         if(allow_methode(req.get_methode()))
         {
+            //puts("HERE12");
             status = 405;
             ft_creat_file(root,1);
             return;
         }
+        //puts("HERE13");
         if(locations[ns].at("index").empty())
         {
             status = 404;
@@ -159,16 +143,22 @@ Response::Response(Request &req, std::vector<ServerData> servers)
         }
         else
         {
+            //puts("HERE14");
             //std::cout<<"{"<<locations[ns].at("index")<<"}"<<std::endl;
             std::string index = root+locations[ns].at("index");
             std::cout<<index<<std::endl;
             ft_creat_file(index,0);
             index.clear();
+            //puts("HERE15");
         }
         ns = 0;
         }
         else
-            ft_creat_file(root,1);          
+        {
+            //puts("HERE16");
+            ft_creat_file(root,1);
+        }
+       // puts("END");         
        // puts("hnaa");
     }
     
@@ -177,12 +167,15 @@ Response::Response(Request &req, std::vector<ServerData> servers)
 int Response::allow_methode(std::string m)
 {
     size_t i = 0;
+    //std::cout<< "********** methodes *********" << std::endl;
     while(i < methodes.size())
     {
+        
         if(m == methodes[i])
             return (0);
         i++;
     }
+    //std::cout<< "********** close methodes *********" << std::endl;
     return(1);
 }
 
@@ -205,13 +198,16 @@ void Response::ft_creat_file(std::string root,int ok)
     //char *infile;
     int i = open(root.c_str(),O_RDWR,777);
     std::string str;
-    char ss[3000] = {0};
+    //char ss[3000] = {0};
     if(i != -1 && ok == 0)
     {
-        read(i,ss,3000);
-        // //puts(ss);
-        // // free(infile);
-        str = ss;
+        std::ifstream f(root.c_str()); //taking file as inputstream
+        std::string str;
+        if(f) {
+            std::ostringstream ss;
+            ss << f.rdbuf(); // reading data
+            str = ss.str();
+        }
         memset(buf,0,3000);
         strcpy(buf,"HTTP/1.1 ");
         strcat(buf,ft_itoa(status));
@@ -245,11 +241,11 @@ void Response::ft_creat_file(std::string root,int ok)
         // //std::string final = v+"\n\n"+str;
         // // ft_strlcat(buf,final.c_str(),3000);
         //there is a segfault here to be tested by mfagri
-        strcpy(buf,"HTTP/1.1 404 Not found\nContent-Type: text/plain\nContent-Length: 5\n\nNot !");
+        strcpy(buf,"HTTP/1.1 404 Not found\nContent-Type: text/html\nContent-Length: 13\n\n404 Not found");
     }
     res = buf;
     
-    std::cout<<res<<std::endl;
+   // std::cout<<res<<std::endl;
 }
 
 std::string Response::get_res()
