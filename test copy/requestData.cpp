@@ -17,6 +17,7 @@ DIY_req_data::DIY_req_data(int orgsockfdRD, int sockfdRD, std::string requestRD,
     this->rd_request = requestRD;
     this->rd_host = hostRD;
     this->rd_endreq = false;
+    this->rd_gotreq = false;
     this->rd_size = 0;
     this->rd_numdata_readed = 0;
     this->rd_numdata_sended = 0;

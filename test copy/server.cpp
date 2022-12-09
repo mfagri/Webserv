@@ -179,6 +179,10 @@ void DIY_server::Manager_I(int fd_plfdlist, int curr_req)
             }
         }
         num_data_readed = recv(fd_plfdlist, buff, BUFFSIZE, 0);
+        // std::cout << "num data readed : " << num_data_readed << std::endl;
+        // std::cout << "*************************************** " << std::endl;
+        // std::cout << buff << std::endl;
+        // std::cout << "------------------------------------- " << std::endl;
         this->RD_sock_accepted[index].set_rd_numdata_readed(this->RD_sock_accepted[index].get_rd_numdata_readed() + num_data_readed);
         if(num_data_readed < 1)
         {
@@ -195,13 +199,12 @@ void DIY_server::Manager_I(int fd_plfdlist, int curr_req)
             // std::cout << " <| " << this->RD_sock_accepted[index].get_rd_request() << " |> " <<  std::endl;
             if(this->RD_sock_accepted[index].get_rd_rdgotreq() == true)
             {
+                // puts("here");
                 //printf("my request lenght is : %lu \n", this->RD_sock_accepted[index].get_rd_request().length());
                 //puts("in req");
-                //puts("zbii");
-                std::cout<<this->RD_sock_accepted[index].get_rd_request()<<std::endl;
-                //puts("////////////////////////////////////////////");
+                // std::cout<<this->RD_sock_accepted[index].get_rd_request()<<std::endl;
+                // puts("in request");
                 Request req(this->RD_sock_accepted[index].get_rd_request());
-               // puts("ecoo");
                 this->sv_request = req;
                 // Response resp(this->sv_request);
                 // std::string test;
@@ -226,6 +229,7 @@ void DIY_server::Manager_O(int fd_plfdlist, int curr_req)
     }
     if(this->RD_sock_accepted[index].get_rd_rdgotreq() == true)
     {
+        // puts("in response");
         int num_data_sended = 0;
         std::string resp;
         Response respp(this->sv_request, SV_data);
@@ -252,8 +256,8 @@ void DIY_server::Manager_O(int fd_plfdlist, int curr_req)
             this->RD_sock_accepted.erase(this->RD_sock_accepted.begin() + index);
             this->fd_sk_num--;
         }
-        this->RD_sock_accepted[index].set_rdgotreq(false);
-        this->RD_sock_accepted[index].set_rd_request("");
+        // this->RD_sock_accepted[index].set_rdgotreq(false);
+        // this->RD_sock_accepted[index].set_rd_request("");
     }
     this->poll_list[curr_req].events = POLLIN;
     this->poll_list[curr_req].revents = 0;
@@ -276,6 +280,27 @@ void DIY_server::Manager_IO()
             if (this->poll_list[i].revents & POLLIN)
             {
                 Manager_I(fd_from_pollfdList, i);
+            }
+            if(this->poll_list[i].revents & POLLHUP)
+            {
+                int index;
+                index = 0;
+                for (size_t k = 0; k < this->RD_sock_accepted.size(); k++)
+                {
+                    if (this->RD_sock_accepted[k].get_rd_acceptfd() == fd_from_pollfdList)
+                    {   
+                        index = k;
+                        break;
+                    }
+                }
+                if(index)
+                {
+                    std::cout << "This socket has been disconnected : " << fd_from_pollfdList << std::endl;
+                    close(fd_from_pollfdList);
+                    this->poll_list.erase(this->poll_list.begin() + i);
+                    this->RD_sock_accepted.erase(this->RD_sock_accepted.begin() + index);
+                    this->fd_sk_num--;
+                }
             }
             if (this->poll_list[i].revents & POLLOUT)
             {

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ntanjaou <ntanjaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/25 18:53:30 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/09 19:39:23 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/12/09 21:04:56 by ntanjaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ Response::Response(Request &req, std::vector<ServerData> servers)
         i++;
     }
     //puts("HERE4");
-    if(status != 200)
+    if(status != 0 && status != 200)
     {
         //puts("asa\n");
         ft_creat_file(root,1);
@@ -146,7 +146,7 @@ Response::Response(Request &req, std::vector<ServerData> servers)
             //puts("HERE14");
             //std::cout<<"{"<<locations[ns].at("index")<<"}"<<std::endl;
             std::string index = root+locations[ns].at("index");
-            std::cout<<index<<std::endl;
+            // std::cout<<index<<std::endl;
             ft_creat_file(index,0);
             index.clear();
             //puts("HERE15");
@@ -244,7 +244,7 @@ void Response::ft_creat_file(std::string root,int ok)
         strcpy(buf,"HTTP/1.1 404 Not found\nContent-Type: text/html\nContent-Length: 13\n\n404 Not found");
     }
     res = buf;
-    
+    close(i);
    // std::cout<<res<<std::endl;
 }
 
