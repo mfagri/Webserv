@@ -3,15 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ntanjaou <ntanjaou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/25 18:53:30 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/09 21:04:56 by ntanjaou         ###   ########.fr       */
+/*   Updated: 2022/12/10 22:20:27 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "response.hpp"
-
+# include <filesystem>
 
     // (none): If no modifiers are present, the location is interpreted as a prefix match. This means that the location given will be matched against the beginning of the request URI to determine a match.
     // =: If an equal sign is used, this block will be considered a match if the request URI exactly matches the location given.
@@ -33,9 +33,10 @@ Response::~Response()
 }
 Response::Response(Request &req, std::vector<ServerData> servers)
 {
-    //puts("HERE1");
+     //puts("HERE1");
     reqheaders = req.get_headers();
     status = req.get_status_code();
+;
     ServerData sv;
     int port = atoi(reqheaders["Host"].substr(reqheaders["Host"].find(":")+1).c_str());
     //std::cout<<"{"<<reqheaders["Host"].substr(reqheaders["Host"].find(":")+1)<<"}"<<std::endl;
@@ -53,6 +54,8 @@ Response::Response(Request &req, std::vector<ServerData> servers)
     //puts("HERE2");
     // if(sv)
     std::string root = sv.getRoot();
+   
+    // close(dir);
     std::vector<std::map<std::string,std::string> > locations = sv.getLocations();
     //std::cout<< "here loc size : " << locations.size()<<std::endl;
     //exit(1);
@@ -73,9 +76,9 @@ Response::Response(Request &req, std::vector<ServerData> servers)
         i++;
     }
     //puts("HERE4");
-    if(status != 0 && status != 200)
+    if(status != 200)
     {
-        //puts("asa\n");
+ 
         ft_creat_file(root,1);
         return;
     }
@@ -102,7 +105,7 @@ Response::Response(Request &req, std::vector<ServerData> servers)
        // std::cout<<l<<std::endl;
         if(!l )
         {
-            //puts("HERE7");
+
             status = 404;
             ft_creat_file(root,1);
             //puts("HERE8");
@@ -130,38 +133,51 @@ Response::Response(Request &req, std::vector<ServerData> servers)
         //puts("HERE11");
         if(allow_methode(req.get_methode()))
         {
-            //puts("HERE12");
+
             status = 405;
             ft_creat_file(root,1);
             return;
         }
         //puts("HERE13");
-        if(locations[ns].at("index").empty())
+        if (locations[ns].count("autoindex")) {
+            if (locations[ns].at("autoindex") == "on") { 
+                _autoindex = true;
+            }
+        }
+        if(locations[ns].count("index") == 0 && !_autoindex)
         {
+
             status = 404;
             ft_creat_file(root,1);
+            return ;
         }
         else
         {
-            //puts("HERE14");
-            //std::cout<<"{"<<locations[ns].at("index")<<"}"<<std::endl;
+            puts("HERE14");
+
+            // std::cout<<"{"<<locations[ns].at("index")<<"}"<<std::endl;
+            if(!_autoindex)
+            {
             std::string index = root+locations[ns].at("index");
-            // std::cout<<index<<std::endl;
             ft_creat_file(index,0);
             index.clear();
+            }
+            else
+                ft_creat_file(root,0);
             //puts("HERE15");
         }
         ns = 0;
         }
         else
         {
-            //puts("HERE16");
+            puts("HERE16");
             ft_creat_file(root,1);
         }
        // puts("END");         
        // puts("hnaa");
     }
     
+        
                 
 }
 int Response::allow_methode(std::string m)
@@ -191,15 +207,51 @@ int find_option(char **s,std::string op)
     }
     return (404);
 }
+std::string add_content_type(std::string type)
+{
 
+    if(type == "png" || type == "jpeg" || type == "jpj" || type == "ico")
+       return ("image/"+type);
+    else if(type == "html" || type == "txt" || type == "htm" || type == "css")
+       return ("text/"+type);
+    else if (type == "json")
+        return "application/json";
+    return ("text/"+type);
+        
+}
 void Response::ft_creat_file(std::string root,int ok)
 {
-    char buf[3000];
+    std::string buf;
     //char *infile;
-    int i = open(root.c_str(),O_RDWR,777);
+    int i = open(root.c_str(),O_RDWR);
+    std::cout << root << i <<std:: endl;
     std::string str;
     //char ss[3000] = {0};
-    if(i != -1 && ok == 0)
+    if (_autoindex)
+    {
+        puts("s111uuuu");
+            //  DIR *dir;
+    // struct dirent *dent;
+    // char buffer[50];
+    // strcpy(buffer, args[1]);
+    // dir = opendir(root.c_str());   //this part
+    //     if(dir!=NULL)
+    //     {
+            buf += "<!DOCTYPE html>\n\
+                <html lang=\"en\">\n\
+                <head>\n\
+                <meta charset=\"UTF-8\">\n\
+                <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n\
+                <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n\
+                <title>Document</title>\n\
+                </head>\n\
+                <body>\n\
+                <h1> AUTOINDEX  </h1>\n\
+                </body>\n\
+                </html>";
+        // }
+    }
+    else if(i != -1 && ok == 0)
     {
         std::ifstream f(root.c_str()); //taking file as inputstream
         std::string str;
@@ -208,16 +260,31 @@ void Response::ft_creat_file(std::string root,int ok)
             ss << f.rdbuf(); // reading data
             str = ss.str();
         }
-        memset(buf,0,3000);
-        strcpy(buf,"HTTP/1.1 ");
-        strcat(buf,ft_itoa(status));
-        strcat(buf," OK\nDate: Thu, 24 Nov 2022 14:37:49 GMT\nContent-Type: text/html\nContent-Length: "); //9\n\n"
+        //memset(buf,0,3000);
+        // strcpy(buf,"HTTP/1.1 ");
+        time_t now = time(0); // get current dat/time with respect to system  
+  
+        char* dt = ctime(&now); // convert it into string  
+        buf.append("HTTP/1.1 ");
+        buf.append(ft_itoa(status));
+        buf.append(" OK\nDate: ");
+        buf.append(dt);
+        strtok((char*)root.c_str(), ".");
+        std::string st=  strtok(NULL, ".");
+        std::cout<<st<<std::endl;
+        std::string rep = "Content-Type: $1\nContent-Length: ";
+        rep.replace(14,2,add_content_type(st));
+        std::cout << rep << std::endl;
+        buf.append(rep); //9\n\n"
         int lenght;
         lenght = str.length();
         //std::cout<<"lenght:"<<lenght<<std::endl;
-        std::string v = ft_itoa(lenght);
-        std::string final = v+"\n\n"+str;
-        ft_strlcat(buf,final.c_str(),3000);
+        // std::string v = ft_itoa(lenght);
+        // std::string final = v+"\n\n"+str;
+        buf.append(ft_itoa(lenght));
+        buf.append("\n\n");
+        buf.append(str);
+        // std::cout << buf << std::endl;
     }
     else
     {
@@ -241,7 +308,7 @@ void Response::ft_creat_file(std::string root,int ok)
         // //std::string final = v+"\n\n"+str;
         // // ft_strlcat(buf,final.c_str(),3000);
         //there is a segfault here to be tested by mfagri
-        strcpy(buf,"HTTP/1.1 404 Not found\nContent-Type: text/html\nContent-Length: 13\n\n404 Not found");
+        buf.append("HTTP/1.1 404 Not found\nContent-Type: text/html\nContent-Length: 13\n\n404 Not found");
     }
     res = buf;
     close(i);

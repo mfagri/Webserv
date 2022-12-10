@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   response.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ntanjaou <ntanjaou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/25 18:53:17 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/05 18:38:32 by ntanjaou         ###   ########.fr       */
+/*   Updated: 2022/12/10 21:46:21 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,8 @@ class Response{
     private:
         std::string uri;
         std::string res;
+        std::string autoindex;
+        bool _autoindex;
         int status;
         std::map<std::string,std::string>reqheaders;
         std::map<int,std::string>errormsg;

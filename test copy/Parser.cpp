@@ -6,7 +6,7 @@
 /*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/18 15:33:32 by mmardi            #+#    #+#             */
-/*   Updated: 2022/12/09 16:01:01 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/12/10 21:37:23 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,13 +88,13 @@ bool Parser::checkServer(std::string line)
 
 void Parser::checkElementLocation(std::string key) {
 
-    std::string arr[2] = {"index", "allow_methods"};
+    std::string arr[3] = {"index", "allow_methods", "autoindex"};
     long unsigned int i = 0;
-    while (i < 2 && arr[i] != key)
+    while (i < 3 && arr[i] != key)
     {
         i++;
     }
-    if (i == 2)
+    if (i == 3)
     {
         std::cerr << "Undefined location element name \"" + key + "\"" << std::endl;
         exit(1);
