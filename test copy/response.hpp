@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   response.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
+/*   By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/25 18:53:17 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/10 21:46:21 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/12/11 19:03:38 by mmardi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ class Response{
         std::string get_res();
         char *ft_generat_html();
         int allow_methode(std::string m);
+        std::string getAutoIndexBody(std::string root);
 };
 int find_option(char *s[],std::string op);
 #endif

@@ -6,7 +6,7 @@
 /*   By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/25 18:53:30 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/11 03:49:18 by mmardi           ###   ########.fr       */
+/*   Updated: 2022/12/11 20:55:40 by mmardi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,7 @@ Response::Response(Request &req, std::vector<ServerData> servers)
     //std::cout<< "here loc size : " << locations.size()<<std::endl;
     //exit(1);
     uri = req.get_uri();
+    std::cout << uri<<std::endl;
     std::string errors[6] = {"404","400","501","505","411","431"};
     std::string msgs[6] = {"404 Not found",
                            "400 Bad Request",
@@ -105,7 +106,19 @@ Response::Response(Request &req, std::vector<ServerData> servers)
        // std::cout<<l<<std::endl;
         if(!l )
         {
-
+            std::string file = root + uri;
+            if(opendir(file.c_str()))
+            {
+                _autoindex = true;
+                ft_creat_file(file,0);
+                return;
+                
+            }
+            if(access(file.c_str(), F_OK) == 0)
+            {
+                ft_creat_file(file,0);
+                return ;
+            }
             status = 404;
             ft_creat_file(root,1);
             //puts("HERE8");
@@ -153,17 +166,19 @@ Response::Response(Request &req, std::vector<ServerData> servers)
         }
         else
         {
-            puts("HERE14");
+            // puts("HERE14");
 
             // std::cout<<"{"<<locations[ns].at("index")<<"}"<<std::endl;
             if(!_autoindex)
             {
-            std::string index = root+locations[ns].at("index");
-            ft_creat_file(index,0);
-            index.clear();
+                std::string index = root+locations[ns].at("index");
+                ft_creat_file(index,0);
+                index.clear();
             }
-            else
+            else {
+                root.append(uri);
                 ft_creat_file(root,0);
+            }
             //puts("HERE15");
         }
         ns = 0;
@@ -173,8 +188,6 @@ Response::Response(Request &req, std::vector<ServerData> servers)
             puts("HERE16");
             ft_creat_file(root,1);
         }
-       // puts("END");         
-       // puts("hnaa");
     }
     
         
@@ -183,7 +196,6 @@ Response::Response(Request &req, std::vector<ServerData> servers)
 int Response::allow_methode(std::string m)
 {
     size_t i = 0;
-    //std::cout<< "********** methodes *********" << std::endl;
     while(i < methodes.size())
     {
         
@@ -191,7 +203,6 @@ int Response::allow_methode(std::string m)
             return (0);
         i++;
     }
-    //std::cout<< "********** close methodes *********" << std::endl;
     return(1);
 }
 
@@ -210,44 +221,56 @@ int find_option(char **s,std::string op)
 std::string add_content_type(std::string type)
 {
 
-    if(type == "png" || type == "jpeg" || type == "jpj" || type == "ico")
+    if(type == "png" || type == "jpeg" || type == "jpj")
        return ("image/"+type);
+    else if (type == "ico")
+        return ("text/x-icon");
     else if(type == "html" || type == "txt" || type == "htm" || type == "css")
        return ("text/"+type);
     else if (type == "json")
         return "application/json";
-    return ("text/html");
+        else if (type == "mp4")
+        return "video/mp4";
+    return ("text/plain");
         
 }
 
-std::string getAutoIndexBody(std::string root) {
-    // DIR *dir;
-    // struct dirent *dent;
-    // dir = opendir(root.c_str());// this part
-    std::ifstream FILE("/home/mmardi/Desktop/webserv/links/htmlfiles/autoindex.html");
-    std::cout << root ;
-    std::string body = "3aa";
-    size_t index;
-    if (FILE)
+std::string Response::getAutoIndexBody(std::string root) {
+    DIR *dir;
+    struct dirent *dent;
+    dir = opendir(root.c_str());// this part
+    // std::cout << root ;
+    std::string body = "<!DOCTYPE html>\n\
+                        <html lang=\"en\">\n\
+                        <style>ul{background-color: cyan; margin:50px; padding:150px}li{list-style:none; margin:30px;} li a{text-decoration:none; color:black;}</style>\n\
+                        <head>\n\
+            	            <meta charset=\"UTF-8\">\n\
+	                <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n\
+                        	<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n\
+                        	<title>Root</title>\n\
+                        </head>\n\
+                     <body>\n\
+	                      <ul>";
+    if (dir != NULL)
     {
-        std::ostringstream ss;
-        ss << FILE.rdbuf(); // reading data
-       body = ss.str();
-    }
-    index = body.find("<ul>", 0);
-    // index += 4;
-    // if (dir != NULL)
-    // {
-    //    dent = readdir(dir);
-        std::string element = "\n<li><a href=\""+root+"\">here</a></li>\n";
-       body.insert(index, element);
-
-       // while ((dent = readdir(dir)) != NULL) {
-
-       // }
+       while ((dent = readdir(dir)) != NULL) {
+            std::string url;
+            std::string fname = dent->d_name;
+            if (uri[0] == '/' && uri.length() == 1)   
+                url = fname;
+            else 
+                url = uri + "/" + fname;
+            if (fname != "." && fname != "..") {
+                std::string str= "\n<li><a href=\"" + url +"\">" + fname +"</a></li>\n";
+                body.append(str);
+            }
+       }
         
-    // }
-    std::cout << "------" << body;
+    }
+    body.append("	</ul>\n\
+                    </body>\n\
+                    </html>");
+    std::cout << body << std::endl;
     return body;
 }
 void Response::ft_creat_file(std::string root,int ok)
@@ -273,6 +296,7 @@ void Response::ft_creat_file(std::string root,int ok)
         buf.append(ft_itoa(body.length()));
         buf.append("\n\n");
         buf.append(body);
+        body.clear();
         }
     else if(i != -1 && ok == 0)
     {

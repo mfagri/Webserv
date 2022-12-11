@@ -202,7 +202,7 @@ void DIY_server::Manager_I(int fd_plfdlist, int curr_req)
                 // puts("here");
                 //printf("my request lenght is : %lu \n", this->RD_sock_accepted[index].get_rd_request().length());
                 //puts("in req");
-                // std::cout<<this->RD_sock_accepted[index].get_rd_request()<<std::endl;
+                //  std::cout<<this->RD_sock_accepted[index].get_rd_request()<<std::endl;
                 // puts("in request");
                 Request req(this->RD_sock_accepted[index].get_rd_request());
                 this->sv_request = req;
