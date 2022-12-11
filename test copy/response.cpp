@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
+/*   By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/25 18:53:30 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/10 22:20:27 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/12/11 03:49:18 by mmardi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -216,8 +216,39 @@ std::string add_content_type(std::string type)
        return ("text/"+type);
     else if (type == "json")
         return "application/json";
-    return ("text/"+type);
+    return ("text/html");
         
+}
+
+std::string getAutoIndexBody(std::string root) {
+    // DIR *dir;
+    // struct dirent *dent;
+    // dir = opendir(root.c_str());// this part
+    std::ifstream FILE("/home/mmardi/Desktop/webserv/links/htmlfiles/autoindex.html");
+    std::cout << root ;
+    std::string body = "3aa";
+    size_t index;
+    if (FILE)
+    {
+        std::ostringstream ss;
+        ss << FILE.rdbuf(); // reading data
+       body = ss.str();
+    }
+    index = body.find("<ul>", 0);
+    // index += 4;
+    // if (dir != NULL)
+    // {
+    //    dent = readdir(dir);
+        std::string element = "\n<li><a href=\""+root+"\">here</a></li>\n";
+       body.insert(index, element);
+
+       // while ((dent = readdir(dir)) != NULL) {
+
+       // }
+        
+    // }
+    std::cout << "------" << body;
+    return body;
 }
 void Response::ft_creat_file(std::string root,int ok)
 {
@@ -228,29 +259,21 @@ void Response::ft_creat_file(std::string root,int ok)
     std::string str;
     //char ss[3000] = {0};
     if (_autoindex)
-    {
-        puts("s111uuuu");
-            //  DIR *dir;
-    // struct dirent *dent;
-    // char buffer[50];
-    // strcpy(buffer, args[1]);
-    // dir = opendir(root.c_str());   //this part
-    //     if(dir!=NULL)
-    //     {
-            buf += "<!DOCTYPE html>\n\
-                <html lang=\"en\">\n\
-                <head>\n\
-                <meta charset=\"UTF-8\">\n\
-                <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n\
-                <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n\
-                <title>Document</title>\n\
-                </head>\n\
-                <body>\n\
-                <h1> AUTOINDEX  </h1>\n\
-                </body>\n\
-                </html>";
-        // }
-    }
+    {  
+        std::string str;
+        time_t now = time(0); // get current dat/time with respect to system
+        char *dt = ctime(&now);
+        buf.append("HTTP/1.1 ");
+        buf.append(ft_itoa(status));
+        buf.append(" OK\nDate: ");
+        buf.append(dt);
+        std::string rep = "Content-Type: text/html\nContent-Length: ";
+        buf.append(rep);
+        std::string body = getAutoIndexBody(root);
+        buf.append(ft_itoa(body.length()));
+        buf.append("\n\n");
+        buf.append(body);
+        }
     else if(i != -1 && ok == 0)
     {
         std::ifstream f(root.c_str()); //taking file as inputstream
@@ -271,7 +294,6 @@ void Response::ft_creat_file(std::string root,int ok)
         buf.append(dt);
         strtok((char*)root.c_str(), ".");
         std::string st=  strtok(NULL, ".");
-        std::cout<<st<<std::endl;
         std::string rep = "Content-Type: $1\nContent-Length: ";
         rep.replace(14,2,add_content_type(st));
         std::cout << rep << std::endl;

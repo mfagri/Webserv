@@ -13,6 +13,7 @@ void DIY_server::init_sockets()
 
     while (i < SV_data.size())
     {
+
         if (std::find(vec_ports.begin(), vec_ports.end(), SV_data[i].getPort()) != vec_ports.end())
         {
             continue;
@@ -41,7 +42,6 @@ int DIY_server::list_polls()
     struct pollfd poll_fds;
     size_t i = -1;
     int num_pollfd = 0;
-
     while (++i < this->sk_list.size())
     {
         id_skfd = this->sk_list[i].get_sk();
@@ -315,6 +315,7 @@ void DIY_server::launch_serv()
 {
     std::cout << "Launching the PROGRAM !" << std::endl;
     init_sockets();
+
     if (list_polls() == 0)
     {
         std::cerr << "Not enough data to create a SERVER !" << std::endl;

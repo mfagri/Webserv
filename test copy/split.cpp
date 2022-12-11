@@ -6,13 +6,35 @@
 /*   By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 17:36:48 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/08 23:11:22 by mmardi           ###   ########.fr       */
+/*   Updated: 2022/12/11 00:37:26 by mmardi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 // #include "request.hpp"
 #include <stdlib.h>
 #include <string.h>
+
+size_t ft_strlcpy(char *dst, const char *src, size_t dstsize)
+{
+	size_t i;
+	size_t j;
+
+	i = 0;
+	j = 0;
+	while (src[i])
+	{
+		i++;
+	}
+	if (dstsize == 0)
+		return (i);
+	while (j < dstsize - 1 && src[j])
+	{
+		dst[j] = src[j];
+		j++;
+	}
+	dst[j] = '\0';
+	return (i);
+}
 
 char	*ft_strnstr(const char *d, const char *s, size_t len)
 {
@@ -141,7 +163,7 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	a = (char *)malloc((b + c + 1) * sizeof(char));
 	if (!a)
 		return (NULL);
-	strlcpy(a, s1, b + 1);
+	ft_strlcpy(a, s1, b + 1);
 	ft_strlcat(&a[strlen(a)], s2, c + 1);
 	return (a);
 }
@@ -162,27 +184,7 @@ char	*ft_strtrim(char const *s1, char const *set)
 	}
 	return (ft_substr(s1, 0, j + 1));
 }
-size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize)
-{
-	size_t	i;
-	size_t	j;
 
-	i = 0;
-	j = 0;
-	while (src[i])
-	{
-		i++;
-	}
-	if (dstsize == 0)
-		return (i);
-	while (j < dstsize - 1 && src[j])
-	{
-		dst[j] = src[j];
-		j++;
-	}
-	dst[j] = '\0';
-	return (i);
-}
 static size_t	ft_count(char const *s, char c)
 {
 	size_t	i;
