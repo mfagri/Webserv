@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ServerData.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
+/*   By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/20 23:00:22 by mmardi            #+#    #+#             */
-/*   Updated: 2022/12/09 15:57:06 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/12/12 01:29:12 by mmardi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ int ServerData::setData(std::map<std::string, std::string> server, std::vector<s
 	}
 	if (server.count("body_size") > 0) 
 	{
-			std::string num =strtok((char *)server.at("body_size").c_str(), s);;
+			std::string num = strtok((char *)server.at("body_size").c_str(), s);;
 			if (!checkAllNum(num))
 			{
 				std::cerr << "body_size can take only digits\n" << '\n';
@@ -75,27 +75,38 @@ int ServerData::setData(std::map<std::string, std::string> server, std::vector<s
 	}
 	if (server.count("methods") > 0)
 	{
-		std::string m = strtok((char *)server.at("methods").c_str(), s);;
+		std::string m = server.at("methods");
 		// std::cout << m << std::endl;
-		char *method = strtok((char *)m.c_str(), ",");
+		char *method = strtok((char *)m.c_str(), "	 ");
 		while (method) 
 		{
 			methods.push_back(method);
-			method = strtok(NULL, ",");
+			method = strtok(NULL, "	 ");
 		}
+		for (size_t i = 0; i < methods.size(); i++)
+		{
+			if (methods[i] != "GET" && methods[i] != "POST" && methods[i] != "DELETE") {
+				std::cerr << "ERROR: invalid allowed method \"" + methods[i] + " \"\n" ;
+				exit (1);
+			}
+		}
+		
 	}
-	// else {
-	// 	std::cout << "missing allowed methods in a sever\n";
-	// 	exit (1);
-	// }
+	else {
+		std::cerr << "ERROR: missing allowed methods in a sever\n";
+		exit (1);
+	}
 	if (server.count("root") > 0) 
 	{
 		root = strtok((char *)server.at("root").c_str(), s);
-		// std::cout << root << std::endl;
+		if (!opendir(root.c_str())) {
+			std::cerr << "ERROR: can't access to root path\n";
+			exit (1);
+		}
 	}
 	else 
 	{
-		std::cerr << "missing root in server\n";
+		std::cerr << "ERROR: missing root in server\n";
 		exit(1);
 	}
 	if (server.count("index")) 
@@ -108,6 +119,22 @@ int ServerData::setData(std::map<std::string, std::string> server, std::vector<s
 		error_pages = strtok((char *)server.at("error_pages").c_str(), s);
 		// std::cout << error_pages << std::endl;
 	}
+	
+	for (size_t i = 0; i < locations.size(); i++)
+	{
+		if (locations[i].count("root"))
+		{
+			if (!opendir(locations[i].at("root").c_str()))
+			{
+				std::cerr << "ERROR: can't access to root path in location\n";
+				exit(1);
+			}
+		}
+		else {
+			locations[i].insert(std::pair<std::string, std::string>("root", this->root));
+		}
+	}
+	
 	return 1;
 }
 
