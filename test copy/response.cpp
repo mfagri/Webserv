@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ntanjaou <ntanjaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/25 18:53:30 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/11 20:55:40 by mmardi           ###   ########.fr       */
+/*   Updated: 2022/12/12 20:23:39 by ntanjaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ Response::Response(Request &req, std::vector<ServerData> servers)
     //std::cout<< "here loc size : " << locations.size()<<std::endl;
     //exit(1);
     uri = req.get_uri();
-    std::cout << uri<<std::endl;
+    // std::cout << uri<<std::endl;
     std::string errors[6] = {"404","400","501","505","411","431"};
     std::string msgs[6] = {"404 Not found",
                            "400 Bad Request",
@@ -124,6 +124,7 @@ Response::Response(Request &req, std::vector<ServerData> servers)
             //puts("HERE8");
             return;
         }
+        
         /// need check methodes :(
         if(locations[ns].at("allow_methods").empty())
         {
@@ -227,8 +228,8 @@ std::string add_content_type(std::string type)
         return ("text/x-icon");
     else if(type == "html" || type == "txt" || type == "htm" || type == "css")
        return ("text/"+type);
-    else if (type == "json")
-        return "application/json";
+    else if (type == "json" || type == "pdf")
+        return "application/" + type;
         else if (type == "mp4")
         return "video/mp4";
     return ("text/plain");
@@ -270,7 +271,7 @@ std::string Response::getAutoIndexBody(std::string root) {
     body.append("	</ul>\n\
                     </body>\n\
                     </html>");
-    std::cout << body << std::endl;
+    // std::cout << body << std::endl;
     return body;
 }
 void Response::ft_creat_file(std::string root,int ok)
@@ -278,7 +279,7 @@ void Response::ft_creat_file(std::string root,int ok)
     std::string buf;
     //char *infile;
     int i = open(root.c_str(),O_RDWR);
-    std::cout << root << i <<std:: endl;
+    // std::cout << root << i <<std:: endl;
     std::string str;
     //char ss[3000] = {0};
     if (_autoindex)
@@ -320,7 +321,7 @@ void Response::ft_creat_file(std::string root,int ok)
         std::string st=  strtok(NULL, ".");
         std::string rep = "Content-Type: $1\nContent-Length: ";
         rep.replace(14,2,add_content_type(st));
-        std::cout << rep << std::endl;
+        // std::cout << rep << std::endl;
         buf.append(rep); //9\n\n"
         int lenght;
         lenght = str.length();

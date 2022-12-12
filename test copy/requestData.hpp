@@ -15,6 +15,7 @@ private:
     size_t rd_size;
     int rd_numdata_readed;
     int rd_numdata_sended;
+    size_t rd_req_len;
 public:
     DIY_req_data();
     ~DIY_req_data() {};
@@ -24,6 +25,8 @@ public:
     size_t get_rd_numdata_sended() const;
     size_t get_rd_size() const;
     void set_rd_size(size_t value);
+    size_t get_rd_reqlen() const;
+    void set_rd_reqlen(size_t value);
     bool get_rd_rdgotreq() const;
     int get_rd_acceptfd() const;
     const std::string &get_rd_request();

@@ -8,6 +8,7 @@ DIY_req_data::DIY_req_data()
     this->rd_request = "";
     this->rd_endreq = false;
     this->rd_gotreq = false;
+    this->rd_req_len = 0;
 }
 
 DIY_req_data::DIY_req_data(int orgsockfdRD, int sockfdRD, std::string requestRD, std::string hostRD)
@@ -21,6 +22,7 @@ DIY_req_data::DIY_req_data(int orgsockfdRD, int sockfdRD, std::string requestRD,
     this->rd_size = 0;
     this->rd_numdata_readed = 0;
     this->rd_numdata_sended = 0;
+    this->rd_req_len = 0;
 }
 
 int DIY_req_data::get_rd_org_skfd() const
@@ -86,4 +88,14 @@ size_t DIY_req_data::get_rd_size() const
 void DIY_req_data::set_rd_size(size_t value)
 {
     this->rd_size = value;
+}
+
+size_t DIY_req_data::get_rd_reqlen() const
+{
+    return this->rd_req_len;
+}
+
+void DIY_req_data::set_rd_reqlen(size_t value)
+{
+    this->rd_req_len = value;
 }

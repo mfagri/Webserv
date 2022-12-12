@@ -13,7 +13,6 @@ void DIY_server::init_sockets()
 
     while (i < SV_data.size())
     {
-
         if (std::find(vec_ports.begin(), vec_ports.end(), SV_data[i].getPort()) != vec_ports.end())
         {
             continue;
@@ -47,7 +46,7 @@ int DIY_server::list_polls()
         id_skfd = this->sk_list[i].get_sk();
         this->sk_fd.push_back(id_skfd);
         poll_fds.fd = id_skfd;
-        poll_fds.events = POLLIN | POLLOUT;
+        poll_fds.events = POLLIN | POLLOUT | POLLHUP;
         poll_fds.revents = 0;
         this->poll_list.push_back(poll_fds);
         this->fd_sk_num++;
@@ -116,14 +115,9 @@ bool check_request(DIY_req_data rd_request)
     if(req_status == 1)
     {
         rq_body = request.substr(pos + 4, request.length() - (pos + 4));
-        // printf("%lu , %lu \n", rd_request.get_rd_numdata_readed() - (pos + 4), check_content_len(request));
         if(rd_request.get_rd_numdata_readed() - (pos + 4) == check_content_len(request)){
             return true;
         }
-        // if(rd_request.get_rd_numdata_readed() - (pos + 4) >= check_content_len(request))
-        // {
-        //     return true;
-        // }
     }
     if(req_status == 2)
     {
@@ -179,10 +173,6 @@ void DIY_server::Manager_I(int fd_plfdlist, int curr_req)
             }
         }
         num_data_readed = recv(fd_plfdlist, buff, BUFFSIZE, 0);
-        // std::cout << "num data readed : " << num_data_readed << std::endl;
-        // std::cout << "*************************************** " << std::endl;
-        // std::cout << buff << std::endl;
-        // std::cout << "------------------------------------- " << std::endl;
         this->RD_sock_accepted[index].set_rd_numdata_readed(this->RD_sock_accepted[index].get_rd_numdata_readed() + num_data_readed);
         if(num_data_readed < 1)
         {
@@ -199,26 +189,18 @@ void DIY_server::Manager_I(int fd_plfdlist, int curr_req)
             // std::cout << " <| " << this->RD_sock_accepted[index].get_rd_request() << " |> " <<  std::endl;
             if(this->RD_sock_accepted[index].get_rd_rdgotreq() == true)
             {
-                // puts("here");
-                //printf("my request lenght is : %lu \n", this->RD_sock_accepted[index].get_rd_request().length());
-                //puts("in req");
-                //  std::cout<<this->RD_sock_accepted[index].get_rd_request()<<std::endl;
-                // puts("in request");
                 Request req(this->RD_sock_accepted[index].get_rd_request());
                 this->sv_request = req;
-                // Response resp(this->sv_request);
-                // std::string test;
-                // test = resp.get_res();
-                // this->RD_sock_accepted[index].set_rd_request(test);
             }
         }
-        this->poll_list[curr_req].events = POLLIN | POLLOUT;
+        // this->poll_list[curr_req].events = POLLIN | POLLOUT;
     }
 }
 
 void DIY_server::Manager_O(int fd_plfdlist, int curr_req)
 {
     int index = 0;
+    size_t len = 0;
 
     for (size_t i = 0; i < this->RD_sock_accepted.size(); i++)
     {
@@ -229,26 +211,20 @@ void DIY_server::Manager_O(int fd_plfdlist, int curr_req)
     }
     if(this->RD_sock_accepted[index].get_rd_rdgotreq() == true)
     {
-        // puts("in response");
         int num_data_sended = 0;
         std::string resp;
         Response respp(this->sv_request, SV_data);
         this->RD_sock_accepted[index].set_rd_request(respp.get_res());
         resp = this->RD_sock_accepted[index].get_rd_request();
         this->RD_sock_accepted[index].set_rd_size(resp.length());
-        int len = this->RD_sock_accepted[index].get_rd_size();
-        num_data_sended = send(fd_plfdlist, resp.c_str(), len, 0);
+        // std::cout << "---------------------------------" << std::endl;
+        // std::cout << "lenght " << this->RD_sock_accepted[index].get_rd_size() << std::endl;
+        this->RD_sock_accepted[index].set_rd_reqlen(resp.length() - this->RD_sock_accepted[index].get_rd_numdata_sended());
+        len = this->RD_sock_accepted[index].get_rd_reqlen();
+        num_data_sended = send(fd_plfdlist, resp.c_str() + this->RD_sock_accepted[index].get_rd_numdata_sended(), len, 0);
+        len -= num_data_sended;
         this->RD_sock_accepted[index].set_rd_numdata_sended(this->RD_sock_accepted[index].get_rd_numdata_sended() + num_data_sended);
-        try
-        {
-            this->RD_sock_accepted[index].set_rd_request(this->RD_sock_accepted[index].get_rd_request().substr(num_data_sended));
-        }
-        catch(std::exception &e)
-        {
-            num_data_sended = -1;
-        }
-        // printf("num data : %d and request lenght : %lu \n", num_data_sended, this->RD_sock_accepted[index].get_rd_size());
-        if(num_data_sended < 1 || (int)this->RD_sock_accepted[index].get_rd_request().length() == num_data_sended)
+        if(num_data_sended < 1 || this->RD_sock_accepted[index].get_rd_size() == this->RD_sock_accepted[index].get_rd_numdata_sended())
         {
             std::cout << "This socket has been disconnected : " << fd_plfdlist << std::endl;
             close(fd_plfdlist);
@@ -256,17 +232,15 @@ void DIY_server::Manager_O(int fd_plfdlist, int curr_req)
             this->RD_sock_accepted.erase(this->RD_sock_accepted.begin() + index);
             this->fd_sk_num--;
         }
-        // this->RD_sock_accepted[index].set_rdgotreq(false);
-        // this->RD_sock_accepted[index].set_rd_request("");
     }
-    this->poll_list[curr_req].events = POLLIN;
-    this->poll_list[curr_req].revents = 0;
+    // this->poll_list[curr_req].events = POLLIN;
+    // this->poll_list[curr_req].revents = 0;
 }
 
 void DIY_server::Manager_IO()
 {
     int fd_from_pollfdList;
-    size_t i = -1;
+    size_t i = 0;
     std::string catch_req;
 
     while (1)
@@ -274,7 +248,7 @@ void DIY_server::Manager_IO()
         if (poll(&this->poll_list[0], this->fd_sk_num, -1) < 0)
             std::cerr << "Error in poll !" << std::endl;
 
-        while (++i < this->poll_list.size())
+        while (i < this->poll_list.size())
         {
             fd_from_pollfdList = this->poll_list[i].fd;
             if (this->poll_list[i].revents & POLLIN)
@@ -284,7 +258,7 @@ void DIY_server::Manager_IO()
             if(this->poll_list[i].revents & POLLHUP)
             {
                 int index;
-                index = 0;
+                index = -1;
                 for (size_t k = 0; k < this->RD_sock_accepted.size(); k++)
                 {
                     if (this->RD_sock_accepted[k].get_rd_acceptfd() == fd_from_pollfdList)
@@ -293,7 +267,7 @@ void DIY_server::Manager_IO()
                         break;
                     }
                 }
-                if(index)
+                if(index != -1)
                 {
                     std::cout << "This socket has been disconnected : " << fd_from_pollfdList << std::endl;
                     close(fd_from_pollfdList);
@@ -306,8 +280,9 @@ void DIY_server::Manager_IO()
             {
                 Manager_O(fd_from_pollfdList, i);
             }
+            i++;
         }
-        i = -1;
+        i = 0;
     }
 }
 
