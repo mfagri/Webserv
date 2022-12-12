@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ntanjaou <ntanjaou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/25 18:53:30 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/12 20:23:39 by ntanjaou         ###   ########.fr       */
+/*   Updated: 2022/12/12 21:22:27 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,17 +26,28 @@ Response::Response()
     // res = "";
     
 }
-
+std::string get_location_uri(std::string uri)
+{
+    std::string s;
+    size_t i = 0;
+    if(uri[0] == '/')
+        i++;
+    while(uri[i] != '/' && i < uri.length())
+    {
+        s += uri[i];
+        i++;
+    }
+    return ("/"+s);
+}
 Response::~Response()
 {
     //bzero(res.c_str(),strlen(res)); 
 }
 Response::Response(Request &req, std::vector<ServerData> servers)
 {
-     //puts("HERE1");
     reqheaders = req.get_headers();
     status = req.get_status_code();
-;
+    std::cout<<status<<std::endl;
     ServerData sv;
     int port = atoi(reqheaders["Host"].substr(reqheaders["Host"].find(":")+1).c_str());
     //std::cout<<"{"<<reqheaders["Host"].substr(reqheaders["Host"].find(":")+1)<<"}"<<std::endl;
@@ -51,16 +62,10 @@ Response::Response(Request &req, std::vector<ServerData> servers)
         }
         k++;
     }
-    //puts("HERE2");
-    // if(sv)
     std::string root = sv.getRoot();
-   
-    // close(dir);
     std::vector<std::map<std::string,std::string> > locations = sv.getLocations();
-    //std::cout<< "here loc size : " << locations.size()<<std::endl;
-    //exit(1);
     uri = req.get_uri();
-    // std::cout << uri<<std::endl;
+    std::cout << uri<<std::endl;
     std::string errors[6] = {"404","400","501","505","411","431"};
     std::string msgs[6] = {"404 Not found",
                            "400 Bad Request",
@@ -68,15 +73,16 @@ Response::Response(Request &req, std::vector<ServerData> servers)
                            "505 HTTP Version Not Supported",
                            "411 Length Required",
                            "431 Request Header Fields Too Large"};
-    //puts("HERE3");
-    
+
     int i = 0;
     while(i < 6)
     {
         errormsg.insert(std::pair<int,std::string>(atoi(errors[i].c_str()),msgs[i]));
         i++;
     }
-    //puts("HERE4");
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    if(req.get_methode() == "GET" || req.get_methode() == "POST")
+    {
     if(status != 200)
     {
  
@@ -85,28 +91,25 @@ Response::Response(Request &req, std::vector<ServerData> servers)
     }
     else
     {
-        //puts("HERE5");
-        
-        if(locations.size() != 0)
-        {
         size_t ns = 0;
-        size_t l;
+        int l = 0;
+        std::string url = get_location_uri(uri);
+        std::cout<<"-------"+url<<std::endl;
         while (ns < locations.size())
         {
-            l=0;
-           if (locations[ns].at("location-path") == uri) {
-                //std::cout<<ns<<std::endl;
-                //std::cout<<locations[ns].at("location-path")<<std::endl;
+            l = 0;
+           if (locations[ns].at("location-path") == url){
                 l = 1;
                 break;
            }
            ns++;
         }
-        //puts("HERE6");
-       // std::cout<<l<<std::endl;
-        if(!l )
+        if(!l)
         {
             std::string file = root + uri;
+            std::cout << file << std::endl;
+            puts("here");
+            
             if(opendir(file.c_str()))
             {
                 _autoindex = true;
@@ -119,76 +122,43 @@ Response::Response(Request &req, std::vector<ServerData> servers)
                 ft_creat_file(file,0);
                 return ;
             }
-            status = 404;
-            ft_creat_file(root,1);
-            //puts("HERE8");
+            ft_creat_file(file,0);
             return;
-        }
-        
-        /// need check methodes :(
-        if(locations[ns].at("allow_methods").empty())
-        {
-            //puts("HERE9");
-            methodes = sv.getMethods();
         }
         else
         {
-            //puts("HERE10");
-            //std::cout<<"{"<<locations[ns].at("allow_methods")<<"}"<<std::endl;
-            char **s = ft_split(locations[ns].at("allow_methods").c_str(),' ');
-            l = 0;
-            while (s[l])
-                methodes.push_back(s[l++]);
-            ////need free s
-        }
-        /////////////////////
-        //allowed methodes
-        //////////////////
-        //puts("HERE11");
-        if(allow_methode(req.get_methode()))
-        {
-
-            status = 405;
-            ft_creat_file(root,1);
-            return;
-        }
-        //puts("HERE13");
-        if (locations[ns].count("autoindex")) {
-            if (locations[ns].at("autoindex") == "on") { 
-                _autoindex = true;
-            }
-        }
-        if(locations[ns].count("index") == 0 && !_autoindex)
-        {
-
-            status = 404;
-            ft_creat_file(root,1);
-            return ;
-        }
-        else
-        {
-            // puts("HERE14");
-
-            // std::cout<<"{"<<locations[ns].at("index")<<"}"<<std::endl;
-            if(!_autoindex)
+            std::string uri1 = uri;
+            std::string url = get_location_uri(uri1);
+            int index = uri1.find(url, 0); 
+            uri1.erase(index, url.length());
+            std::cout <<"{" +url+"}" <<  std::endl;
+            for (size_t i = 0; i < locations.size(); i++)
             {
-                std::string index = root+locations[ns].at("index");
-                ft_creat_file(index,0);
-                index.clear();
+                if(locations[i].at("location-path") == url)
+                {
+                    std::cout << locations[i].at("root")+uri1 << std::endl;
+                    if (locations[i].count("autoindex")) {
+                        if (locations[i].at("autoindex") == "on"){
+                            _autoindex = true;
+                        }
+                    }
+                    if (locations[i].count("index") && !_autoindex)
+                            uri1 += "/" +locations[i].at("index");
+                    ft_creat_file(locations[i].at("root")+uri1,0);
+                    break;
+                }
             }
-            else {
-                root.append(uri);
-                ft_creat_file(root,0);
-            }
-            //puts("HERE15");
+            
         }
-        ns = 0;
-        }
-        else
-        {
-            puts("HERE16");
-            ft_creat_file(root,1);
-        }
+    }
+   
+    }
+    else
+    {
+        puts("jjjjjjjjlll");
+        std::string h = root + uri;
+        std::cout<<h<<std::endl;
+        remove(h.c_str());
     }
     
         
@@ -229,7 +199,7 @@ std::string add_content_type(std::string type)
     else if(type == "html" || type == "txt" || type == "htm" || type == "css")
        return ("text/"+type);
     else if (type == "json" || type == "pdf")
-        return "application/" + type;
+        return "application/"+type;
         else if (type == "mp4")
         return "video/mp4";
     return ("text/plain");
@@ -262,7 +232,7 @@ std::string Response::getAutoIndexBody(std::string root) {
             else 
                 url = uri + "/" + fname;
             if (fname != "." && fname != "..") {
-                std::string str= "\n<li><a href=\"" + url +"\">" + fname +"</a></li>\n";
+                std::string str= "\n<h1><a href=\"" + url +"\">" + fname +"</a></h1>\n";
                 body.append(str);
             }
        }
@@ -271,18 +241,46 @@ std::string Response::getAutoIndexBody(std::string root) {
     body.append("	</ul>\n\
                     </body>\n\
                     </html>");
-    // std::cout << body << std::endl;
+   // std::cout << body << std::endl;
     return body;
 }
 void Response::ft_creat_file(std::string root,int ok)
 {
     std::string buf;
-    //char *infile;
     int i = open(root.c_str(),O_RDWR);
-    // std::cout << root << i <<std:: endl;
+    std::cout << root << i <<std:: endl;
     std::string str;
-    //char ss[3000] = {0};
-    if (_autoindex)
+    if(i != -1 && ok == 0)
+    {
+        std::ifstream f(root.c_str()); //taking file as inputstream
+        std::string str;
+        if(f) {
+            std::ostringstream ss;
+            ss << f.rdbuf(); // reading data
+            str = ss.str();
+        }
+        time_t now = time(0); // get current dat/time with respect to system  
+  
+        char* dt = ctime(&now); // convert it into string  
+        buf.append("HTTP/1.1 ");
+        buf.append(ft_itoa(status));
+        buf.append(" OK\nDate: ");
+        buf.append(dt);
+        strtok((char*)root.c_str(), ".");
+        std::string st=  strtok(NULL, ".");
+        std::string rep = "Content-Type: $1\nContent-Length: ";
+        rep.replace(14,2,add_content_type(st));
+        //std::cout << rep << std::endl;
+        buf.append(rep); //9\n\n"
+        int lenght;
+        lenght = str.length();
+        buf.append(ft_itoa(lenght));
+        buf.append("\n\n");
+        buf.append(str);
+        res = buf;
+        return;
+    }
+    else if (_autoindex && opendir(root.c_str()))
     {  
         std::string str;
         time_t now = time(0); // get current dat/time with respect to system
@@ -298,45 +296,13 @@ void Response::ft_creat_file(std::string root,int ok)
         buf.append("\n\n");
         buf.append(body);
         body.clear();
-        }
-    else if(i != -1 && ok == 0)
-    {
-        std::ifstream f(root.c_str()); //taking file as inputstream
-        std::string str;
-        if(f) {
-            std::ostringstream ss;
-            ss << f.rdbuf(); // reading data
-            str = ss.str();
-        }
-        //memset(buf,0,3000);
-        // strcpy(buf,"HTTP/1.1 ");
-        time_t now = time(0); // get current dat/time with respect to system  
-  
-        char* dt = ctime(&now); // convert it into string  
-        buf.append("HTTP/1.1 ");
-        buf.append(ft_itoa(status));
-        buf.append(" OK\nDate: ");
-        buf.append(dt);
-        strtok((char*)root.c_str(), ".");
-        std::string st=  strtok(NULL, ".");
-        std::string rep = "Content-Type: $1\nContent-Length: ";
-        rep.replace(14,2,add_content_type(st));
-        // std::cout << rep << std::endl;
-        buf.append(rep); //9\n\n"
-        int lenght;
-        lenght = str.length();
-        //std::cout<<"lenght:"<<lenght<<std::endl;
-        // std::string v = ft_itoa(lenght);
-        // std::string final = v+"\n\n"+str;
-        buf.append(ft_itoa(lenght));
-        buf.append("\n\n");
-        buf.append(str);
-        // std::cout << buf << std::endl;
+        res = buf;
+        return;
     }
     else
     {
-        // if(status == 200)
-        //     status = 404;
+        if(status == 200)
+            status = 404;
         // //std::ifstream f("/Users/mfagri/Desktop/Webserv/pages/not_found.html");
         // // int i = open("/Users/mfagri/Desktop/Webserv/pages/not_found.html",O_RDWR,777);
         // // read(i,ss,3000);
@@ -355,7 +321,12 @@ void Response::ft_creat_file(std::string root,int ok)
         // //std::string final = v+"\n\n"+str;
         // // ft_strlcat(buf,final.c_str(),3000);
         //there is a segfault here to be tested by mfagri
-        buf.append("HTTP/1.1 404 Not found\nContent-Type: text/html\nContent-Length: 13\n\n404 Not found");
+        buf.append("HTTP/1.1");
+        buf.append(errormsg[status]);
+        buf.append("\nContent-Type: text/html\nContent-Length: ");
+        buf.append(ft_itoa(errormsg[status].length()));
+        buf.append("\n\n");
+        buf.append(errormsg[status]);
     }
     res = buf;
     close(i);

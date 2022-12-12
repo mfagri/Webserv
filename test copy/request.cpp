@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ntanjaou <ntanjaou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:06:24 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/04 19:35:58 by ntanjaou         ###   ########.fr       */
+/*   Updated: 2022/12/12 21:23:28 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ Request::Request(std::string buf)
     //header_fields
     //body
     // char *buf = strdup((const char *)b.c_str());
-    max_body = 5000000;
+    max_body = 100000;
     // max_body = 1024;
     status_code = 200;
     chunked = 0;
@@ -104,7 +104,7 @@ Request::Request(std::string buf)
     if(parse_headers(request_header))
     {
         printf("%d\n",status_code);
-        status_code = 200;
+        //status_code = 200;
         printf("in headres\n");
         return;
     }
@@ -398,7 +398,7 @@ int Request::ft_parse_body()
                 if(ft_strnstr(boundraies[i].c_str(),"filename=",strlen(boundraies[i].c_str())))
                 {
                     std::string filename = boundraies[i].substr(boundraies[i].find("filename=") + 10, boundraies[i].substr(boundraies[i].find("filename=") + 10).find("\r\n") - 1);
-                    std::ofstream file( "./files/" + filename);
+                    std::ofstream file( "../links/upload/" + filename);
                     std::string content = boundraies[i].substr(boundraies[i].find("Content-Type:"));
                     std::string content2 = content.substr(content.find("\r\n\r\n") + 4);
                     file << content2;
@@ -434,7 +434,7 @@ int Request::ft_parse_body()
         //     std::cout << Body[i];
         // }
         // std::cout << "\n***************\n" << "./files/" + headers["Content-Type"].replace(headers["Content-Type"].find('/'), 1, ".") << std::endl;
-        std::ofstream file("./files/" + headers["Content-Type"].replace(headers["Content-Type"].find('/'), 1, "."));
+        std::ofstream file("../links/upload/" + headers["Content-Type"].replace(headers["Content-Type"].find('/'), 1, "."));
         file << Body;
         file.close();
     }
