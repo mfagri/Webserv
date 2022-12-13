@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
+/*   By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/25 18:53:30 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/13 18:07:00 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/12/13 21:33:29 by mmardi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -158,7 +158,16 @@ Response::Response(Request &req, std::vector<ServerData> servers)
                             status = 405;
                             ft_creat_file(root,1);
                             return;
-                        }   
+                        } 
+                        if(locations[i].count("return"))
+                        {
+                            status = 301;
+                            std::cout << "ssd";
+                            std::string ret = locations[i].at("return").substr(locations[i].at("return").find("/"));
+                            std::cout<<ret<<std::endl;
+                            ft_creat_file(ret,1);
+                            return;
+                        }  
                         if (locations[i].count("autoindex")) {
                             if (locations[i].at("autoindex") == "on"){
                                 _autoindex = true;
@@ -353,6 +362,15 @@ void Response::ft_creat_file(std::string root,int ok)
     }
     else
     {
+        if(status == 301)
+        {
+            puts("imhere");
+            res = "HTTP/1.1 301 Moved Permanently\nLocation: ";
+            res.append(root);
+            res.append("\n");
+            // res.append("\r\n\r\n\r\n");
+            return;
+        }
         if(status == 200)
             status = 404;
         // std::ifstream f(); //taking file as inputstream
