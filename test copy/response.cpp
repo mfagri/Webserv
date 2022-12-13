@@ -6,7 +6,7 @@
 /*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/25 18:53:30 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/12 21:22:27 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/12/13 18:07:00 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ Response::Response(Request &req, std::vector<ServerData> servers)
 {
     reqheaders = req.get_headers();
     status = req.get_status_code();
-    std::cout<<status<<std::endl;
+    //\std::cout<<status<<std::endl;
     ServerData sv;
     int port = atoi(reqheaders["Host"].substr(reqheaders["Host"].find(":")+1).c_str());
     //std::cout<<"{"<<reqheaders["Host"].substr(reqheaders["Host"].find(":")+1)<<"}"<<std::endl;
@@ -65,17 +65,23 @@ Response::Response(Request &req, std::vector<ServerData> servers)
     std::string root = sv.getRoot();
     std::vector<std::map<std::string,std::string> > locations = sv.getLocations();
     uri = req.get_uri();
-    std::cout << uri<<std::endl;
-    std::string errors[6] = {"404","400","501","505","411","431"};
-    std::string msgs[6] = {"404 Not found",
+    //std::cout << uri<<std::endl;
+    std::string errors[11] = {"404","400","501","505","411","431","405","409","202","204","401"};
+    std::string msgs[11] = {"404 Not found",
                            "400 Bad Request",
                            "501 Not Implemented",
                            "505 HTTP Version Not Supported",
                            "411 Length Required",
-                           "431 Request Header Fields Too Large"};
+                           "431 Request Header Fields Too Large",
+                           "405 Method Not Allowed",
+                           "409 Conflict",
+                           "202 Accepted",
+                           "204 No Content",
+                           "401 Unauthorized"
+                           };
 
     int i = 0;
-    while(i < 6)
+    while(i < 11)
     {
         errormsg.insert(std::pair<int,std::string>(atoi(errors[i].c_str()),msgs[i]));
         i++;
@@ -83,82 +89,126 @@ Response::Response(Request &req, std::vector<ServerData> servers)
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     if(req.get_methode() == "GET" || req.get_methode() == "POST")
     {
-    if(status != 200)
-    {
- 
-        ft_creat_file(root,1);
-        return;
-    }
-    else
-    {
-        size_t ns = 0;
-        int l = 0;
-        std::string url = get_location_uri(uri);
-        std::cout<<"-------"+url<<std::endl;
-        while (ns < locations.size())
+        if(status != 200)
         {
-            l = 0;
-           if (locations[ns].at("location-path") == url){
-                l = 1;
-                break;
-           }
-           ns++;
-        }
-        if(!l)
-        {
-            std::string file = root + uri;
-            std::cout << file << std::endl;
-            puts("here");
-            
-            if(opendir(file.c_str()))
-            {
-                _autoindex = true;
-                ft_creat_file(file,0);
-                return;
-                
-            }
-            if(access(file.c_str(), F_OK) == 0)
-            {
-                ft_creat_file(file,0);
-                return ;
-            }
-            ft_creat_file(file,0);
+        
+            ft_creat_file(root,1);
             return;
         }
         else
         {
-            std::string uri1 = uri;
-            std::string url = get_location_uri(uri1);
-            int index = uri1.find(url, 0); 
-            uri1.erase(index, url.length());
-            std::cout <<"{" +url+"}" <<  std::endl;
-            for (size_t i = 0; i < locations.size(); i++)
+            size_t ns = 0;
+            int l = 0;
+            std::string url = get_location_uri(uri);
+            //std::cout<<"-------"+url<<std::endl;
+            while (ns < locations.size())
             {
-                if(locations[i].at("location-path") == url)
-                {
-                    std::cout << locations[i].at("root")+uri1 << std::endl;
-                    if (locations[i].count("autoindex")) {
-                        if (locations[i].at("autoindex") == "on"){
-                            _autoindex = true;
-                        }
-                    }
-                    if (locations[i].count("index") && !_autoindex)
-                            uri1 += "/" +locations[i].at("index");
-                    ft_creat_file(locations[i].at("root")+uri1,0);
+                l = 0;
+               if (locations[ns].at("location-path") == url){
+                    l = 1;
                     break;
-                }
+               }
+               ns++;
             }
-            
+            if(!l)
+            {
+                std::string file = root + uri;
+                //std::cout << file << std::endl;               
+                if(opendir(file.c_str()))
+                {
+                    _autoindex = true;
+                    ft_creat_file(file,0);
+                    return;
+                    
+                }
+                if(access(file.c_str(), F_OK) == 0)
+                {
+                    ft_creat_file(file,0);
+                    return ;
+                }
+                ft_creat_file(file,0);
+                return;
+            }
+            else
+            {
+                
+                std::string uri1 = uri;
+                std::string url = get_location_uri(uri1);
+                int index = uri1.find(url, 0); 
+                uri1.erase(index, url.length());
+                //std::cout <<"{" +url+"}" <<  std::endl;
+                for (size_t i = 0; i < locations.size(); i++)
+                {
+                    if(locations[i].at("location-path") == url)
+                    {
+                       // std::cout << locations[i].at("root")+uri1 << std::endl;
+                        if(locations[i].at("allow_methods").empty())
+                        {
+                            methodes = sv.getMethods();
+                        }
+                        else
+                        {
+                            char **s = ft_split(locations[i].at("allow_methods").c_str(),' ');
+                            l = 0;
+                            while (s[l])
+                                methodes.push_back(s[l++]);
+                        }
+                        if(allow_methode(req.get_methode()))
+                        {
+                            status = 405;
+                            ft_creat_file(root,1);
+                            return;
+                        }   
+                        if (locations[i].count("autoindex")) {
+                            if (locations[i].at("autoindex") == "on"){
+                                _autoindex = true;
+                            }
+                        }
+                        if (locations[i].count("index") && !_autoindex)
+                                uri1 += "/" +locations[i].at("index");
+                        
+                        ft_creat_file(locations[i].at("root")+uri1,0);
+                        break;
+                    }
+                }
+                
+            }
         }
-    }
-   
     }
     else
     {
-        puts("jjjjjjjjlll");
+        std::string is_allow = get_location_uri(uri);
+        //  std::cout<<root<<std::endl;
+        //  std::cout<<uri<<std::endl;
+        if(is_allow != "/upload")
+        {
+            status = 409;
+            ft_creat_file("bad",1);
+            return;
+        }
         std::string h = root + uri;
-        std::cout<<h<<std::endl;
-        remove(h.c_str());
+        if(opendir(h.c_str()) != NULL)
+        {
+            status = 401;
+            //401 Unauthorized
+            ft_creat_file("bad",1);
+            return;
+        }
+        else
+        {
+            if(remove(h.c_str()) == 0)
+            {
+                status = 202;
+                ft_creat_file("good",1);//202 Accepted
+            }
+            else
+            {
+                status = 204;
+                ft_creat_file("bad",1);//204 No Content
+            }
+            return;
+        }
+        // std::cout<<h<<std::endl;
     }
     
         
@@ -248,7 +298,7 @@ void Response::ft_creat_file(std::string root,int ok)
 {
     std::string buf;
     int i = open(root.c_str(),O_RDWR);
-    std::cout << root << i <<std:: endl;
+    //std::cout << root << i <<std:: endl;
     std::string str;
     if(i != -1 && ok == 0)
     {
@@ -278,6 +328,7 @@ void Response::ft_creat_file(std::string root,int ok)
         buf.append("\n\n");
         buf.append(str);
         res = buf;
+        close(i);
         return;
     }
     else if (_autoindex && opendir(root.c_str()))
@@ -297,40 +348,34 @@ void Response::ft_creat_file(std::string root,int ok)
         buf.append(body);
         body.clear();
         res = buf;
+        close(i);
         return;
     }
     else
     {
         if(status == 200)
             status = 404;
-        // //std::ifstream f("/Users/mfagri/Desktop/Webserv/pages/not_found.html");
-        // // int i = open("/Users/mfagri/Desktop/Webserv/pages/not_found.html",O_RDWR,777);
-        // // read(i,ss,3000);
-        // str = ft_generat_html();
-        // memset(buf,0,3000);
-        // strcpy(buf,"HTTP/1.1 ");
-        // strcat(buf,ft_itoa(404));
-        // strcat(buf," OK\nDate: Thu, 24 Nov 2022 14:37:49 GMT\nContent-Type: text/html\nContent-Length: "); //9\n\n"
-        // int lenght;
-        // lenght = str.length();
-        // strcat(buf,ft_itoa(lenght));
-        // //std::cout<<"lenght:"<<lenght<<std::endl;
-        // //std::string v = ft_itoa(lenght);
-        // strcat(buf,"\n\n");
-        // strcat(buf,(const char *)str.c_str());
-        // //std::string final = v+"\n\n"+str;
-        // // ft_strlcat(buf,final.c_str(),3000);
-        //there is a segfault here to be tested by mfagri
-        buf.append("HTTP/1.1");
+        // std::ifstream f(); //taking file as inputstream
+        // std::string str;
+        // if(f) {
+        //     std::ostringstream ss;
+        //     ss << f.rdbuf(); // reading data
+        //     str = ss.str();
+        // }
+        time_t now = time(0); // get current dat/time with respect to system
+        char *dt = ctime(&now);
+        buf.append("HTTP/1.1 ");
         buf.append(errormsg[status]);
-        buf.append("\nContent-Type: text/html\nContent-Length: ");
-        buf.append(ft_itoa(errormsg[status].length()));
+        buf.append("\nDate: ");
+        buf.append(dt);
+        buf.append("Content-Type: text/html\nContent-Length: ");
+        buf.append(ft_itoa(errormsg[status].length()));//length
         buf.append("\n\n");
-        buf.append(errormsg[status]);
+        buf.append(errormsg[status]);//body
+        res = buf;
+        close(i);
+        return;
     }
-    res = buf;
-    close(i);
-   // std::cout<<res<<std::endl;
 }
 
 std::string Response::get_res()

@@ -6,7 +6,7 @@
 /*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:06:24 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/12 21:23:28 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/12/13 18:11:00 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ Request::Request(std::string buf)
     //header_fields
     //body
     // char *buf = strdup((const char *)b.c_str());
-    max_body = 100000;
+    max_body = 500000;
     // max_body = 1024;
     status_code = 200;
     chunked = 0;
@@ -98,21 +98,16 @@ Request::Request(std::string buf)
        Body = buf.substr(buf.find("\r\n\r\n"));
     if(parse_request_line(request_line))
     {
-        printf("in line\n");
-        return ;
+        return;
     }
     if(parse_headers(request_header))
     {
-        printf("%d\n",status_code);
-        //status_code = 200;
-        printf("in headres\n");
         return;
     }
     if(in)
     {
         if(chunked)
         {
-            puts("fdsfdffdsfdfdfdsfdsfdsfdsfdsfdsfadafdf");
             ft_chunked();
         }
         ft_parse_body();
