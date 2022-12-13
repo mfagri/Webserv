@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ntanjaou <ntanjaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 17:34:23 by mmardi            #+#    #+#             */
-/*   Updated: 2022/12/12 02:08:05 by mmardi           ###   ########.fr       */
+/*   Updated: 2022/12/13 18:39:17 by ntanjaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,20 +21,11 @@ int main(int ac, char **av) {
     }
     try
     {
-        
         Parser parser(av);
         std::vector<ServerData> servers;
         servers = parser.getServers();
-        // std::vector<std::map<std::string, std::string> > locations;
-        // locations = servers[0].getLocations();
-        // std::cout << locations[0].at("root") << std::endl;
-        // exit(1);
         DIY_server sv(servers);
         sv.launch_serv();
-        // std::vector<std::map<std::string, std::string> > locations = servers[0].getLocations();
-        // std::cout << locations.size() << std::endl;  
-        // std::cout << locations[0].at("location-path") << std::endl;  
-        // std::cout << locations[0].at("upload_enable") << std::endl;  
     }
     catch(const std::exception& e)
     {  

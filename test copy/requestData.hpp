@@ -16,6 +16,7 @@ private:
     int rd_numdata_readed;
     int rd_numdata_sended;
     size_t rd_req_len;
+    
 public:
     DIY_req_data();
     ~DIY_req_data() {};

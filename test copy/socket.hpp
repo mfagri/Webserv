@@ -10,6 +10,7 @@ private:
     int socket_FD;
     struct sockaddr_in address_sk;
     int address_sk_len;
+
 public:
     DIY_socket();
     ~DIY_socket();
@@ -20,6 +21,5 @@ public:
     int get_sk() const;
     struct sockaddr_in get_adr_sk() const;
 };
-
 
 #endif
