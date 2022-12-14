@@ -6,7 +6,7 @@
 /*   By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/25 18:53:17 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/11 19:03:38 by mmardi           ###   ########.fr       */
+/*   Updated: 2022/12/14 00:50:30 by mmardi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ class Response{
         std::string get_res();
         char *ft_generat_html();
         int allow_methode(std::string m);
+        std::string getExtension(std::string path);
         std::string getAutoIndexBody(std::string root);
 };
 int find_option(char *s[],std::string op);

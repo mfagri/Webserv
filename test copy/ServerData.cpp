@@ -6,7 +6,7 @@
 /*   By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/20 23:00:22 by mmardi            #+#    #+#             */
-/*   Updated: 2022/12/12 01:29:12 by mmardi           ###   ########.fr       */
+/*   Updated: 2022/12/15 00:01:44 by mmardi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,13 +43,11 @@ int ServerData::setData(std::map<std::string, std::string> server, std::vector<s
 			exit (1);
 		}
 		port = std::stoi(p);
-		// std::cout << port << std::endl;
 	}
 	if (server.count("host") > 0) 
 	{
 		std::string p = strtok((char *)server.at("host").c_str(), s);
 		host = p;
-		// std::cout << host << std::endl;
 	}
 	if (server.count("server_name") > 0) 
 	{
@@ -57,7 +55,6 @@ int ServerData::setData(std::map<std::string, std::string> server, std::vector<s
 		char *name = strtok((char *)names.c_str(), s);
 		while (name)
 		{
-		// std::cout << server.at("server_name") << std::endl;
 			server_names.push_back(name);
 			name = strtok(NULL, s);
 		}
@@ -71,12 +68,10 @@ int ServerData::setData(std::map<std::string, std::string> server, std::vector<s
 				exit (1);
 			}
 			body_size = std::stoi(num);
-		// std::cout << body_size << std::endl;
 	}
 	if (server.count("methods") > 0)
 	{
 		std::string m = server.at("methods");
-		// std::cout << m << std::endl;
 		char *method = strtok((char *)m.c_str(), "	 ");
 		while (method) 
 		{
@@ -112,12 +107,10 @@ int ServerData::setData(std::map<std::string, std::string> server, std::vector<s
 	if (server.count("index")) 
 	{
 		index = strtok((char *)server.at("index").c_str(), s);
-		// std::cout << index << std::endl;
 	}
 	if (server.count("error_pages") > 0) 
 	{
 		error_pages = strtok((char *)server.at("error_pages").c_str(), s);
-		// std::cout << error_pages << std::endl;
 	}
 	
 	for (size_t i = 0; i < locations.size(); i++)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
+/*   By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/25 18:53:30 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/14 21:04:13 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/12/15 00:12:55 by mmardi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,13 +47,9 @@ Response::Response(Request &req, std::vector<ServerData> servers)
 {
     reqheaders = req.get_headers();
     status = req.get_status_code();
-    //\std::cout<<status<<std::endl;
     ServerData sv;
     int port = atoi(reqheaders["Host"].substr(reqheaders["Host"].find(":")+1).c_str());
-    //std::cout<<"{"<<reqheaders["Host"].substr(reqheaders["Host"].find(":")+1)<<"}"<<std::endl;
-    //std::cout<<port<<std::endl;
     size_t k = 0;
-    // sv.getServerNames();
     while(k < servers.size())
     {
         if(port == servers[k].getPort())
@@ -66,7 +62,6 @@ Response::Response(Request &req, std::vector<ServerData> servers)
     std::string root = sv.getRoot();
     std::vector<std::map<std::string,std::string> > locations = sv.getLocations();
     uri = req.get_uri();
-    //std::cout << uri<<std::endl;
     std::string errors[11] = {"404","400","501","505","411","431","405","409","202","204","401"};
     std::string msgs[11] = {"404 Not found",
                            "400 Bad Request",
@@ -87,7 +82,6 @@ Response::Response(Request &req, std::vector<ServerData> servers)
         errormsg.insert(std::pair<int,std::string>(atoi(errors[i].c_str()),msgs[i]));
         i++;
     }
-    ///////////////////////////////////////////////////////////////////////////////////////////////////
     if(req.get_methode() == "GET" || req.get_methode() == "POST")
     {
         if(status != 200)
@@ -101,22 +95,21 @@ Response::Response(Request &req, std::vector<ServerData> servers)
             size_t ns = 0;
             int l = 0;
             std::string url = get_location_uri(uri);
-            //std::cout<<"-------"+url<<std::endl;
-            if(strrchr(uri.c_str(),'.'))
+            if (strrchr(uri.c_str(), '.'))
             {
-                std::string cgis = strrchr(uri.c_str(),'.');
-                if(cgis == ".py" || cgis == ".php")
+                std::string cgis = strrchr(uri.c_str(), '.');
+                if (cgis == ".py" || cgis == ".php")
                 {
-                    cgis = "*"+cgis;
-                    std::cout<<cgis<<std::endl;
+                    cgis = "*" + cgis;
+                    std::cout << cgis << std::endl;
                     i = 0;
-                    while(i < locations.size())
+                    while (i < locations.size())
                     {
-                        if(locations[i].at("location-path") == cgis)
+                        if (locations[i].at("location-path") == cgis)
                         {
-                            std::cout<<"headersssss\n";
-                            //allowed methode
-                            ///handel cgi
+                            std::cout << "headersssss\n";
+                            // allowed methode
+                            /// handel cgi
                             return;
                         }
                         i++;
@@ -136,7 +129,6 @@ Response::Response(Request &req, std::vector<ServerData> servers)
             if(!l)
             {
                 std::string file = root + uri;
-                //std::cout << file << std::endl;               
                 if(opendir(file.c_str()))
                 {
                     _autoindex = true;
@@ -159,12 +151,10 @@ Response::Response(Request &req, std::vector<ServerData> servers)
                 std::string url = get_location_uri(uri1);
                 int index = uri1.find(url, 0); 
                 uri1.erase(index, url.length());
-                //std::cout <<"{" +url+"}" <<  std::endl;
                 for (size_t i = 0; i < locations.size(); i++)
                 {
                     if(locations[i].at("location-path") == url)
                     {
-                       // std::cout << locations[i].at("root")+uri1 << std::endl;
                         if(locations[i].at("allow_methods").empty())
                         {
                             methodes = sv.getMethods();
@@ -210,8 +200,6 @@ Response::Response(Request &req, std::vector<ServerData> servers)
     else
     {
         std::string is_allow = get_location_uri(uri);
-        //  std::cout<<root<<std::endl;
-        //  std::cout<<uri<<std::endl;
         if(is_allow != "/upload")
         {
             status = 409;
@@ -222,7 +210,6 @@ Response::Response(Request &req, std::vector<ServerData> servers)
         if(opendir(h.c_str()) != NULL)
         {
             status = 401;
-            //401 Unauthorized
             ft_creat_file("bad",1);
             return;
         }
@@ -240,7 +227,6 @@ Response::Response(Request &req, std::vector<ServerData> servers)
             }
             return;
         }
-        // std::cout<<h<<std::endl;
     }
     
         
@@ -251,12 +237,23 @@ int Response::allow_methode(std::string m)
     size_t i = 0;
     while(i < methodes.size())
     {
-        
         if(m == methodes[i])
             return (0);
         i++;
     }
     return(1);
+}
+
+std::string Response::getExtension(std::string path) {
+    
+      std::string ex;
+      int s = path.length() - 1;
+      while (s >= 0 && path[s] != '.')
+      {
+        ex.insert(0,1,path[s]);
+        s--;
+      }
+      return ex;
 }
 
 int find_option(char **s,std::string op)
@@ -273,7 +270,6 @@ int find_option(char **s,std::string op)
 }
 std::string add_content_type(std::string type)
 {
-
     if(type == "png" || type == "jpeg" || type == "jpj")
        return ("image/"+type);
     else if (type == "ico")
@@ -282,7 +278,7 @@ std::string add_content_type(std::string type)
        return ("text/"+type);
     else if (type == "json" || type == "pdf")
         return "application/"+type;
-        else if (type == "mp4")
+    else if (type == "mp4")
         return "video/mp4";
     return ("text/plain");
         
@@ -292,29 +288,61 @@ std::string Response::getAutoIndexBody(std::string root) {
     DIR *dir;
     struct dirent *dent;
     dir = opendir(root.c_str());// this part
-    // std::cout << root ;
     std::string body = "<!DOCTYPE html>\n\
                         <html lang=\"en\">\n\
-                        <style>ul{background-color: cyan; margin:50px; padding:150px}li{list-style:none; margin:30px;} li a{text-decoration:none; color:black;}</style>\n\
+                        <style> \
+                        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Montserrat:wght@500&display=swap'); \
+                        * {	\
+                            font-size:20px; \
+                        } \
+                        ul { \
+                            border-top: solid black 1px; \
+                            border-bottom: solid black 1px; \
+                            margin:50px; \
+                            padding:150px;\
+                        } \
+                        li{ \
+                            list-style:none; \
+                            margin:30px; \
+                        } li a{ \
+                            text-decoration:none; \
+                            color:black; \
+                        } \
+                        li { \
+                            display: flex; \
+                        } \
+                        img { \
+                          width:25px;  \
+                          margin-right: 5px; \
+                        }\
+                        </style>\n\
                         <head>\n\
-            	            <meta charset=\"UTF-8\">\n\
-	                <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n\
+                            <meta charset =\"UTF-8\">\n\
+	                        <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n\
                         	<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n\
+                            <script src=\"https://kit.fontawesome.com/cb1896687a.js\" crossorigin=\"anonymous\"></script>\n\
                         	<title>Root</title>\n\
                         </head>\n\
-                     <body>\n\
-	                      <ul>";
+                        <body>\n\
+                       <ul> ";
     if (dir != NULL)
     {
        while ((dent = readdir(dir)) != NULL) {
             std::string url;
+            std::string icon;
             std::string fname = dent->d_name;
             if (uri[0] == '/' && uri.length() == 1)   
                 url = fname;
             else 
                 url = uri + "/" + fname;
             if (fname != "." && fname != "..") {
-                std::string str= "\n<h1><a href=\"" + url +"\">" + fname +"</a></h1>\n";
+                std::string url1 = root +"/" +url;
+                std::cout << url1 << std::endl;
+                if (opendir(url1.c_str()))
+                    icon = "<img src=\"https://cdn-icons-png.flaticon.com/512/3767/3767084.png\" />";
+                else
+                    icon = "<img src=\"https://cdn-icons-png.flaticon.com/512/2965/2965335.png\" />";
+                std::string str = "\n<li>" + icon + "<a href=\"" + url + "\">" + fname + "</a></li>\n";
                 body.append(str);
             }
        }
@@ -323,14 +351,12 @@ std::string Response::getAutoIndexBody(std::string root) {
     body.append("	</ul>\n\
                     </body>\n\
                     </html>");
-   // std::cout << body << std::endl;
     return body;
 }
 void Response::ft_creat_file(std::string root,int ok)
 {
     std::string buf;
     int i = open(root.c_str(),O_RDWR);
-    //std::cout << root << i <<std:: endl;
     std::string str;
     if(i != -1 && ok == 0)
     {
@@ -342,17 +368,14 @@ void Response::ft_creat_file(std::string root,int ok)
             str = ss.str();
         }
         time_t now = time(0); // get current dat/time with respect to system  
-  
         char* dt = ctime(&now); // convert it into string  
         buf.append("HTTP/1.1 ");
         buf.append(ft_itoa(status));
         buf.append(" OK\nDate: ");
         buf.append(dt);
-        strtok((char*)root.c_str(), ".");
-        std::string st=  strtok(NULL, ".");
+        std::string st =  getExtension(root);
         std::string rep = "Content-Type: $1\nContent-Length: ";
         rep.replace(14,2,add_content_type(st));
-        //std::cout << rep << std::endl;
         buf.append(rep); //9\n\n"
         int lenght;
         lenght = str.length();
@@ -391,18 +414,10 @@ void Response::ft_creat_file(std::string root,int ok)
             res = "HTTP/1.1 301 Moved Permanently\nLocation: ";
             res.append(root);
             res.append("\n");
-            // res.append("\r\n\r\n\r\n");
             return;
         }
         if(status == 200)
             status = 404;
-        // std::ifstream f(); //taking file as inputstream
-        // std::string str;
-        // if(f) {
-        //     std::ostringstream ss;
-        //     ss << f.rdbuf(); // reading data
-        //     str = ss.str();
-        // }
         time_t now = time(0); // get current dat/time with respect to system
         char *dt = ctime(&now);
         buf.append("HTTP/1.1 ");
@@ -429,13 +444,10 @@ char *Response::ft_generat_html()
     char *infile;
     infile = strdup("<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <title>Document</title>\
         \n</head>\n<body>\n  <h1> ");
-        //Hiiiiii  </h1>\n</body>\n</html>\n");
-    //puts(errormsg[404].c_str());
     char *msg = strdup(errormsg[status].c_str());
     char *endhtml = strdup("  </h1>\n</body>\n</html>\n");
     infile = ft_strjoin(infile,msg);
     infile = ft_strjoin(infile,endhtml);
-    //puts(infile);
     free(msg);
     free(endhtml);
     return (infile);

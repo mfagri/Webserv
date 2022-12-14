@@ -6,7 +6,7 @@
 /*   By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/18 15:33:32 by mmardi            #+#    #+#             */
-/*   Updated: 2022/12/13 19:15:01 by mmardi           ###   ########.fr       */
+/*   Updated: 2022/12/14 01:25:59 by mmardi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -173,7 +173,7 @@ bool    Parser::checkSemicolon(std::string line)
 
 void Parser::checkElement(std::string key) {
 
-    std::string arr[7] = {"listen", "host", "server_names", "error", "methods", "root", "body_size"};
+    std::string arr[7] = {"listen", "host", "server_names", "error_pages", "methods", "root", "body_size"};
     long unsigned int i = 0;
     while (i < 7 && arr[i] != key) {
         i++;
