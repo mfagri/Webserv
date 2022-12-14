@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/25 18:53:30 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/13 21:33:29 by mmardi           ###   ########.fr       */
+/*   Updated: 2022/12/14 21:04:13 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,7 @@ Response::Response(Request &req, std::vector<ServerData> servers)
     //std::cout<<"{"<<reqheaders["Host"].substr(reqheaders["Host"].find(":")+1)<<"}"<<std::endl;
     //std::cout<<port<<std::endl;
     size_t k = 0;
+    // sv.getServerNames();
     while(k < servers.size())
     {
         if(port == servers[k].getPort())
@@ -80,7 +81,7 @@ Response::Response(Request &req, std::vector<ServerData> servers)
                            "401 Unauthorized"
                            };
 
-    int i = 0;
+    size_t i = 0;
     while(i < 11)
     {
         errormsg.insert(std::pair<int,std::string>(atoi(errors[i].c_str()),msgs[i]));
@@ -101,6 +102,28 @@ Response::Response(Request &req, std::vector<ServerData> servers)
             int l = 0;
             std::string url = get_location_uri(uri);
             //std::cout<<"-------"+url<<std::endl;
+            if(strrchr(uri.c_str(),'.'))
+            {
+                std::string cgis = strrchr(uri.c_str(),'.');
+                if(cgis == ".py" || cgis == ".php")
+                {
+                    cgis = "*"+cgis;
+                    std::cout<<cgis<<std::endl;
+                    i = 0;
+                    while(i < locations.size())
+                    {
+                        if(locations[i].at("location-path") == cgis)
+                        {
+                            std::cout<<"headersssss\n";
+                            //allowed methode
+                            ///handel cgi
+                            return;
+                        }
+                        i++;
+                    }
+                    i = 0;
+                }
+            }
             while (ns < locations.size())
             {
                 l = 0;
