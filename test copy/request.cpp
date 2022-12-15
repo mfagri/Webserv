@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:06:24 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/15 19:08:48 by mmardi           ###   ########.fr       */
+/*   Updated: 2022/12/15 22:34:56 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,15 +63,14 @@ Request::Request(std::string buf)
     //request_line
     //header_fields
     //body
-    puts("Sui");
+    //puts("Sui");
     // char *buf = strdup((const char *)b.c_str());
-    max_body = 500000;
+    max_body = 5000000;
     // max_body = 1024;
     status_code = 200;
     chunked = 0;
     if(buf[0] == '\0')
     {
-        puts("fefe");
         return;
     }
     int in = 0;
@@ -81,7 +80,8 @@ Request::Request(std::string buf)
     {
         if(buf[i] == '\r' && buf[i + 1] == '\n' && buf[i+2] == '\r' && buf[i + 3] == '\n')
         {
-            if(buf[i + 4])
+            // puts("ssss");
+            // if(buf[i + 4])
                 in = 1;
             break;
         }
@@ -96,24 +96,30 @@ Request::Request(std::string buf)
     // puts("**************************");
     //////if body in request //////////////
     if(in)
+    {
        Body = buf.substr(buf.find("\r\n\r\n"));
+    }
     if(parse_request_line(request_line))
     {
+        // puts("line");
         return;
     }
     if(parse_headers(request_header))
     {
+        // puts("header");
         return;
     }
     if(in)
     {
+        if(Body.size() < 5)
+            return;
         if(chunked)
         {
             ft_chunked();
         }
         ft_parse_body();
     }
-    puts("here");
+    return;
     ////////////////////////////////////////
     //////////////////////////////////////////////////////////////
     // std::cout<<"{"<<methode<<"}"<<std::endl;
@@ -361,9 +367,9 @@ int Request::ft_chunked(void)
 // }
 int Request::ft_parse_body()
 {
-    //puts("hnaaa");//for binary
     if(strncmp(headers["Content-Type"].c_str(),"multipart/form-data; boundary",strlen("multipart/form-data; boundary")) == 0)
     {
+    // puts("hnaaa");//for binary
         std::vector<std::string> boundraies;
         std::string b;
         std::string test;
@@ -372,6 +378,7 @@ int Request::ft_parse_body()
         b = "--";
         b += bounday;
         
+        //std::cout << "BODY : " << Body;
         Body = Body.substr(Body.find(b));
 		unsigned long j = 0;
 		while (j < Body.length())
@@ -389,13 +396,18 @@ int Request::ft_parse_body()
 		{
             if(boundraies[i] == "-\r\n")
             {
+                std::cout<<boundraies[i]<<std::endl;
                 boundraies.erase(boundraies.begin() + i);
             }
 			else
             {
-                if(ft_strnstr(boundraies[i].c_str(),"filename=",strlen(boundraies[i].c_str())))
+                // std::string j = boundraies[i].substr(boundraies[i].find("filename=") + 10, boundraies[i].substr(boundraies[i].find("filename=") + 10).find("\r\n") - 1);
+                // std::cout<<j<<std::endl;
+                if(boundraies[i].find("filename=") != std::string::npos)
                 {
+                    //puts ("ffff");
                     std::string filename = boundraies[i].substr(boundraies[i].find("filename=") + 10, boundraies[i].substr(boundraies[i].find("filename=") + 10).find("\r\n") - 1);
+                    //std::cout<<filename<<std::endl;
                     std::ofstream file( "../links/upload/" + filename);
                     std::string content = boundraies[i].substr(boundraies[i].find("Content-Type:"));
                     std::string content2 = content.substr(content.find("\r\n\r\n") + 4);
@@ -422,9 +434,15 @@ int Request::ft_parse_body()
     }
     else
     {
-        size_t pos = Body.find('\n') + 3;
-        Body=Body.substr(pos);
-        // std::cout << "************************\n";
+        if(Body.empty())
+            return (0);
+        if((Body[0] == '\r' || Body[0] == '\n' ) && !chunked )
+        {
+            if(Body.size() < 5)
+                return(0);
+            size_t pos = Body.find('\n') + 3;
+            Body=Body.substr(pos);
+        }
         // for (int i = 0; i != 100; i++)
         // {
         //     // if( Body[i] == '\n')
