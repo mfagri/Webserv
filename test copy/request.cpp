@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
+/*   By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:06:24 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/13 18:11:00 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/12/15 16:22:42 by mmardi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -304,10 +304,10 @@ int Request::ft_chunked(void)
 {
     std::string sbody;
     int k = 0;
-    int i = 0;
+    size_t i = 0;
     i = 0;
     k = 0;
-    while(Body[i])
+    while(i < Body.size())
     {
         std::string integr;
         if((Body[i] =='\r' && Body[i+1] == '\n'))
