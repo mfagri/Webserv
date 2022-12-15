@@ -6,7 +6,7 @@
 /*   By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/25 18:53:30 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/15 01:17:38 by mmardi           ###   ########.fr       */
+/*   Updated: 2022/12/15 11:38:31 by mmardi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -244,14 +244,14 @@ int Response::allow_methode(std::string m)
 
 std::string Response::getExtension(std::string path) {
     
-      std::string ex;
-      int s = path.length() - 1;
-      while (s >= 0 && path[s] != '.')
-      {
+    std::string ex;
+    int s = path.length() - 1;
+    while (s >= 0 && path[s] != '.')
+    {
         ex.insert(0,1,path[s]);
         s--;
-      }
-      return ex;
+    }
+    return ex;
 }
 
 int find_option(char **s,std::string op)
@@ -285,8 +285,6 @@ std::string add_content_type(std::string type)
 std::string Response::getAutoIndexBody(std::string root) {
     DIR *dir;
     struct dirent *dent;
-    std::cout << root + "----" << std::endl;
-    std::cout << uri + "----" << std::endl;
     dir = opendir(root.c_str());// this part
     std::string body = "<!DOCTYPE html>\n\
                         <html lang=\"en\">\n\
@@ -332,12 +330,11 @@ std::string Response::getAutoIndexBody(std::string root) {
             std::string icon;
             std::string fname = dent->d_name;
             if (uri[0] == '/' && uri.length() == 1)   
-                url =  "/" +fname;
+                url =  fname;
             else 
                 url = uri + "/" + fname;
             if (fname != "." && fname != "..") {
                 std::string url1 = root + "/" + fname;;
-                std::cout << url1 << std::endl;
                 if (opendir(url1.c_str()))
                     icon = "<img src=\"https://cdn-icons-png.flaticon.com/512/3767/3767084.png\" />";
                 else
