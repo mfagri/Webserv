@@ -6,7 +6,7 @@
 /*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:06:24 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/15 22:34:56 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/12/15 23:23:23 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ Request::Request(std::string buf)
     //body
     //puts("Sui");
     // char *buf = strdup((const char *)b.c_str());
-    max_body = 5000000;
+    max_body = 50000000;
     // max_body = 1024;
     status_code = 200;
     chunked = 0;
@@ -379,17 +379,24 @@ int Request::ft_parse_body()
         b += bounday;
         
         //std::cout << "BODY : " << Body;
-        Body = Body.substr(Body.find(b));
-		unsigned long j = 0;
-		while (j < Body.length())
-		{
-			j = Body.find(b) + b.length() + 1;
-			if (j > Body.length())
-				break ;
-            boundraies.push_back(Body.substr(j, Body.substr(j).find(b)));
-			Body = Body.substr(j);
-		}
-        
+        // Body = Body.substr(Body.find(b));
+		// unsigned long j = 0;
+		// while (j < Body.length())
+		// {
+		// 	j = Body.find(b) + b.length();
+		// 	if (j > Body.length())
+		// 		break ;
+        //     boundraies.push_back(Body.substr(j, Body.substr(j).find(b)));
+		// 	Body = Body.substr(j);
+		// }
+        for (size_t i = 0, index = -1; true; i++) {
+        index = Body.find(b, index + 1);
+        boundraies.push_back(Body.substr(index + 0, Body.find(b, index + 1) - index));
+        if (boundraies[i].find(b + "--") != Body.npos) {
+            boundraies.pop_back();
+            break ;
+        }
+    }
         size_t i ;
         i = -1;
         while (++i < boundraies.size())
