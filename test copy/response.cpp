@@ -6,7 +6,7 @@
 /*   By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/25 18:53:30 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/15 00:12:55 by mmardi           ###   ########.fr       */
+/*   Updated: 2022/12/15 01:17:38 by mmardi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,8 +108,6 @@ Response::Response(Request &req, std::vector<ServerData> servers)
                         if (locations[i].at("location-path") == cgis)
                         {
                             std::cout << "headersssss\n";
-                            // allowed methode
-                            /// handel cgi
                             return;
                         }
                         i++;
@@ -287,6 +285,8 @@ std::string add_content_type(std::string type)
 std::string Response::getAutoIndexBody(std::string root) {
     DIR *dir;
     struct dirent *dent;
+    std::cout << root + "----" << std::endl;
+    std::cout << uri + "----" << std::endl;
     dir = opendir(root.c_str());// this part
     std::string body = "<!DOCTYPE html>\n\
                         <html lang=\"en\">\n\
@@ -332,11 +332,11 @@ std::string Response::getAutoIndexBody(std::string root) {
             std::string icon;
             std::string fname = dent->d_name;
             if (uri[0] == '/' && uri.length() == 1)   
-                url = fname;
+                url =  "/" +fname;
             else 
                 url = uri + "/" + fname;
             if (fname != "." && fname != "..") {
-                std::string url1 = root +"/" +url;
+                std::string url1 = root + "/" + fname;;
                 std::cout << url1 << std::endl;
                 if (opendir(url1.c_str()))
                     icon = "<img src=\"https://cdn-icons-png.flaticon.com/512/3767/3767084.png\" />";
