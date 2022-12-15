@@ -6,7 +6,7 @@
 /*   By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:06:24 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/15 16:22:42 by mmardi           ###   ########.fr       */
+/*   Updated: 2022/12/15 19:08:48 by mmardi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,7 @@ Request::Request(std::string buf)
     //request_line
     //header_fields
     //body
+    puts("Sui");
     // char *buf = strdup((const char *)b.c_str());
     max_body = 500000;
     // max_body = 1024;
@@ -112,6 +113,7 @@ Request::Request(std::string buf)
         }
         ft_parse_body();
     }
+    puts("here");
     ////////////////////////////////////////
     //////////////////////////////////////////////////////////////
     // std::cout<<"{"<<methode<<"}"<<std::endl;
@@ -238,7 +240,8 @@ int Request::parse_request_line(std::string req)
         {
             char *key = strtok(t[i],"=");
             char *value = strtok(NULL,"\0");
-            query.insert(std::pair<std::string, std::string>(key, value));
+            if (value && key)
+                query.insert(std::pair<std::string, std::string>(key, value));
             i++;
         }
         ft_free2(t);
