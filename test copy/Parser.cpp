@@ -6,7 +6,7 @@
 /*   By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/18 15:33:32 by mmardi            #+#    #+#             */
-/*   Updated: 2022/12/14 01:25:59 by mmardi           ###   ########.fr       */
+/*   Updated: 2022/12/16 18:52:46 by mmardi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,7 @@ bool Parser::checkServer(std::string line)
 
 void Parser::checkElementLocation(std::string key) {
 
-    std::string arr[5] = {"index", "allow_methods", "autoindex", "root", "return"};
+    std::string arr[5] = {"index", "methods", "autoindex", "root", "return"};
     long unsigned int i = 0;
     while (i < 5 && arr[i] != key)
     {
@@ -269,6 +269,17 @@ std::vector<ServerData> Parser::getServers()
         ServerData s;
         s.setData(servers[i], serversLocation[i]);
         servs.push_back(s);
+    }
+    for(size_t i = 0;i < servs.size(); i++)
+    {
+        for (size_t j = i + 1; j < servs.size(); j++)
+        {
+           if (servs[i].getPort() == servs[j].getPort()) {
+                std::cerr << "ERROR: multiple servers with same port\n";
+                exit (1);
+           }
+        }
+        
     }
     return servs;
 }

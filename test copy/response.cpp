@@ -6,7 +6,7 @@
 /*   By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/25 18:53:30 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/15 11:38:31 by mmardi           ###   ########.fr       */
+/*   Updated: 2022/12/16 18:53:02 by mmardi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,13 +153,13 @@ Response::Response(Request &req, std::vector<ServerData> servers)
                 {
                     if(locations[i].at("location-path") == url)
                     {
-                        if(locations[i].at("allow_methods").empty())
+                        if(locations[i].at("methods").empty())
                         {
                             methodes = sv.getMethods();
                         }
                         else
                         {
-                            char **s = ft_split(locations[i].at("allow_methods").c_str(),' ');
+                            char **s = ft_split(locations[i].at("methods").c_str(),' ');
                             l = 0;
                             while (s[l])
                                 methodes.push_back(s[l++]);

@@ -6,7 +6,7 @@
 /*   By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/20 23:00:22 by mmardi            #+#    #+#             */
-/*   Updated: 2022/12/15 00:01:44 by mmardi           ###   ########.fr       */
+/*   Updated: 2022/12/16 19:06:24 by mmardi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ int ServerData::setData(std::map<std::string, std::string> server, std::vector<s
 		for (size_t i = 0; i < methods.size(); i++)
 		{
 			if (methods[i] != "GET" && methods[i] != "POST" && methods[i] != "DELETE") {
-				std::cerr << "ERROR: invalid allowed method \"" + methods[i] + " \"\n" ;
+				std::cerr << "ERROR: invalid allowed method \"" + methods[i] + "\"\n" ;
 				exit (1);
 			}
 		}
@@ -126,6 +126,28 @@ int ServerData::setData(std::map<std::string, std::string> server, std::vector<s
 		else {
 			locations[i].insert(std::pair<std::string, std::string>("root", this->root));
 		}
+		if (!locations[i].count("methods")) {
+			locations[i].insert(std::pair<std::string, std::string>("methods", server.at("methods")));
+		}
+		else {
+			std::string methods = locations[i].at("methods");
+			char *p = strtok((char *)methods.c_str(), " 	");
+			while (p) {
+				if (strcmp(p, "GET") != 0 && strcmp(p, "POST") != 0 && strcmp(p, "DELETE") != 0)
+				{
+					std::cerr << "ERROR: invalide method " <<  p << std::endl;
+					exit (1);
+				}
+				p = strtok(NULL, " 	");
+			}
+		}
+		for (size_t j = 0; j < locations[i].at("methods").size(); j++)
+		{
+			if (locations[i].at("methods")[j] == '\t') {
+				locations[i].at("methods")[j] = ' ';
+			}
+		}
+		
 	}
 	
 	return 1;
