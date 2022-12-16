@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/25 18:53:30 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/16 18:53:02 by mmardi           ###   ########.fr       */
+/*   Updated: 2022/12/16 22:04:37 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,13 +101,14 @@ Response::Response(Request &req, std::vector<ServerData> servers)
                 if (cgis == ".py" || cgis == ".php")
                 {
                     cgis = "*" + cgis;
-                    std::cout << cgis << std::endl;
+                    //std::cout << cgis << std::endl;
                     i = 0;
                     while (i < locations.size())
                     {
                         if (locations[i].at("location-path") == cgis)
                         {
-                            std::cout << "headersssss\n";
+                           // std::cout << "headersssss\n";
+                            launch_cgi(uri,req);
                             return;
                         }
                         i++;

@@ -6,7 +6,7 @@
 /*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:06:24 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/15 23:23:23 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/12/16 20:45:30 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -244,10 +244,14 @@ int Request::parse_request_line(std::string req)
         char **t = ft_split(s_query,'&');
         while(t[i])
         {
+            queryuri += t[i];
+            queryuri += "&";
             char *key = strtok(t[i],"=");
             char *value = strtok(NULL,"\0");
             if (value && key)
+            {
                 query.insert(std::pair<std::string, std::string>(key, value));
+            }
             i++;
         }
         ft_free2(t);
@@ -308,7 +312,10 @@ int Request::get_status_code()
 {
     return (status_code);
 }
-
+std::string Request::get_queryuri()
+{
+    return (queryuri);
+}
 int Request::ft_chunked(void)
 {
     std::string sbody;
@@ -423,11 +430,15 @@ int Request::ft_parse_body()
                 }
                 else
                 {
+                   // std::cout<<boundraies[i]<<std::endl;
                     std::string body3;
-                    names = boundraies[i].substr(0,boundraies[i].find("\r\n"));
-                    body3 = boundraies[i].substr(boundraies[i].find("\r\n"));
+                   // names = boundraies[i].substr(0,boundraies[i].find("\r\n"));
+                    std::string name = boundraies[i].substr(boundraies[i].find("name=") + 6, boundraies[i].substr(boundraies[i].find("name=") + 6).find("\r\n") - 1);
+                    body3 = boundraies[i].substr(boundraies[i].find("\r\n")+2);
+                    body3 = body3.substr(body3.find("\r\n")+2);
+                    // std::cout<<"{"<<name<<"}"<<std::endl;
                     body3 = ft_strtrim(body3.c_str(),"\r\n");
-                    names = ft_strtrim(strrchr(names.c_str(),'='),"\"=");
+                    // std::cout<<"{"<<body3<<"}"<<std::endl;
                     body_query.insert(std::pair<std::string,std::string>(names,body3));
                 }
             }

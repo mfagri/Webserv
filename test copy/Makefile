@@ -2,7 +2,7 @@ NAME = 	webserv
 CFLAGS = -Wall -Wextra -Werror
 CC = c++
 
-SRCS = main.cpp Parser.cpp ServerData.cpp server.cpp  socket.cpp request.cpp response.cpp split.cpp requestData.cpp
+SRCS = main.cpp Parser.cpp ServerData.cpp server.cpp  socket.cpp request.cpp response.cpp split.cpp requestData.cpp cgi.cpp
 OBJS = $(SRCS:.cpp=.o)
 
 $(NAME) : $(OBJS)

@@ -6,7 +6,7 @@
 /*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:06:56 by mfagri            #+#    #+#             */
-/*   Updated: 2022/11/30 15:36:26 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/12/16 18:49:49 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ class Request{
     //////request_line//////
     long max_body;
     std::string request_line;
+    std::string queryuri;
     std::string methode;///method
     std::string Request_uri;//uri
     std::map<std::string,std::string> headers;
@@ -57,6 +58,7 @@ class Request{
     std::string get_uri();
     std::string get_methode();
     std::map<std::string,std::string> get_headers();
+    std::string get_queryuri();
     //////////////////////////////
     
 };
