@@ -1,4 +1,10 @@
-a = 5
-b = 6
+import turtle
+    
+# Initializing the turtle
+t = turtle.Turtle()
+  
+  
+r = 50
+t.circle(r)
 
-print('Hello, World!',a+b)
+print('hello from 1337!!!')

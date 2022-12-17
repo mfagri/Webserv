@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/18 15:33:32 by mmardi            #+#    #+#             */
-/*   Updated: 2022/12/16 18:52:46 by mmardi           ###   ########.fr       */
+/*   Updated: 2022/12/17 20:21:21 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,13 +88,13 @@ bool Parser::checkServer(std::string line)
 
 void Parser::checkElementLocation(std::string key) {
 
-    std::string arr[5] = {"index", "methods", "autoindex", "root", "return"};
+    std::string arr[6] = {"index", "methods", "autoindex", "root", "return","cgi_bin"};
     long unsigned int i = 0;
-    while (i < 5 && arr[i] != key)
+    while (i < 6 && arr[i] != key)
     {
         i++;
     }
-    if (i == 5)
+    if (i == 6)
     {
         std::cerr << "Undefined location element name \"" + key + "\"" << std::endl;
         exit(1);

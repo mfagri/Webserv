@@ -6,7 +6,7 @@
 /*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:06:24 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/16 20:45:30 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/12/17 23:45:03 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -240,7 +240,8 @@ int Request::parse_request_line(std::string req)
     if(strchr(Request_uri.c_str(),'?'))
     {
         i = 0;
-        char *s_query = ft_strtrim(Request_uri.c_str(),"/?");
+        strtok((char *)Request_uri.c_str(),"?");
+        char *s_query = strtok(NULL,"?");
         char **t = ft_split(s_query,'&');
         while(t[i])
         {

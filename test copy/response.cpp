@@ -6,7 +6,7 @@
 /*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/25 18:53:30 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/16 22:04:37 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/12/17 23:34:33 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,17 @@ Response::Response(Request &req, std::vector<ServerData> servers)
     std::string root = sv.getRoot();
     std::vector<std::map<std::string,std::string> > locations = sv.getLocations();
     uri = req.get_uri();
+    std::string temp;
+    size_t tt  =0 ;
+    while(uri[tt])
+    {
+        if(uri[tt] == '?')
+            break;
+        temp += uri[tt];
+        tt++;
+    }
+    uri.clear();
+    uri = temp;
     std::string errors[11] = {"404","400","501","505","411","431","405","409","202","204","401"};
     std::string msgs[11] = {"404 Not found",
                            "400 Bad Request",
@@ -98,17 +109,32 @@ Response::Response(Request &req, std::vector<ServerData> servers)
             if (strrchr(uri.c_str(), '.'))
             {
                 std::string cgis = strrchr(uri.c_str(), '.');
-                if (cgis == ".py" || cgis == ".php")
+                if (cgis == ".py" || cgis == ".php" || cgis == ".c")
                 {
+                    
                     cgis = "*" + cgis;
-                    //std::cout << cgis << std::endl;
+                    std::cout << cgis << std::endl;
                     i = 0;
                     while (i < locations.size())
                     {
                         if (locations[i].at("location-path") == cgis)
                         {
-                           // std::cout << "headersssss\n";
-                            launch_cgi(uri,req);
+                            _cgi = true;
+                            uri = strrchr(uri.c_str(),'/');
+                            std::string output;
+                            std::string bin =  locations[i].at("cgi_bin");
+                            std::string path = locations[i].at("root")+ uri;
+                            std::cout<<path<<std::endl;
+                            if(access(path.c_str(), R_OK) == 0)
+                            {
+                                output =  launch_cgi(path,bin,req);
+                                ft_creat_file(output,0);
+                            }
+                            else
+                            {
+                               status = 404;
+                               ft_creat_file(output,1); 
+                            }
                             return;
                         }
                         i++;
@@ -174,7 +200,6 @@ Response::Response(Request &req, std::vector<ServerData> servers)
                         if(locations[i].count("return"))
                         {
                             status = 301;
-                            std::cout << "ssd";
                             std::string ret = locations[i].at("return").substr(locations[i].at("return").find("/"));
                             std::cout<<ret<<std::endl;
                             ft_creat_file(ret,1);
@@ -356,6 +381,23 @@ void Response::ft_creat_file(std::string root,int ok)
     std::string buf;
     int i = open(root.c_str(),O_RDWR);
     std::string str;
+    if(_cgi && ok == 0)
+    {
+        time_t now = time(0); // get current dat/time with respect to system  
+        char* dt = ctime(&now);
+        buf.append("HTTP/1.1 ");
+        buf.append(ft_itoa(status));
+        buf.append(" OK\nDate: ");
+        buf.append(dt);
+        buf.append("Content-Type: text/html\nContent-Length: ");
+        int lenght;
+        lenght = root.length();
+        buf.append(ft_itoa(lenght));
+        buf.append("\n\n");
+        buf.append(root);
+        res = buf;
+        return;
+    }
     if(i != -1 && ok == 0)
     {
         std::ifstream f(root.c_str()); //taking file as inputstream

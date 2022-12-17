@@ -6,7 +6,7 @@
 /*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/25 18:53:30 by mfagri            #+#    #+#             */
-/*   Updated: 2022/11/27 16:33:13 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/12/17 21:59:22 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ Response::Response()
 Response::Response(Request &req)
 {
     uri = req.get_uri();
+    std::cout<<uri<<std::endl;
     reqheaders = req.get_headers();
     std::string errors[6] = {"404","400","501","505","411","431"};
     std::string msgs[6] = {"404 Not found",

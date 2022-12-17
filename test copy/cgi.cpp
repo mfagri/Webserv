@@ -6,7 +6,7 @@
 /*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/14 17:27:59 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/16 21:52:32 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/12/17 23:47:33 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,12 +63,33 @@
 // SERVER_NAME: The hostname of the server.
 // SERVER_SOFTWARE: The name and version of the web server software.
 ////////////////
-std::string launch_cgi(std::string path,Request Req)
+std::string	get_cgistring(FILE *temp, int fdtemp)
+{
+	char buff[4096];
+	std::string string;
+
+    rewind(temp);
+	while(!feof(temp))
+ 	{
+       if (fgets(buff, 4096, temp) == NULL)
+             break;
+       string += buff;
+ 	}
+	close(fdtemp);
+	fclose(temp);
+    //std::cout<<"{"<<string<<"}";
+    return (string);
+	// client.setIsContentLen(string);
+	// client.setCgiBody(string);
+}
+
+std::string launch_cgi(std::string path,std::string bin ,Request Req)
 {
     ///wtf
 
-    (void)path;
-	// std::string			string;
+    // (void)path;
+    // (void)bin;
+	std::string			cgistring;
 	// HTTPResponse		&response = client.getResponse();
 	// HTTPHeader			&header = client.getHeader();
 	// std::string			file = sock.getRealUrl(sockNbr, response.getUrl());
@@ -90,9 +111,8 @@ std::string launch_cgi(std::string path,Request Req)
 	// }
     char **envcgi;
     char *arg[3];
-    int fd  = open("tet",O_CREAT| O_RDWR,777);
-    arg[0] = strdup("/usr/bin/python3"); //pass cgi
-    arg[1] = strdup("../links/htmlfiles/c.py");//path file
+    arg[0] = strdup(bin.c_str()); //pass cgi
+    arg[1] = strdup(path.c_str());//path file
     arg[2] = NULL;
     
     std::map<std::string,std::string> reqheaders = Req.get_headers();
@@ -110,13 +130,18 @@ std::string launch_cgi(std::string path,Request Req)
         env["CONTENT_LENGTH"] = reqheaders["CONTENT_LENGTH"];
     else{
         if(!query.empty())
+        {
             env["QUERY_STRING"] = query;
+            std::cout<<env["QUERY_STRING"]<<std::endl;
+        }
     }
     env["CONTENT_TYPE"] = reqheaders["CONTENT_TYPE"];
    // env["REMOTE_ADDR"] = "";
     //env["AUTH_TYPE"] = "";
     size_t i  = env.size();
     envcgi =(char **) malloc(sizeof(char *) * i+1);
+    FILE		*temp = std::tmpfile();
+    int			fdtemp = fileno(temp);
     std::map<std::string, std::string>::iterator it;
     i  = 0;
     for (it = env.begin(); it != env.end(); ++it) {
@@ -125,18 +150,23 @@ std::string launch_cgi(std::string path,Request Req)
        envcgi[i++] = strdup(hh.c_str());
     }
     envcgi[i] = NULL;
+    //int fd  = open("kkkkk", O_CREAT | O_RDWR | O_TRUNC, 0777);
+    // if (fd < 0)
+    //     printf("errore\n");
     int f = fork();
    // std::cout<<path<<std::endl;
-    dup2(fd,1);
-    if(!f)
+   extern char **environ;
+    if(f == 0)
     {
-        execve(arg[0],&arg[0],envcgi);
-        exit(0);
+        dup2(fdtemp, 1);
+        close(fdtemp);
+        execve(arg[0],arg,environ);
+        // dup2(1,fd);
     }
-    dup2(1,fd);
-    // char buf[1024];
-    // read(fd,buf,1024);
-    // std::cout<<"{"<<buf<<"}"<<std::endl;
-    close(fd);
-    return ("ss");
+    else
+    {
+        waitpid(f,NULL,0);
+        cgistring = get_cgistring(temp,fdtemp);
+    }
+    return (cgistring);
 }

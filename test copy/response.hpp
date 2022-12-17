@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   response.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/25 18:53:17 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/14 00:50:30 by mmardi           ###   ########.fr       */
+/*   Updated: 2022/12/17 19:14:02 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ class Response{
         std::string autoindex;
         bool _autoindex;
         int status;
+        bool _cgi;
         std::map<std::string,std::string>reqheaders;
         std::map<int,std::string>errormsg;
         std::vector <std::string>methodes;
