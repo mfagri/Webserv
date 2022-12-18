@@ -1,5 +1,7 @@
 # Import modules for CGI handling 
-import cgi, cgitb 
+import cgi, cgitb , sys
+
+# print(sys.argv[1]);
 
 # Create instance of FieldStorage 
 form = cgi.FieldStorage() 
