@@ -6,7 +6,7 @@
 /*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/14 17:27:59 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/17 23:47:33 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/12/18 16:54:29 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,10 +109,11 @@ std::string launch_cgi(std::string path,std::string bin ,Request Req)
 	// 	if (client.isQueryString() == false)
 	// 		client.setEnvValue("QUERY_STRING", "");
 	// }
-    char **envcgi;
+    // char **envcgi;
     char *arg[3];
     arg[0] = strdup(bin.c_str()); //pass cgi
     arg[1] = strdup(path.c_str());//path file
+    // char *g = "sdsdsff";
     arg[2] = NULL;
     
     std::map<std::string,std::string> reqheaders = Req.get_headers();
@@ -122,7 +123,7 @@ std::string launch_cgi(std::string path,std::string bin ,Request Req)
     env["SERVER_NAME"] ="webserv";
     env["SERVER_PROTOCOL"] = "HTTP/1.1";
     env["GATEWAY_INTERFACE"] = "CGI/1.1";
-    env["SERVER_PORT"] = atoi(reqheaders["Host"].substr(reqheaders["Host"].find(":")+1).c_str());;//need host
+    env["SERVER_PORT"] = reqheaders["Host"].substr(reqheaders["Host"].find(":")+1).c_str();//need host
     env["REQUEST_METHOD"] = Req.get_methode();
     env["REQUEST_URI"] = Req.get_uri();
     env["SCRIPT_NAME"] = Req.get_uri();
@@ -133,29 +134,38 @@ std::string launch_cgi(std::string path,std::string bin ,Request Req)
         {
             env["QUERY_STRING"] = query;
             std::cout<<env["QUERY_STRING"]<<std::endl;
+            env["CONTENT_LENGTH"] = "0";
         }
     }
     env["CONTENT_TYPE"] = reqheaders["CONTENT_TYPE"];
    // env["REMOTE_ADDR"] = "";
     //env["AUTH_TYPE"] = "";
-    size_t i  = env.size();
-    envcgi =(char **) malloc(sizeof(char *) * i+1);
+    // size_t i  = env.size();
+    // envcgi =(char **) malloc(sizeof(char *) * i+1);
     FILE		*temp = std::tmpfile();
     int			fdtemp = fileno(temp);
     std::map<std::string, std::string>::iterator it;
-    i  = 0;
+    // i  = 0;
     for (it = env.begin(); it != env.end(); ++it) {
-      std::string hh;
-      hh = it->first + "=" + it->second;
-       envcgi[i++] = strdup(hh.c_str());
+    //   std::string hh;
+    //   hh = it->first + "=" + it->second;
+        setenv(it->first.c_str() ,it->second.c_str(), 1);
+       //envcgi[i++] = strdup(hh.c_str());
     }
-    envcgi[i] = NULL;
+    // envcgi[i] = NULL;
     //int fd  = open("kkkkk", O_CREAT | O_RDWR | O_TRUNC, 0777);
     // if (fd < 0)
     //     printf("errore\n");
     int f = fork();
    // std::cout<<path<<std::endl;
    extern char **environ;
+    // setenv("QUERY_STRING", env["QUERY_STRING"].c_str(), 1);
+//    setenv(env["QUERY_STRING"])
+//   char **s = environ;
+
+//   for (; *s; s++) {
+//     printf("%s\n", *s);
+//   }
     if(f == 0)
     {
         dup2(fdtemp, 1);
@@ -168,5 +178,6 @@ std::string launch_cgi(std::string path,std::string bin ,Request Req)
         waitpid(f,NULL,0);
         cgistring = get_cgistring(temp,fdtemp);
     }
+    std::cout<< cgistring<<std::endl;
     return (cgistring);
 }

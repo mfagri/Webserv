@@ -6,7 +6,7 @@
 /*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/25 18:53:30 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/17 23:34:33 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/12/18 16:29:24 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,7 +113,7 @@ Response::Response(Request &req, std::vector<ServerData> servers)
                 {
                     
                     cgis = "*" + cgis;
-                    std::cout << cgis << std::endl;
+                    //std::cout << cgis << std::endl;
                     i = 0;
                     while (i < locations.size())
                     {
@@ -124,7 +124,7 @@ Response::Response(Request &req, std::vector<ServerData> servers)
                             std::string output;
                             std::string bin =  locations[i].at("cgi_bin");
                             std::string path = locations[i].at("root")+ uri;
-                            std::cout<<path<<std::endl;
+                            // std::cout<<path<<std::endl;
                             if(access(path.c_str(), R_OK) == 0)
                             {
                                 output =  launch_cgi(path,bin,req);
