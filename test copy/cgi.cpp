@@ -6,12 +6,11 @@
 /*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/14 17:27:59 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/18 16:54:29 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/12/18 21:03:00 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "general_info.hpp"
-
 
 
 // CIG (Common Gateway Interface) enables web servers to execute an external program, for example to process user request.
@@ -110,11 +109,11 @@ std::string launch_cgi(std::string path,std::string bin ,Request Req)
 	// 		client.setEnvValue("QUERY_STRING", "");
 	// }
     // char **envcgi;
-    char *arg[3];
+    char *arg[4];
     arg[0] = strdup(bin.c_str()); //pass cgi
     arg[1] = strdup(path.c_str());//path file
-    // char *g = "sdsdsff";
-    arg[2] = NULL;
+    arg[2] = NULL;// char *g = "sdsdsff";
+    arg[3] = NULL;
     
     std::map<std::string,std::string> reqheaders = Req.get_headers();
     std::string query = Req.get_queryuri();
@@ -127,8 +126,13 @@ std::string launch_cgi(std::string path,std::string bin ,Request Req)
     env["REQUEST_METHOD"] = Req.get_methode();
     env["REQUEST_URI"] = Req.get_uri();
     env["SCRIPT_NAME"] = Req.get_uri();
+    env["CONTENT_TYPE"] = reqheaders["CONTENT_TYPE"];
     if(Req.get_methode() == "POST")
+    {
         env["CONTENT_LENGTH"] = reqheaders["CONTENT_LENGTH"];
+        if(env["Content-Type"] == "application/x-www-form-urlencoded")
+            env["QUERY_STRING"] = Req.get_body_req();
+    }
     else{
         if(!query.empty())
         {
@@ -137,47 +141,48 @@ std::string launch_cgi(std::string path,std::string bin ,Request Req)
             env["CONTENT_LENGTH"] = "0";
         }
     }
-    env["CONTENT_TYPE"] = reqheaders["CONTENT_TYPE"];
-   // env["REMOTE_ADDR"] = "";
-    //env["AUTH_TYPE"] = "";
-    // size_t i  = env.size();
-    // envcgi =(char **) malloc(sizeof(char *) * i+1);
     FILE		*temp = std::tmpfile();
+    FILE		*tempo = std::tmpfile();
     int			fdtemp = fileno(temp);
-    std::map<std::string, std::string>::iterator it;
-    // i  = 0;
-    for (it = env.begin(); it != env.end(); ++it) {
-    //   std::string hh;
-    //   hh = it->first + "=" + it->second;
-        setenv(it->first.c_str() ,it->second.c_str(), 1);
-       //envcgi[i++] = strdup(hh.c_str());
-    }
-    // envcgi[i] = NULL;
-    //int fd  = open("kkkkk", O_CREAT | O_RDWR | O_TRUNC, 0777);
-    // if (fd < 0)
-    //     printf("errore\n");
-    int f = fork();
-   // std::cout<<path<<std::endl;
-   extern char **environ;
-    // setenv("QUERY_STRING", env["QUERY_STRING"].c_str(), 1);
-//    setenv(env["QUERY_STRING"])
-//   char **s = environ;
+    int			fdtempo = fileno(tempo);
+    std::string data ;
+    
 
-//   for (; *s; s++) {
-//     printf("%s\n", *s);
-//   }
+    std::map<std::string, std::string>::iterator it;
+    for (it = env.begin(); it != env.end(); ++it) {
+        setenv(it->first.c_str() ,it->second.c_str(), 1);
+    }
+    int f = fork();
+   extern char **environ;
     if(f == 0)
     {
+        if(Req.get_methode() == "POST")
+        {
+            puts("here");
+            data = Req.get_body_req();
+            //arg[3] = strdup(data.c_str());
+            std::cout<<data<<std::endl;
+            //fgets((char *)data.c_str(), (int)data.length(), 0);
+            dup2(fdtempo,0);
+            write(fdtempo,data.c_str(),data.length());
+        }
         dup2(fdtemp, 1);
         close(fdtemp);
         execve(arg[0],arg,environ);
-        // dup2(1,fd);
     }
     else
     {
-        waitpid(f,NULL,0);
+        // if(Req.get_methode() == "POST")
+        // {
+        //     //fgets((char *)data.c_str(), (int)data.length(), 0);
+        //     std::cout<<data<<std::endl;
+        //     write(fdtempo,data.c_str(),data.length());
+        //     //dup2(fdtempo[1],1);
+        // }
+        waitpid(-1,NULL,0);
+        //write(fdtempo[0],data.c_str(),data.length());
         cgistring = get_cgistring(temp,fdtemp);
     }
-    std::cout<< cgistring<<std::endl;
+    //std::cout<< cgistring<<std::endl;
     return (cgistring);
 }

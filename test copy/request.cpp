@@ -6,7 +6,7 @@
 /*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:06:24 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/17 23:45:03 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/12/18 17:58:08 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ Request::Request()
 
 Request::Request(std::string buf)
 {
-    // std::cout<<buf<<std::endl;
+    //std::cout<<buf<<std::endl;
     //exit(1);
     //request_line
     //header_fields
@@ -117,6 +117,8 @@ Request::Request(std::string buf)
         {
             ft_chunked();
         }
+        Bodypost = Body;
+        //puts("ssss2");
         ft_parse_body();
     }
     return;
@@ -449,7 +451,8 @@ int Request::ft_parse_body()
     {
         char *key = strtok((char *)Body.c_str(),"=");
         char *value =strtok(NULL,"\0");
-        body_query.insert(std::pair<std::string,std::string>(key,value));
+        if(key && value)
+            body_query.insert(std::pair<std::string,std::string>(key,value));
     }
     else
     {
@@ -484,7 +487,10 @@ std::string Request::get_methode()
 {
     return (methode);
 }
-
+std::string Request::get_body_req()
+{
+    return (Bodypost);
+}
 std::map<std::string,std::string> Request::get_headers()
 {
     return (headers);

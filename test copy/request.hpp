@@ -6,7 +6,7 @@
 /*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:06:56 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/16 18:49:49 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/12/18 17:27:08 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ class Request{
     long max_body;
     std::string request_line;
     std::string queryuri;
+    std::string Bodypost;
     std::string methode;///method
     std::string Request_uri;//uri
     std::map<std::string,std::string> headers;
@@ -51,6 +52,7 @@ class Request{
     int ft_check_request();
     // void ft_parse_body();
     int get_status_code();
+    std::string get_body_req();
     int parse_request_line(std::string req);
     int parse_headers(std::string headres_);
     int ft_chunked(void);
