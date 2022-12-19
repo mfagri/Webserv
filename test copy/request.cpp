@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
+/*   By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:06:24 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/18 17:58:08 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/12/19 16:17:04 by mmardi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ Request::Request()
 
 Request::Request(std::string buf)
 {
-    //std::cout<<buf<<std::endl;
+    std::cout<<buf<<std::endl;
     //exit(1);
     //request_line
     //header_fields
@@ -244,20 +244,23 @@ int Request::parse_request_line(std::string req)
         i = 0;
         strtok((char *)Request_uri.c_str(),"?");
         char *s_query = strtok(NULL,"?");
-        char **t = ft_split(s_query,'&');
-        while(t[i])
-        {
-            queryuri += t[i];
-            queryuri += "&";
-            char *key = strtok(t[i],"=");
-            char *value = strtok(NULL,"\0");
-            if (value && key)
+        if (s_query) {
+            
+            char **t = ft_split(s_query,'&');
+            while(t[i])
             {
-                query.insert(std::pair<std::string, std::string>(key, value));
+                queryuri += t[i];
+                queryuri += "&";
+                char *key = strtok(t[i],"=");
+                char *value = strtok(NULL,"\0");
+                if (value && key)
+                {
+                    query.insert(std::pair<std::string, std::string>(key, value));
+                }
+                i++;
             }
-            i++;
+            ft_free2(t);
         }
-        ft_free2(t);
     }
     return (status);
 }

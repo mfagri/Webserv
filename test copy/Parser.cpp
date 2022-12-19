@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
+/*   By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/18 15:33:32 by mmardi            #+#    #+#             */
-/*   Updated: 2022/12/17 20:21:21 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/12/19 19:54:46 by mmardi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,8 +96,8 @@ void Parser::checkElementLocation(std::string key) {
     }
     if (i == 6)
     {
-        std::cerr << "Undefined location element name \"" + key + "\"" << std::endl;
-        exit(1);
+        std::string e = "ERROR: undefined location element name \"" + key + "\"";
+        throw std::runtime_error(e);
     }
 }
 
@@ -179,8 +179,8 @@ void Parser::checkElement(std::string key) {
         i++;
     }
     if (i == 7) {
-        std::cerr << "Undefined element name \"" + key + "\"" << std::endl;
-        exit (1);
+        std::string e = "ERROR: undefined element name \"" + key + "\"";
+        throw std::runtime_error(e);
     }
     
 }
@@ -196,7 +196,7 @@ void Parser::parsElements()
         {
             i++;
             if (!checkBrackets(lines[i], lines[i - 1], '{'))
-                throw MissingBrackets();
+                throw std::runtime_error("Messing brackets for openin or closing a server");
             if (lines[i][0] == '{')
                         i++;
             while(lines[i][0] != '}') {
@@ -204,26 +204,26 @@ void Parser::parsElements()
                 {
                     i++;
                     if (!checkBrackets(lines[i], lines[i - 1], '{')) 
-                        throw MissingLocationBrackets();
+                        throw std::runtime_error("ERROR: messing brackets for openin or closing a server");
                     std::map<std::string, std::string> lElements;
                     std::string path = getLocationPath(lines[i - 1]);
                     if (path.empty())
-                        throw NoValueFound();
+                        throw std::runtime_error("ERROR: messing location path");
                     lElements.insert(std::pair<std::string, std::string>("location-path", path));
                     if (lines[i][0] == '{')
                         i++;
                     while(lines[i][0] != '}') 
                     {
                         if (lines[i][0] != '}' && (strncmp(lines[i].c_str(), "server", 6) == 0 || strncmp(lines[i].c_str(), "location", 8) == 0 || lines[i] == "The End"))
-                            throw MissingLocationBrackets();
+                            throw std::runtime_error("ERROR: messing brackets for opening or closing a location");
                         if (!checkSemicolon(lines[i]))
-                            throw MissingSemicolon();
+                            throw std::runtime_error("ERROR: messing semicolon at the end of the line");
                         char s[4] = {' ', '\t', ';', '\0'};
                         char *key = strtok((char *)lines[i].c_str(), s);
                         checkElementLocation(key);
                         char *value = strtok(NULL, ";");
                          if (!value)
-                             throw NoValueFound();
+                             throw std::runtime_error("ERROR: no value found for element");
                         lElements.insert(std::pair<std::string, std::string>(key,value));
                         i++;
                     }
@@ -235,15 +235,15 @@ void Parser::parsElements()
                 else 
                 {
                     if (lines[i][0] != '}' && (strncmp(lines[i].c_str(), "server ", 7) == 0 || lines[i] == "The End"))
-                        throw MissingBrackets();
+                        throw std::runtime_error("ERROR: messing brackets for openin or closing a server");
                     if (!checkSemicolon(lines[i])) 
-                            throw MissingSemicolon();
+                            throw std::runtime_error("ERROR: missing semicolon");
                     char s[4] = {' ', '\t', ';', '\0'};
                     char *key = strtok((char *)lines[i].c_str(), s);
                     checkElement(key);
                     char *value = strtok(NULL, ";");
                     if (!value)
-                        throw NoValueFound();
+                        throw std::runtime_error("ERROR: no value found for element");
                     element.insert(std::pair<std::string, std::string>(key,value));
                 }
                 i++;
@@ -256,7 +256,7 @@ void Parser::parsElements()
     }
     if(servers.size() == 0) 
     {
-        throw NoSeverfound();
+        throw std::runtime_error("ERROR: no server found");
     }
 }
 
@@ -275,25 +275,12 @@ std::vector<ServerData> Parser::getServers()
         for (size_t j = i + 1; j < servs.size(); j++)
         {
            if (servs[i].getPort() == servs[j].getPort()) {
-                std::cerr << "ERROR: multiple servers with same port\n";
-                exit (1);
+                throw std::runtime_error("ERROR: multiple servers with same port");
            }
         }
         
     }
     return servs;
-}
-
-
-std::string Parser::getElementByServer(unsigned int index, std::string _name) 
-{
-    
-    if (index >= getNumberOfservers()) 
-    {
-        std::cerr << "index out of bound\n";
-        throw NoSeverfound();
-    }
-    return this->servers[index].at(_name);
 }
 
 size_t Parser::getNumberOfservers() 

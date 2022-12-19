@@ -6,7 +6,7 @@
 /*   By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/20 23:00:22 by mmardi            #+#    #+#             */
-/*   Updated: 2022/12/16 19:06:24 by mmardi           ###   ########.fr       */
+/*   Updated: 2022/12/19 20:06:01 by mmardi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,8 +39,7 @@ int ServerData::setData(std::map<std::string, std::string> server, std::vector<s
 		std::string p = strtok((char *)server.at("listen").c_str(), s);
 		if (!this->checkAllNum(p))
 		{
-			std::cerr << "Ports can take only digits\n";
-			exit (1);
+			throw std::runtime_error("ERROR: ports must take only degits");
 		}
 		port = std::stoi(p);
 	}
@@ -64,8 +63,7 @@ int ServerData::setData(std::map<std::string, std::string> server, std::vector<s
 			std::string num = strtok((char *)server.at("body_size").c_str(), s);;
 			if (!checkAllNum(num))
 			{
-				std::cerr << "body_size can take only digits\n" << '\n';
-				exit (1);
+				throw std::runtime_error("ERROR: body_size must take only digits");
 			}
 			body_size = std::stoi(num);
 	}
@@ -81,28 +79,25 @@ int ServerData::setData(std::map<std::string, std::string> server, std::vector<s
 		for (size_t i = 0; i < methods.size(); i++)
 		{
 			if (methods[i] != "GET" && methods[i] != "POST" && methods[i] != "DELETE") {
-				std::cerr << "ERROR: invalid allowed method \"" + methods[i] + "\"\n" ;
-				exit (1);
+				std::string e = "ERROR: invalid allowed method \"" + methods[i] + "\"";
+				throw std::runtime_error(e);
 			}
 		}
 		
 	}
 	else {
-		std::cerr << "ERROR: missing allowed methods in a sever\n";
-		exit (1);
+		throw std::runtime_error("ERROR: missing allowed methods in a sever");
 	}
 	if (server.count("root") > 0) 
 	{
 		root = strtok((char *)server.at("root").c_str(), s);
 		if (!opendir(root.c_str())) {
-			std::cerr << "ERROR: can't access to root path\n";
-			exit (1);
+			throw std::runtime_error("ERROR: can't access to root path");
 		}
 	}
 	else 
 	{
-		std::cerr << "ERROR: missing root in server\n";
-		exit(1);
+		throw std::runtime_error("ERROR: missing root in server");
 	}
 	if (server.count("index")) 
 	{
@@ -119,8 +114,7 @@ int ServerData::setData(std::map<std::string, std::string> server, std::vector<s
 		{
 			if (!opendir(locations[i].at("root").c_str()))
 			{
-				std::cerr << "ERROR: can't access to root path in location\n";
-				exit(1);
+				throw std::runtime_error("ERROR: can't access to root path in location");
 			}
 		}
 		else {
@@ -135,8 +129,9 @@ int ServerData::setData(std::map<std::string, std::string> server, std::vector<s
 			while (p) {
 				if (strcmp(p, "GET") != 0 && strcmp(p, "POST") != 0 && strcmp(p, "DELETE") != 0)
 				{
-					std::cerr << "ERROR: invalide method " <<  p << std::endl;
-					exit (1);
+					std::string e = "ERROR: invalide method ";
+					e.append(p);
+					throw std::runtime_error(e);
 				}
 				p = strtok(NULL, " 	");
 			}
