@@ -38,5 +38,5 @@
 #include "server.hpp"
 
 #define BUFFSIZE 3000
-std::string launch_cgi(std::string path,std::string bin ,Request Req);
+std::string launch_cgi(std::string path,std::string bin ,Request &Req);
 #endif

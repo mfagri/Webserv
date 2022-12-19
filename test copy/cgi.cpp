@@ -6,7 +6,7 @@
 /*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/14 17:27:59 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/18 21:03:00 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/12/19 23:16:40 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,7 @@ std::string	get_cgistring(FILE *temp, int fdtemp)
 	// client.setCgiBody(string);
 }
 
-std::string launch_cgi(std::string path,std::string bin ,Request Req)
+std::string launch_cgi(std::string path,std::string bin ,Request &Req)
 {
     ///wtf
 
@@ -109,27 +109,28 @@ std::string launch_cgi(std::string path,std::string bin ,Request Req)
 	// 		client.setEnvValue("QUERY_STRING", "");
 	// }
     // char **envcgi;
-    char *arg[4];
+    char *arg[3];
     arg[0] = strdup(bin.c_str()); //pass cgi
-    arg[1] = strdup(path.c_str());//path file
-    arg[2] = NULL;// char *g = "sdsdsff";
-    arg[3] = NULL;
+    arg[1] = strdup(path.c_str());//path file// char *g = "sdsdsff";
+    arg[2] = NULL;
     
     std::map<std::string,std::string> reqheaders = Req.get_headers();
     std::string query = Req.get_queryuri();
     
     std::map<std::string ,std::string > env;
     env["SERVER_NAME"] ="webserv";
+    env["HTTP_USER_AGENT"] = reqheaders["User-Agent"];
     env["SERVER_PROTOCOL"] = "HTTP/1.1";
     env["GATEWAY_INTERFACE"] = "CGI/1.1";
     env["SERVER_PORT"] = reqheaders["Host"].substr(reqheaders["Host"].find(":")+1).c_str();//need host
     env["REQUEST_METHOD"] = Req.get_methode();
     env["REQUEST_URI"] = Req.get_uri();
+    env["HTTP_HOST"] = reqheaders["Host"];
     env["SCRIPT_NAME"] = Req.get_uri();
-    env["CONTENT_TYPE"] = reqheaders["CONTENT_TYPE"];
+    env["CONTENT_TYPE"] = reqheaders["Content-Type"];
     if(Req.get_methode() == "POST")
     {
-        env["CONTENT_LENGTH"] = reqheaders["CONTENT_LENGTH"];
+        env["CONTENT_LENGTH"] = reqheaders["Content-Length"];
         if(env["Content-Type"] == "application/x-www-form-urlencoded")
             env["QUERY_STRING"] = Req.get_body_req();
     }
@@ -137,14 +138,14 @@ std::string launch_cgi(std::string path,std::string bin ,Request Req)
         if(!query.empty())
         {
             env["QUERY_STRING"] = query;
-            std::cout<<env["QUERY_STRING"]<<std::endl;
+            //std::cout<<env["QUERY_STRING"]<<std::endl;
             env["CONTENT_LENGTH"] = "0";
         }
     }
     FILE		*temp = std::tmpfile();
-    FILE		*tempo = std::tmpfile();
+    // FILE		*tempo = std::tmpfile();
     int			fdtemp = fileno(temp);
-    int			fdtempo = fileno(tempo);
+    // int			fdtempo = fileno(tempo);
     std::string data ;
     
 
@@ -153,36 +154,52 @@ std::string launch_cgi(std::string path,std::string bin ,Request Req)
         setenv(it->first.c_str() ,it->second.c_str(), 1);
     }
     int f = fork();
-   extern char **environ;
+    int fdo[2];
+    if(pipe(fdo) < 0)
+         std::cout<<"errro1\n";
+    extern char **environ;
     if(f == 0)
     {
+        // close(fdo[0]);
+        // close(fdo[1]);
         if(Req.get_methode() == "POST")
         {
-            puts("here");
-            data = Req.get_body_req();
+            //data = Req.get_body_req();
             //arg[3] = strdup(data.c_str());
-            std::cout<<data<<std::endl;
+            //std::cout<<data<<std::endl;
             //fgets((char *)data.c_str(), (int)data.length(), 0);
-            dup2(fdtempo,0);
-            write(fdtempo,data.c_str(),data.length());
+            if(dup2(fdo[0],0) < 0)
+                std::cout<<"errro\n";
+            // write(fdtempo,data.c_str(),data.length());
         }
-        dup2(fdtemp, 1);
-        close(fdtemp);
+        if(dup2(fdtemp, 1) < 0)
+            std::cout<<"errro\n";
+        // close(fdo[0]);
+        // close(fdo[1]);
+        // close(fdtemp);
         execve(arg[0],arg,environ);
+        exit(0);
     }
     else
     {
-        // if(Req.get_methode() == "POST")
-        // {
-        //     //fgets((char *)data.c_str(), (int)data.length(), 0);
-        //     std::cout<<data<<std::endl;
-        //     write(fdtempo,data.c_str(),data.length());
-        //     //dup2(fdtempo[1],1);
-        // }
-        waitpid(-1,NULL,0);
+            // dup2(fdo[1],1);
+        // close(fdo[0]);
+        // close(fdo[1]);
+        waitpid(f,NULL,0);
+        if(Req.get_methode() == "POST")
+        {
+            puts("here2");
+            //fgets((char *)data.c_str(), (int)data.length(), 0);
+           // std::cout<<"{"<<Req.get_body_req()<<"}"<<std::endl;
+            
+            int n = write(fdo[1],Req.get_body_req().c_str(),Req.get_body_req().size());
+            printf("{%d}\n",n);
+        }
+        close(fdo[1]);
+        close(fdo[0]);
         //write(fdtempo[0],data.c_str(),data.length());
         cgistring = get_cgistring(temp,fdtemp);
     }
-    //std::cout<< cgistring<<std::endl;
+    //std::cout<<"{"<< cgistring<<"}"<<std::endl;
     return (cgistring);
 }
