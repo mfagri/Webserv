@@ -9,3 +9,5 @@ http Webserv
 
 
 nc -l port
+
+ki mela bobo
