@@ -6,7 +6,7 @@
 /*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/14 17:27:59 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/20 21:48:46 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/12/20 21:58:50 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,14 +109,10 @@ std::string launch_cgi(std::string path,std::string bin ,Request &Req)
 	// 		client.setEnvValue("QUERY_STRING", "");
 	// }
     // char **envcgi;
-    // char *arg[3];
-    // arg[0] = strdup(bin.c_str()); //
-    // std::cout<<arg[0]<<std::endl;
-    // arg[1] = strdup("/Users/mfagri/Desktop/Webserv/links/htmlfiles/d.php");//path file// char *g = "sdsdsff";
-    // //   std::cout<<realpath(arg[1], resolved_path)<<std::endl;
-    // arg[2] = NULL;
-
-    char *const args[] = {(char *const)bin.c_str(), (char *const)path.c_str()};
+    char *arg[3];
+    arg[0] = strdup(bin.c_str()); //pass cgi
+    arg[1] = strdup(path.c_str());//path file// char *g = "sdsdsff";
+    arg[2] = NULL;
     
     std::map<std::string,std::string> reqheaders = Req.get_headers();
     std::string query = Req.get_queryuri();
@@ -136,8 +132,8 @@ std::string launch_cgi(std::string path,std::string bin ,Request &Req)
     if(Req.get_methode() == "POST")
     {
         env["CONTENT_LENGTH"] = reqheaders["Content-Length"];
-        // if(env["Content-Type"] == "application/x-www-form-urlencoded")
-        //     env["QUERY_STRING"] = Req.get_body_req();
+        if(env["Content-Type"] == "application/x-www-form-urlencoded")
+            env["QUERY_STRING"] = Req.get_body_req();
     }
     else{
         if(!query.empty())
@@ -167,15 +163,13 @@ std::string launch_cgi(std::string path,std::string bin ,Request &Req)
         std::string s = Req.get_body_req();
         s = s.substr(s.find("\r\n\r\n")+4);
         write(fdtempo,s.c_str(),s.length());
-        close(fdtempo);
         rewind(tempo);
     }
-        std::cout <<args[1]<<std::endl;
     if(f == 0)
     {
         if(dup2(fdtemp, 1) < 0)
             std::cout<<"errro\n";
-        execve(args[0],&args[0],environ);
+        execve(arg[0],arg,environ);
         exit(0);
     }
     else
@@ -183,6 +177,5 @@ std::string launch_cgi(std::string path,std::string bin ,Request &Req)
         waitpid(f,NULL,0);
         cgistring = get_cgistring(temp,fdtemp);
     }
-    //std::cout<<cgistring<<std::endl;
     return (cgistring);
 }
