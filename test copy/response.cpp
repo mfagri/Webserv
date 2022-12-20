@@ -6,7 +6,7 @@
 /*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/25 18:53:30 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/18 17:54:50 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/12/20 21:31:20 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -389,11 +389,11 @@ void Response::ft_creat_file(std::string root,int ok)
         buf.append(ft_itoa(status));
         buf.append(" OK\nDate: ");
         buf.append(dt);
-        buf.append("Content-Type: text/html\nContent-Length: ");
+        buf.append("Content-Type: text/html;\nContent-Length: ");
         int lenght;
         lenght = root.length();
         buf.append(ft_itoa(lenght));
-        buf.append("\n\n");
+        //buf.append("\n\n");
         buf.append(root);
         res = buf;
         return;

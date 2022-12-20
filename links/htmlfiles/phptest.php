@@ -10,6 +10,8 @@
 <?php
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // collect value of input field
+    // fscanf(STDIN, "%s", $s);
+    // echo 'hiii '; echo $s;
     $name = $_POST['fname'];
     if (empty($name)) {
         echo "Name is empty";

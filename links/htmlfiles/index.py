@@ -4,8 +4,9 @@ import cgi, cgitb , sys
 # print(sys.argv[1]);
 
 # Create instance of FieldStorage 
+# line = input()
+# print(line)
 form = cgi.FieldStorage() 
-
 # Get data from fields
 first_name = form.getvalue('first_name')
 last_name  = form.getvalue('last_name')
