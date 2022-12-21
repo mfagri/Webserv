@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
+/*   By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:06:24 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/20 13:53:03 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/12/21 02:30:08 by mmardi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ Request::Request()
 
 Request::Request(std::string buf)
 {
-   // std::cout<<buf<<std::endl;
+   std::cout<<buf<<std::endl;
     //exit(1);
     //request_line
     //header_fields
