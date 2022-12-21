@@ -6,7 +6,7 @@
 /*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/14 17:27:59 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/21 17:10:07 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/12/21 21:10:48 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,8 +135,8 @@ std::string launch_cgi(std::string path,std::string bin ,Request &Req)
     if(Req.get_methode() == "POST")
     {
         env["CONTENT_LENGTH"] = reqheaders["Content-Length"];
-        if(env["Content-Type"] == "application/x-www-form-urlencoded")
-            env["QUERY_STRING"] = Req.get_body_req();
+        // if(env["Content-Type"] == "application/x-www-form-urlencoded")
+        //     env["QUERY_STRING"] = Req.get_body_req();
     }
     else{
         if(!query.empty())
