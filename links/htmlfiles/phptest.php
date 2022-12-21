@@ -17,8 +17,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         echo "Name is empty";
     } else {
         echo $name;
-        if (isset($_COOKIE["name"]))
-            echo "ck fnd";
     }
 }
 ?>
