@@ -6,7 +6,7 @@
 /*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/14 17:27:59 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/20 21:58:50 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/12/21 01:11:47 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,11 +123,14 @@ std::string launch_cgi(std::string path,std::string bin ,Request &Req)
     env["SERVER_PROTOCOL"] = "HTTP/1.1";
     env["GATEWAY_INTERFACE"] = "CGI/1.1";
     env["REDIRECT_STATUS"] = "200";
+    env["PATH_INFO"] = path;
+    env["PATH_TRANSLATED"] = path;
     env["SERVER_PORT"] = reqheaders["Host"].substr(reqheaders["Host"].find(":")+1).c_str();//need host
     env["REQUEST_METHOD"] = Req.get_methode();
     env["REQUEST_URI"] = Req.get_uri();
     env["HTTP_HOST"] = reqheaders["Host"];
     env["SCRIPT_NAME"] = Req.get_uri();
+    env["SCRIPT_FILENAME"] = path;
     env["CONTENT_TYPE"] = reqheaders["Content-Type"];
     if(Req.get_methode() == "POST")
     {
@@ -174,8 +177,9 @@ std::string launch_cgi(std::string path,std::string bin ,Request &Req)
     }
     else
     {
-        waitpid(f,NULL,0);
+        waitpid(-1,NULL,0);
         cgistring = get_cgistring(temp,fdtemp);
     }
+    std::cout<<"["<<cgistring<<"]"<<std::endl;
     return (cgistring);
 }
