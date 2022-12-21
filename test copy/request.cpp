@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:06:24 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/21 02:30:08 by mmardi           ###   ########.fr       */
+/*   Updated: 2022/12/21 16:35:46 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,14 +58,14 @@ Request::Request()
 
 Request::Request(std::string buf)
 {
-   std::cout<<buf<<std::endl;
+   //std::cout<<buf<<std::endl;
     //exit(1);
     //request_line
     //header_fields
     //body
     //puts("Sui");
     // char *buf = strdup((const char *)b.c_str());
-    max_body = 50000000;
+    max_body = 50000;
     // max_body = 1024;
     status_code = 200;
     chunked = 0;
@@ -161,7 +161,7 @@ int Request::ft_check_request()
     if(atol(headers["Content-Length"].c_str()) > max_body)
     {
         std::cout<<" max Content-Lenght size has been reached ! "<<std::endl;
-        status_code = 400;
+        status_code = 431;
         return (1);
     }
     if(headers["Host"].empty())

@@ -6,7 +6,7 @@
 /*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/25 18:53:30 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/20 21:59:02 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/12/21 16:31:44 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -448,9 +448,16 @@ void Response::ft_creat_file(std::string root,int ok)
     }
     else
     {
+        // std::string errorpage;
+        // std::ifstream f(root.c_str());
+        // std::string str;
+        // if(f) {
+        //     std::ostringstream ss;
+        //     ss << f.rdbuf(); // reading data
+        //     str = ss.str();
+        // }
         if(status == 301)
         {
-            puts("imhere");
             res = "HTTP/1.1 301 Moved Permanently\nLocation: ";
             res.append(root);
             res.append("\n");
@@ -458,6 +465,16 @@ void Response::ft_creat_file(std::string root,int ok)
         }
         if(status == 200)
             status = 404;
+        std::string errorpage = "../links/pages/";
+        errorpage += ft_itoa(status);
+        errorpage += ".html";
+        std::ifstream f(errorpage.c_str());
+        std::string str;
+        if(f) {
+            std::ostringstream ss;
+            ss << f.rdbuf(); // reading data
+            str = ss.str();
+        }
         time_t now = time(0); // get current dat/time with respect to system
         char *dt = ctime(&now);
         buf.append("HTTP/1.1 ");
@@ -465,9 +482,9 @@ void Response::ft_creat_file(std::string root,int ok)
         buf.append("\nDate: ");
         buf.append(dt);
         buf.append("Content-Type: text/html\nContent-Length: ");
-        buf.append(ft_itoa(errormsg[status].length()));//length
+        buf.append(ft_itoa(str.length()));//length
         buf.append("\n\n");
-        buf.append(errormsg[status]);//body
+        buf.append(str);//body
         res = buf;
         close(i);
         return;

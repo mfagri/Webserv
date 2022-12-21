@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cgi.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/14 17:27:59 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/21 02:36:05 by mmardi           ###   ########.fr       */
+/*   Updated: 2022/12/21 15:00:11 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,7 +132,6 @@ std::string launch_cgi(std::string path,std::string bin ,Request &Req)
     env["SCRIPT_NAME"] = Req.get_uri();
     env["SCRIPT_FILENAME"] = path;
     env["CONTENT_TYPE"] = reqheaders["Content-Type"];
-    env["_COOKIES"] = "Cookie: helloo=nothin";
     if(Req.get_methode() == "POST")
     {
         env["CONTENT_LENGTH"] = reqheaders["Content-Length"];
