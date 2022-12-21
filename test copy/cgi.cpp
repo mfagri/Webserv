@@ -6,7 +6,7 @@
 /*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/14 17:27:59 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/21 01:11:47 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/12/21 01:25:45 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -180,6 +180,8 @@ std::string launch_cgi(std::string path,std::string bin ,Request &Req)
         waitpid(-1,NULL,0);
         cgistring = get_cgistring(temp,fdtemp);
     }
-    std::cout<<"["<<cgistring<<"]"<<std::endl;
+    if(cgistring.find("\r\n\r\n") != std::string::npos)
+        cgistring = cgistring.substr(cgistring.find("\r\n\r\n")+4);
+    //std::cout<<"["<<cgistring<<"]"<<std::endl;
     return (cgistring);
 }
