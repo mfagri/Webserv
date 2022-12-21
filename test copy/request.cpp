@@ -6,7 +6,7 @@
 /*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:06:24 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/21 18:19:34 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/12/21 18:43:03 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -198,9 +198,9 @@ int Request::parse_request_line(std::string req)
     int status = 0;
     int i = 0;
     std::string Http;
+    
     methode = strtok((char *)req.c_str()," ");
-    // printf("=> %s\n",methode.c_str());
-    // exit(1);
+    
     if(methode != "GET" && methode != "POST" && methode != "DELETE")
     {
         std::cout<<"501 Not Implemented"<<std::endl;
@@ -214,32 +214,15 @@ int Request::parse_request_line(std::string req)
         status_code = 400;
         return (1);
     }
-    //////////////////////////////////
-    //if(open(path+uri) = -1)
-    //{
-    //  error  
-    //}
-    //////////////////////////////////
-    std::string  s = strtok(NULL," ");
-    s = strtok((char *)s.c_str(),"/");
-    Http = s;
     
-    if(Http != "HTTP")
-    {
-        
-        std::cout<<"Not Supported"<<std::endl;
-        status_code = 400;
-        return (1);
-    }
-    http_version = strtok(NULL,"/");
-    http_version = ft_strtrim(http_version.c_str(),"\r");
-    if(http_version[0] != '1' && http_version[1] != '.' && http_version[2] != '1')
+    Http = strtok(NULL," ");
+    if(Http != "HTTP/1.1")
     {
         std::cout<<"505 HTTP Version Not Supported"<<std::endl;
         status_code = 505;
         return (1);
     }
-    // check query string 
+    
     if(strchr(Request_uri.c_str(),'?'))
     {
         i = 0;
@@ -261,10 +244,9 @@ int Request::parse_request_line(std::string req)
                 i++;
             }
             ft_free2(t);
-            //free(s_query);
         }
     }
-    // free(s_query);
+
     return (status);
 }
 int Request::parse_headers(std::string headres_)
@@ -296,7 +278,8 @@ int Request::parse_headers(std::string headres_)
     while(i < hedss.size())
     {
         std::string key = hedss[i].substr(0 ,hedss[i].find(":"));
-        std::string value = ft_strtrim(hedss[i].substr(hedss[i].find(":")+1).c_str()," ");
+        std::string value = hedss[i].substr(hedss[i].find(":")+1);
+        value = value.substr(value.find(" ")+1);
         if(!key.empty() && !value.empty())
         {
             headers.insert(std::pair<std::string, std::string>(key, value));
@@ -305,7 +288,7 @@ int Request::parse_headers(std::string headres_)
         value.clear();
         i++;
     }
-   status = ft_check_request();
+    status = ft_check_request();
     hedss.clear();
     tohelp.clear();
     headres_.clear();
