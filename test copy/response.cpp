@@ -6,11 +6,12 @@
 /*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/25 18:53:30 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/21 16:31:44 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/12/21 17:57:54 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "response.hpp"
+#include "general_info.hpp"
 # include <filesystem>
 
     // (none): If no modifiers are present, the location is interpreted as a prefix match. This means that the location given will be matched against the beginning of the request URI to determine a match.
@@ -90,7 +91,7 @@ Response::Response(Request &req, std::vector<ServerData> servers)
     size_t i = 0;
     while(i < 11)
     {
-        errormsg.insert(std::pair<int,std::string>(atoi(errors[i].c_str()),msgs[i]));
+        errormsg.insert(std::pair<int,std::string>(std::stoi(errors[i].c_str()),msgs[i]));
         i++;
     }
     if(req.get_methode() == "GET" || req.get_methode() == "POST")
@@ -190,6 +191,7 @@ Response::Response(Request &req, std::vector<ServerData> servers)
                             l = 0;
                             while (s[l])
                                 methodes.push_back(s[l++]);
+                            ft_free2(s);
                         }
                         if(allow_methode(req.get_methode()))
                         {
@@ -280,18 +282,18 @@ std::string Response::getExtension(std::string path) {
     return ex;
 }
 
-int find_option(char **s,std::string op)
-{
-    int i;
-    i = 0;
-    while(s[i])
-    {
-        if(strcmp(s[i],op.c_str()) == 0)
-            return (i);
-        i++;
-    }
-    return (404);
-}
+// int find_option(char **s,std::string op)
+// {
+//     int i;
+//     i = 0;
+//     while(s[i])
+//     {
+//         if(strcmp(s[i],op.c_str()) == 0)
+//             return (i);
+//         i++;
+//     }
+//     return (404);
+// }
 std::string add_content_type(std::string type)
 {
     if(type == "png" || type == "jpeg" || type == "jpj")
@@ -386,13 +388,13 @@ void Response::ft_creat_file(std::string root,int ok)
         time_t now = time(0); // get current dat/time with respect to system  
         char* dt = ctime(&now);
         buf.append("HTTP/1.1 ");
-        buf.append(ft_itoa(status));
+        buf.append(std::to_string(status));
         buf.append(" OK\nDate: ");
         buf.append(dt);
         buf.append("Content-Type: text/html\nContent-Length: ");
         int lenght;
         lenght = root.length();
-        buf.append(ft_itoa(lenght));
+        buf.append(std::to_string(lenght));
         buf.append("\n\n");
         buf.append(root);
         res = buf;
@@ -410,7 +412,7 @@ void Response::ft_creat_file(std::string root,int ok)
         time_t now = time(0); // get current dat/time with respect to system  
         char* dt = ctime(&now); // convert it into string  
         buf.append("HTTP/1.1 ");
-        buf.append(ft_itoa(status));
+        buf.append(std::to_string(status));
         buf.append(" OK\nDate: ");
         buf.append(dt);
         std::string st =  getExtension(root);
@@ -419,7 +421,7 @@ void Response::ft_creat_file(std::string root,int ok)
         buf.append(rep); //9\n\n"
         int lenght;
         lenght = str.length();
-        buf.append(ft_itoa(lenght));
+        buf.append(std::to_string(lenght));
         buf.append("\n\n");
         buf.append(str);
         res = buf;
@@ -430,15 +432,15 @@ void Response::ft_creat_file(std::string root,int ok)
     {  
         std::string str;
         time_t now = time(0); // get current dat/time with respect to system
-        char *dt = ctime(&now);
+        std::string dt = ctime(&now);
         buf.append("HTTP/1.1 ");
-        buf.append(ft_itoa(status));
+        buf.append(std::to_string(status));
         buf.append(" OK\nDate: ");
         buf.append(dt);
         std::string rep = "Content-Type: text/html\nContent-Length: ";
         buf.append(rep);
         std::string body = getAutoIndexBody(root);
-        buf.append(ft_itoa(body.length()));
+        buf.append(std::to_string(body.length()));
         buf.append("\n\n");
         buf.append(body);
         body.clear();
@@ -466,7 +468,7 @@ void Response::ft_creat_file(std::string root,int ok)
         if(status == 200)
             status = 404;
         std::string errorpage = "../links/pages/";
-        errorpage += ft_itoa(status);
+        errorpage += std::to_string(status);
         errorpage += ".html";
         std::ifstream f(errorpage.c_str());
         std::string str;
@@ -476,13 +478,13 @@ void Response::ft_creat_file(std::string root,int ok)
             str = ss.str();
         }
         time_t now = time(0); // get current dat/time with respect to system
-        char *dt = ctime(&now);
+        std::string dt = ctime(&now);
         buf.append("HTTP/1.1 ");
         buf.append(errormsg[status]);
         buf.append("\nDate: ");
         buf.append(dt);
         buf.append("Content-Type: text/html\nContent-Length: ");
-        buf.append(ft_itoa(str.length()));//length
+        buf.append(std::to_string(str.length()));//length
         buf.append("\n\n");
         buf.append(str);//body
         res = buf;

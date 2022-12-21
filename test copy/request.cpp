@@ -6,7 +6,7 @@
 /*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:06:24 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/21 16:35:46 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/12/21 18:19:34 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ Request::Request(std::string buf)
     //body
     //puts("Sui");
     // char *buf = strdup((const char *)b.c_str());
-    max_body = 50000;
+    max_body = 5000000;
     // max_body = 1024;
     status_code = 200;
     chunked = 0;
@@ -101,12 +101,12 @@ Request::Request(std::string buf)
     }
     if(parse_request_line(request_line))
     {
-        // puts("line");
+        puts("line");
         return;
     }
     if(parse_headers(request_header))
     {
-        // puts("header");
+        puts("header");
         return;
     }
     if(in)
@@ -152,7 +152,7 @@ Request::~Request()
 
 int Request::ft_check_request()
 {
-    if(headers["Content-Type"].c_str() == NULL)
+    if(headers["Content-Type"].empty() && methode == "POST")
     {
         std::cout<<"Missing Content-Type"<<std::endl;
         status_code = 400;
@@ -220,9 +220,10 @@ int Request::parse_request_line(std::string req)
     //  error  
     //}
     //////////////////////////////////
-    char * s = strtok(NULL," ");
-    s = strtok(s,"/");
+    std::string  s = strtok(NULL," ");
+    s = strtok((char *)s.c_str(),"/");
     Http = s;
+    
     if(Http != "HTTP")
     {
         
@@ -243,25 +244,27 @@ int Request::parse_request_line(std::string req)
     {
         i = 0;
         strtok((char *)Request_uri.c_str(),"?");
-        char *s_query = strtok(NULL,"?");
-        if (s_query) {
+        std::string s_query = strtok(NULL,"?");
+        if (!s_query.empty()) {
             
-            char **t = ft_split(s_query,'&');
+            char **t = ft_split(s_query.c_str(),'&');
             while(t[i])
             {
                 queryuri += t[i];
                 queryuri += "&";
-                char *key = strtok(t[i],"=");
-                char *value = strtok(NULL,"\0");
-                if (value && key)
+                std::string key = strtok(t[i],"=");
+                std::string value = strtok(NULL,"\0");
+                if (!value.empty() && !key.empty())
                 {
                     query.insert(std::pair<std::string, std::string>(key, value));
                 }
                 i++;
             }
             ft_free2(t);
+            //free(s_query);
         }
     }
+    // free(s_query);
     return (status);
 }
 int Request::parse_headers(std::string headres_)
@@ -289,29 +292,24 @@ int Request::parse_headers(std::string headres_)
             hedss.push_back(headres_.substr(j, tmp));
 			headres_ = headres_.substr(j);
 	}
-    // hedss.push_back(headres_.substr(0,headres_.find("\r\n")));
-    // std::cout<<headres_<<std::endl;
-    // puts("sdsd");
     i = 0;
     while(i < hedss.size())
     {
-        char *key = strtok((char *)hedss[i].c_str(),":");
-        char *value = strtok(NULL,"\0");
-        if(key && value)
+        std::string key = hedss[i].substr(0 ,hedss[i].find(":"));
+        std::string value = ft_strtrim(hedss[i].substr(hedss[i].find(":")+1).c_str()," ");
+        if(!key.empty() && !value.empty())
         {
-            headers.insert(std::pair<std::string, std::string>(key, ft_strtrim(value," ")));
+            headers.insert(std::pair<std::string, std::string>(key, value));
         }
+        key.clear();
+        value.clear();
         i++;
     }
-    
-    // i = 0;
-    // while(i < hedss.size())
-    // {
-    //     std::cout<<"h1{"<<hedss[i]<<"}"<<std::endl;
-    //     i++;
-    // }
-    // exit (0);
-    status = ft_check_request();
+   status = ft_check_request();
+    hedss.clear();
+    tohelp.clear();
+    headres_.clear();
+    // while(1);
     return (status);
 }
 int Request::get_status_code()
@@ -361,28 +359,11 @@ int Request::ft_chunked(void)
     sbody.clear();
     return (0);
 }
-// int datanumber(char **bodyendl)
-// {
-//     int d=0;
-//     int i = 0;
-//     while(bodyendl[i])
-//     {
-//         if(bodyendl[i][0] != '\0')
-//         {
-//             if(strchr(bodyendl[i],'=')&&strnstr(bodyendl[i],"form-data",strlen(bodyendl[i])))
-//             {
-//                 d++;
-//             }
-//         }
-//         i++;
-//     }
-//     return (d);
-// }
+
 int Request::ft_parse_body()
 {
     if(strncmp(headers["Content-Type"].c_str(),"multipart/form-data; boundary",strlen("multipart/form-data; boundary")) == 0)
     {
-    // puts("hnaaa");//for binary
         std::vector<std::string> boundraies;
         std::string b;
         std::string test;
@@ -391,17 +372,6 @@ int Request::ft_parse_body()
         b = "--";
         b += bounday;
         
-        //std::cout << "BODY : " << Body;
-        // Body = Body.substr(Body.find(b));
-		// unsigned long j = 0;
-		// while (j < Body.length())
-		// {
-		// 	j = Body.find(b) + b.length();
-		// 	if (j > Body.length())
-		// 		break ;
-        //     boundraies.push_back(Body.substr(j, Body.substr(j).find(b)));
-		// 	Body = Body.substr(j);
-		// }
         for (size_t i = 0, index = -1; true; i++) {
         index = Body.find(b, index + 1);
         boundraies.push_back(Body.substr(index + 0, Body.find(b, index + 1) - index));
@@ -421,13 +391,9 @@ int Request::ft_parse_body()
             }
 			else
             {
-                // std::string j = boundraies[i].substr(boundraies[i].find("filename=") + 10, boundraies[i].substr(boundraies[i].find("filename=") + 10).find("\r\n") - 1);
-                // std::cout<<j<<std::endl;
                 if(boundraies[i].find("filename=") != std::string::npos)
                 {
-                    //puts ("ffff");
                     std::string filename = boundraies[i].substr(boundraies[i].find("filename=") + 10, boundraies[i].substr(boundraies[i].find("filename=") + 10).find("\r\n") - 1);
-                    //std::cout<<filename<<std::endl;
                     std::ofstream file( "../links/upload/" + filename);
                     std::string content = boundraies[i].substr(boundraies[i].find("Content-Type:"));
                     std::string content2 = content.substr(content.find("\r\n\r\n") + 4);
@@ -436,15 +402,11 @@ int Request::ft_parse_body()
                 }
                 else
                 {
-                   // std::cout<<boundraies[i]<<std::endl;
                     std::string body3;
-                   // names = boundraies[i].substr(0,boundraies[i].find("\r\n"));
                     std::string name = boundraies[i].substr(boundraies[i].find("name=") + 6, boundraies[i].substr(boundraies[i].find("name=") + 6).find("\r\n") - 1);
                     body3 = boundraies[i].substr(boundraies[i].find("\r\n")+2);
                     body3 = body3.substr(body3.find("\r\n")+2);
-                    // std::cout<<"{"<<name<<"}"<<std::endl;
                     body3 = ft_strtrim(body3.c_str(),"\r\n");
-                    // std::cout<<"{"<<body3<<"}"<<std::endl;
                     body_query.insert(std::pair<std::string,std::string>(names,body3));
                 }
             }
@@ -452,9 +414,9 @@ int Request::ft_parse_body()
     }     
     else if(headers["Content-Type"] == "application/x-www-form-urlencoded")
     {
-        char *key = strtok((char *)Body.c_str(),"=");
-        char *value =strtok(NULL,"\0");
-        if(key && value)
+        std::string key = strtok((char *)Body.c_str(),"=");
+        std::string value =strtok(NULL,"\0");
+        if(!key.empty() && !value.empty())
             body_query.insert(std::pair<std::string,std::string>(key,value));
     }
     else
@@ -468,13 +430,6 @@ int Request::ft_parse_body()
             size_t pos = Body.find('\n') + 3;
             Body=Body.substr(pos);
         }
-        // for (int i = 0; i != 100; i++)
-        // {
-        //     // if( Body[i] == '\n')
-        //     //     Body[i] = '*';
-        //     std::cout << Body[i];
-        // }
-        // std::cout << "\n***************\n" << "./files/" + headers["Content-Type"].replace(headers["Content-Type"].find('/'), 1, ".") << std::endl;
         std::ofstream file("../links/upload/" + headers["Content-Type"].replace(headers["Content-Type"].find('/'), 1, "."));
         file << Body;
         file.close();
