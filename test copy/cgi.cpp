@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cgi.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
+/*   By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/14 17:27:59 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/21 21:10:48 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/12/21 21:45:35 by mmardi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,6 +132,10 @@ std::string launch_cgi(std::string path,std::string bin ,Request &Req)
     env["SCRIPT_NAME"] = Req.get_uri();
     env["SCRIPT_FILENAME"] = path;
     env["CONTENT_TYPE"] = reqheaders["Content-Type"];
+    if (reqheaders.count("Cookie"))
+    {
+       env["HTTP_COOKIE"] = reqheaders.at("Cookie");
+    }
     if(Req.get_methode() == "POST")
     {
         env["CONTENT_LENGTH"] = reqheaders["Content-Length"];
@@ -180,8 +184,8 @@ std::string launch_cgi(std::string path,std::string bin ,Request &Req)
         waitpid(-1,NULL,0);
         cgistring = get_cgistring(temp,fdtemp);
     }
-    if(cgistring.find("\r\n\r\n") != std::string::npos)
-        cgistring = cgistring.substr(cgistring.find("\r\n\r\n")+4);
+    // if(cgistring.find("\r\n\r\n") != std::string::npos)
+    //     cgistring = cgistring.substr(cgistring.find("\r\n\r\n")+4);
     //std::cout<<"["<<cgistring<<"]"<<std::endl;
     return (cgistring);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
+/*   By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/25 18:53:30 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/21 17:57:54 by mfagri           ###   ########.fr       */
+/*   Updated: 2022/12/21 21:53:48 by mmardi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -383,22 +383,34 @@ void Response::ft_creat_file(std::string root,int ok)
     std::string buf;
     int i = open(root.c_str(),O_RDWR);
     std::string str;
-    if(_cgi && ok == 0)
+    if (_cgi && ok == 0)
     {
-        time_t now = time(0); // get current dat/time with respect to system  
-        char* dt = ctime(&now);
-        buf.append("HTTP/1.1 ");
-        buf.append(std::to_string(status));
-        buf.append(" OK\nDate: ");
-        buf.append(dt);
-        buf.append("Content-Type: text/html\nContent-Length: ");
-        int lenght;
-        lenght = root.length();
-        buf.append(std::to_string(lenght));
-        buf.append("\n\n");
-        buf.append(root);
-        res = buf;
-        return;
+       std::string hd;
+       if (root.find("\r\n\r\n") != std::string::npos)
+       {
+            hd = root.substr(0, root.find("\r\n\r\n"));
+       }
+       time_t now = time(0); // get current dat/time with respect to system
+       char *dt = ctime(&now);
+       buf.append("HTTP/1.1 ");
+       if (hd.find("Status: 301 Moved Permanently") != std::string::npos)
+            buf.append("301 Moved Permanently");
+       else
+            buf.append(ft_itoa(status));
+       buf.append("\n");
+       buf.append(hd);
+       buf.append(" OK\nDate: ");
+       buf.append(dt);
+       buf.append("Content-Type: text/html\nContent-Length: ");
+       int lenght;
+       lenght = root.length();
+       buf.append(ft_itoa(lenght));
+       buf.append("\n\n");
+       if (root.find("\r\n\r\n") != std::string::npos)
+            root = root.substr(root.find("\r\n\r\n") + 4);
+       buf.append(root);
+       res = buf;
+       return;
     }
     if(i != -1 && ok == 0)
     {
