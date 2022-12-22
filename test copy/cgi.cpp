@@ -6,7 +6,7 @@
 /*   By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/14 17:27:59 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/21 21:45:35 by mmardi           ###   ########.fr       */
+/*   Updated: 2022/12/22 18:24:46 by mmardi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -184,8 +184,7 @@ std::string launch_cgi(std::string path,std::string bin ,Request &Req)
         waitpid(-1,NULL,0);
         cgistring = get_cgistring(temp,fdtemp);
     }
-    // if(cgistring.find("\r\n\r\n") != std::string::npos)
-    //     cgistring = cgistring.substr(cgistring.find("\r\n\r\n")+4);
-    //std::cout<<"["<<cgistring<<"]"<<std::endl;
+    free(arg[0]);
+    free(arg[1]);
     return (cgistring);
 }

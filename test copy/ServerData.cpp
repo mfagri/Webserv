@@ -6,7 +6,7 @@
 /*   By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/20 23:00:22 by mmardi            #+#    #+#             */
-/*   Updated: 2022/12/19 20:06:01 by mmardi           ###   ########.fr       */
+/*   Updated: 2022/12/22 18:09:43 by mmardi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,9 +91,11 @@ int ServerData::setData(std::map<std::string, std::string> server, std::vector<s
 	if (server.count("root") > 0) 
 	{
 		root = strtok((char *)server.at("root").c_str(), s);
-		if (!opendir(root.c_str())) {
+		DIR *d = opendir(root.c_str());
+		if (!d) {	
 			throw std::runtime_error("ERROR: can't access to root path");
 		}
+		closedir(d);
 	}
 	else 
 	{
@@ -112,10 +114,12 @@ int ServerData::setData(std::map<std::string, std::string> server, std::vector<s
 	{
 		if (locations[i].count("root"))
 		{
-			if (!opendir(locations[i].at("root").c_str()))
+			DIR *d = opendir(locations[i].at("root").c_str());
+			if (!d)
 			{
 				throw std::runtime_error("ERROR: can't access to root path in location");
 			}
+			closedir(d);
 		}
 		else {
 			locations[i].insert(std::pair<std::string, std::string>("root", this->root));
@@ -144,7 +148,6 @@ int ServerData::setData(std::map<std::string, std::string> server, std::vector<s
 		}
 		
 	}
-	
 	return 1;
 }
 

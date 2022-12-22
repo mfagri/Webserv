@@ -39,10 +39,10 @@ int DIY_server::list_polls()
 {
     int id_skfd;
     struct pollfd poll_fds;
-    size_t i = -1;
+    size_t i = 0;
     int num_pollfd = 0;
 
-    while (++i < this->sk_list.size())
+    while (i < this->sk_list.size())
     {
         id_skfd = this->sk_list[i].get_sk();
         this->sk_fd.push_back(id_skfd);
@@ -52,6 +52,7 @@ int DIY_server::list_polls()
         this->poll_list.push_back(poll_fds);
         this->fd_sk_num++;
         num_pollfd++;
+        i++;
     }
     return num_pollfd;
 }

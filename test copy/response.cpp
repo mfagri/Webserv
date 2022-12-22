@@ -6,7 +6,7 @@
 /*   By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/25 18:53:30 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/21 21:53:48 by mmardi           ###   ########.fr       */
+/*   Updated: 2022/12/22 20:18:22 by mmardi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,8 +155,10 @@ Response::Response(Request &req, std::vector<ServerData> servers)
             if(!l)
             {
                 std::string file = root + uri;
-                if(opendir(file.c_str()))
+                DIR* d = opendir(file.c_str());
+                if(d)
                 {
+                    closedir(d);
                     _autoindex = true;
                     ft_creat_file(file,0);
                     return;
@@ -233,8 +235,10 @@ Response::Response(Request &req, std::vector<ServerData> servers)
             return;
         }
         std::string h = root + uri;
-        if(opendir(h.c_str()) != NULL)
+        DIR* d = opendir(h.c_str());
+        if(d != NULL)
         {
+            closedir(d);
             status = 401;
             ft_creat_file("bad",1);
             return;
@@ -312,7 +316,8 @@ std::string add_content_type(std::string type)
 
 std::string Response::getAutoIndexBody(std::string root) {
     DIR *dir;
-    struct dirent *dent;
+    dirent *dent = NULL;
+
     dir = opendir(root.c_str());// this part
     std::string body = "<!DOCTYPE html>\n\
                         <html lang=\"en\">\n\
@@ -351,6 +356,8 @@ std::string Response::getAutoIndexBody(std::string root) {
                         </head>\n\
                         <body>\n\
                        <ul> ";
+    // system("leaks webserv");
+    // exit (1);
     if (dir != NULL)
     {
        while ((dent = readdir(dir)) != NULL) {
@@ -362,17 +369,20 @@ std::string Response::getAutoIndexBody(std::string root) {
             else 
                 url = uri + "/" + fname;
             if (fname != "." && fname != "..") {
-                std::string url1 = root + "/" + fname;;
-                if (opendir(url1.c_str()))
+                std::string url1 = root + "/" + fname;
+                DIR *d2 = opendir(url1.c_str());
+                if (d2){
                     icon = "<img src=\"https://cdn-icons-png.flaticon.com/512/3767/3767084.png\" />";
+                closedir(d2); 
+                }
                 else
                     icon = "<img src=\"https://cdn-icons-png.flaticon.com/512/2965/2965335.png\" />";
                 std::string str = "\n<li>" + icon + "<a href=\"" + url + "\">" + fname + "</a></li>\n";
                 body.append(str);
             }
        }
-        
     }
+    closedir(dir);
     body.append("	</ul>\n\
                     </body>\n\
                     </html>");
@@ -396,7 +406,7 @@ void Response::ft_creat_file(std::string root,int ok)
        if (hd.find("Status: 301 Moved Permanently") != std::string::npos)
             buf.append("301 Moved Permanently");
        else
-            buf.append(ft_itoa(status));
+            buf.append(std::to_string(status));
        buf.append("\n");
        buf.append(hd);
        buf.append(" OK\nDate: ");
@@ -404,7 +414,7 @@ void Response::ft_creat_file(std::string root,int ok)
        buf.append("Content-Type: text/html\nContent-Length: ");
        int lenght;
        lenght = root.length();
-       buf.append(ft_itoa(lenght));
+       buf.append(std::to_string(lenght));
        buf.append("\n\n");
        if (root.find("\r\n\r\n") != std::string::npos)
             root = root.substr(root.find("\r\n\r\n") + 4);
@@ -437,11 +447,15 @@ void Response::ft_creat_file(std::string root,int ok)
         buf.append("\n\n");
         buf.append(str);
         res = buf;
+
         close(i);
         return;
     }
-    else if (_autoindex && opendir(root.c_str()))
+    else if (_autoindex)
     {  
+        DIR* d = opendir(root.c_str());
+        if (d != NULL)
+        {
         std::string str;
         time_t now = time(0); // get current dat/time with respect to system
         std::string dt = ctime(&now);
@@ -450,15 +464,16 @@ void Response::ft_creat_file(std::string root,int ok)
         buf.append(" OK\nDate: ");
         buf.append(dt);
         std::string rep = "Content-Type: text/html\nContent-Length: ";
-        buf.append(rep);
         std::string body = getAutoIndexBody(root);
+        buf.append(rep);
         buf.append(std::to_string(body.length()));
         buf.append("\n\n");
         buf.append(body);
-        body.clear();
         res = buf;
         close(i);
+        closedir(d);
         return;
+        }
     }
     else
     {
