@@ -6,7 +6,7 @@
 /*   By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/25 18:53:30 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/23 16:28:58 by mmardi           ###   ########.fr       */
+/*   Updated: 2022/12/23 18:47:03 by mmardi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,8 @@ Response::Response(Request &req, std::vector<ServerData> servers)
     }
     std::string root = sv.getRoot();
     error_path = sv.getErrorPages();
+    std::vector<std::string> v =  sv.getServerNames();
+    server_name = v[0];
     std::vector<std::map<std::string,std::string> > locations = sv.getLocations();
     uri = req.get_uri();
     std::string temp;
@@ -101,16 +103,35 @@ Response::Response(Request &req, std::vector<ServerData> servers)
             if (strrchr(uri.c_str(), '.'))
             {
                 std::string cgis = strrchr(uri.c_str(), '.');
-                if (cgis == ".py" || cgis == ".php" || cgis == ".c")
+                if (cgis == ".py" || cgis == ".php")
                 {
                     
                     cgis = "*" + cgis;
                     i = 0;
                     while (i < locations.size())
                     {
-                        if (locations[i].at("location-path") == cgis)
-                        {
-                            _cgi = true;
+                            if (locations[i].at("location-path") == cgis)
+                            {
+                                _cgi = true;
+                                if(locations[i].at("methods").empty())
+                                {
+                                    methodes = sv.getMethods();
+                                }
+                                else
+                                {
+                                    char **s = ft_split(locations[i].at("methods").c_str(),' ');
+                                    l = 0;
+                                    while (s[l])
+                                        methodes.push_back(s[l++]);
+                                    ft_free2(s);
+                                }
+                                if(allow_methode(req.get_methode()))
+                                {
+                                    status = 405;
+                                    ft_creat_file(root,1);
+                                    return;
+                                }
+                                 
                             uri = strrchr(uri.c_str(),'/');
                             std::string output;
                             std::string bin =  locations[i].at("cgi_bin");
@@ -194,7 +215,6 @@ Response::Response(Request &req, std::vector<ServerData> servers)
                         {
                             status = 301;
                             std::string ret = locations[i].at("return").substr(locations[i].at("return").find("/"));
-                            std::cout<<ret<<std::endl;
                             ft_creat_file(ret,1);
                             return;
                         }  
@@ -385,7 +405,10 @@ void Response::ft_creat_file(std::string root,int ok)
             buf.append(std::to_string(status));
        buf.append("\n");
        buf.append(hd);
-       buf.append(" OK\nDate: ");
+       buf.append(" OK");
+       buf.append("\nServer: ");
+       buf.append(server_name);
+       buf.append("\nDate: ");
        buf.append(dt);
        buf.append("Content-Type: text/html\nContent-Length: ");
        int lenght;
@@ -411,7 +434,10 @@ void Response::ft_creat_file(std::string root,int ok)
         char* dt = ctime(&now); // convert it into string  
         buf.append("HTTP/1.1 ");
         buf.append(std::to_string(status));
-        buf.append(" OK\nDate: ");
+        buf.append(" OK");
+        buf.append("\nServer: ");
+        buf.append(server_name);
+        buf.append("\nDate: ");
         buf.append(dt);
         std::string st =  getExtension(root);
         std::string rep = "Content-Type: $1\nContent-Length: ";
@@ -437,7 +463,10 @@ void Response::ft_creat_file(std::string root,int ok)
         std::string dt = ctime(&now);
         buf.append("HTTP/1.1 ");
         buf.append(std::to_string(status));
-        buf.append(" OK\nDate: ");
+        buf.append(" OK");
+        buf.append("\nServer: ");
+        buf.append(server_name);
+        buf.append("\nDate: ");
         buf.append(dt);
         std::string rep = "Content-Type: text/html\nContent-Length: ";
         std::string body = getAutoIndexBody(root);
@@ -476,6 +505,8 @@ void Response::ft_creat_file(std::string root,int ok)
         std::string dt = ctime(&now);
         buf.append("HTTP/1.1 ");
         buf.append(errormsg[status]);
+        buf.append("\nServer: ");
+        buf.append(server_name);
         buf.append("\nDate: ");
         buf.append(dt);
         buf.append("Content-Type: text/html\nContent-Length: ");

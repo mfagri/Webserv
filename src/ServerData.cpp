@@ -6,7 +6,7 @@
 /*   By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/20 23:00:22 by mmardi            #+#    #+#             */
-/*   Updated: 2022/12/23 16:07:39 by mmardi           ###   ########.fr       */
+/*   Updated: 2022/12/23 17:50:15 by mmardi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,15 +47,18 @@ int ServerData::setData(std::map<std::string, std::string> server, std::vector<s
 		std::string p = strtok((char *)server.at("host").c_str(), s);
 		host = p;
 	}
-	if (server.count("server_name") > 0) 
+	if (server.count("server_names") > 0) 
 	{
-		std::string names = server.at("server_name");
+		std::string names = server.at("server_names");
 		char *name = strtok((char *)names.c_str(), s);
 		while (name)
 		{
 			server_names.push_back(name);
 			name = strtok(NULL, s);
 		}
+	}
+	else {
+				throw std::runtime_error("ERROR: Missing server_names");
 	}
 	if (server.count("body_size") > 0) 
 	{

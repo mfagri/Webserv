@@ -6,7 +6,7 @@
 /*   By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/25 18:53:17 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/23 16:00:22 by mmardi           ###   ########.fr       */
+/*   Updated: 2022/12/23 17:30:57 by mmardi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ class Response{
     private:
         std::string uri;
         std::string res;
+        std::string server_name;
         std::string error_path;
         std::string autoindex;
         bool _autoindex;
