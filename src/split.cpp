@@ -3,14 +3,13 @@
 /*                                                        :::      ::::::::   */
 /*   split.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ntanjaou <ntanjaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 17:36:48 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/11 00:37:26 by mmardi           ###   ########.fr       */
+/*   Updated: 2022/12/23 19:13:34 by ntanjaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-// #include "request.hpp"
 #include <stdlib.h>
 #include <string.h>
 

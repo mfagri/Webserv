@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ntanjaou <ntanjaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/25 18:53:30 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/23 18:47:03 by mmardi           ###   ########.fr       */
+/*   Updated: 2022/12/23 19:45:28 by ntanjaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -236,14 +236,26 @@ Response::Response(Request &req, std::vector<ServerData> servers)
     }
     else
     {
+        std::string deleteroot;
+        size_t j = 0;
         std::string is_allow = get_location_uri(uri);
+        while(j < locations.size())
+        {
+            if (locations[j].at("location-path") == "/upload")
+            {
+                deleteroot = locations[j].at("root");
+                break;
+            }
+            j++;
+        }
         if(is_allow != "/upload")
         {
             status = 409;
             ft_creat_file("bad",1);
             return;
         }
-        std::string h = root + uri;
+        std::string h  = strrchr((char *)uri.c_str(),'/');
+        h = deleteroot+h;
         DIR* d = opendir(h.c_str());
         if(d != NULL)
         {
