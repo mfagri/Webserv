@@ -6,7 +6,7 @@
 /*   By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/14 17:27:59 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/23 17:14:56 by mmardi           ###   ########.fr       */
+/*   Updated: 2022/12/23 17:26:31 by mmardi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,6 +107,5 @@ std::string launch_cgi(std::string path,std::string bin ,Request &Req)
     free(arg[0]);
     free(arg[1]);
     unsetenv("QUERY_STRING");
-    std::cout << cgistring << std::endl;
     return (cgistring);
 }
