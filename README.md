@@ -11,3 +11,6 @@ http Webserv
 nc -l port
 
 ki mela bobo
+
+
+mbrok a wlade l97ab w idkome 3la zepi
