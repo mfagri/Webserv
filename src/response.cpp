@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ntanjaou <ntanjaou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/25 18:53:30 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/23 19:45:28 by ntanjaou         ###   ########.fr       */
+/*   Updated: 2022/12/26 17:48:14 by mmardi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,15 +87,15 @@ Response::Response(Request &req, std::vector<ServerData> servers)
         errormsg.insert(std::pair<int,std::string>(std::stoi(errors[i].c_str()),msgs[i]));
         i++;
     }
-    if(req.get_methode() == "GET" || req.get_methode() == "POST")
-    {
         if(status != 200)
         {
         
             ft_creat_file(root,1);
             return;
         }
-        else
+    if(req.get_methode() == "GET" || req.get_methode() == "POST")
+    {
+       if(1)
         {
             size_t ns = 0;
             int l = 0;

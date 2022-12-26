@@ -6,7 +6,7 @@
 /*   By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:06:24 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/23 17:15:47 by mmardi           ###   ########.fr       */
+/*   Updated: 2022/12/26 17:44:28 by mmardi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,6 @@ Request::Request(std::string buf)
     if(parse_request_line(request_line))
     {
         puts("line");
-        return;
     }
     if(parse_headers(request_header))
     {
