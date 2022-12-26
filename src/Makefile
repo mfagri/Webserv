@@ -6,12 +6,12 @@
 #    By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/12/23 19:12:25 by ntanjaou          #+#    #+#              #
-#    Updated: 2022/12/26 17:29:28 by mmardi           ###   ########.fr        #
+#    Updated: 2022/12/26 18:27:12 by mmardi           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = 	webserv
-# CFLAGS = -Wall -Wextra -Werror -std=c++98
+CFLAGS = -Wall -Wextra -Werror 
 CC = c++
 
 SRCS = main.cpp Parser.cpp ServerData.cpp server.cpp  socket.cpp request.cpp response.cpp split.cpp requestData.cpp cgi.cpp
