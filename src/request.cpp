@@ -6,7 +6,7 @@
 /*   By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:06:24 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/26 17:44:28 by mmardi           ###   ########.fr       */
+/*   Updated: 2022/12/26 18:19:46 by mmardi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,10 +84,7 @@ Request::Request(std::string buf)
     {
        Body = buf.substr(buf.find("\r\n\r\n"));
     }
-    if(parse_request_line(request_line))
-    {
-        puts("line");
-    }
+    parse_request_line(request_line);
     if(parse_headers(request_header))
     {
         puts("header");
@@ -245,7 +242,8 @@ int Request::parse_headers(std::string headres_)
         value.clear();
         i++;
     }
-    status = ft_check_request();
+    if (status_code == 200)
+        status = ft_check_request();
     hedss.clear();
     tohelp.clear();
     headres_.clear();
