@@ -142,14 +142,14 @@ Connection: keep-alive
 
 In this example, the HTTP version is HTTP/1.1, the status code is 200, and the reason phrase is OK. The headers include information about the content type, length, date, and connection status. The message body contains the HTML code for the example page.
 
-*Request line:
+### Request line:
 	Request-Line   = Method SP Request-URI SP HTTP-Version CRLF
-  Http verb,uri,http version number
-Exemple:
-GET /home.html HTTP/1.1
-POST /index.html HTTP/1.1
-DELETE /query.html HTTP/1.1
-CONNECT
+        Http verb,uri,http version number
+### Exemple:
+	GET /home.html HTTP/1.1
+	POST /index.html HTTP/1.1
+	DELETE /query.html HTTP/1.1
+	CONNECT
 	GET Request - Used when a client is asking a server for some data.
 	POST Request - Used when a client wants to send data to a server.
 	Ps: if data has been requested , the server will respond by sending the data to the client.
