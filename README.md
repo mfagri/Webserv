@@ -111,7 +111,17 @@ Accept-Language: en-US,en;q=0.9
 ```
 In this example, the HTTP method is GET, the requested resource is /index.html, and the HTTP version is HTTP/1.1. The headers include information about the host, user agent, accepted content types, and more.
 
-I hope this helps! Let me know if you have any questions.
+## Request line:
+	Request-Line   = Method SP Request-URI SP HTTP-Version CRLF
+        Http verb,uri,http version number
+### Exemple:
+	GET /home.html HTTP/1.1
+	POST /index.html HTTP/1.1
+	DELETE /query.html HTTP/1.1
+	CONNECT
+	GET Request - Used when a client is asking a server for some data.
+	POST Request - Used when a client wants to send data to a server.
+	Ps: if data has been requested , the server will respond by sending the data to the client.
 
 
 ### HTTP response
@@ -142,16 +152,34 @@ Connection: keep-alive
 
 In this example, the HTTP version is HTTP/1.1, the status code is 200, and the reason phrase is OK. The headers include information about the content type, length, date, and connection status. The message body contains the HTML code for the example page.
 
-### Request line:
-	Request-Line   = Method SP Request-URI SP HTTP-Version CRLF
-        Http verb,uri,http version number
-### Exemple:
-	GET /home.html HTTP/1.1
-	POST /index.html HTTP/1.1
-	DELETE /query.html HTTP/1.1
-	CONNECT
-	GET Request - Used when a client is asking a server for some data.
-	POST Request - Used when a client wants to send data to a server.
-	Ps: if data has been requested , the server will respond by sending the data to the client.
 
 
+### CGI 
+
+To create a CGI (Common Gateway Interface) program using C++, you will need to follow these steps:
+Write the C++ code for your CGI program. This code should handle the input received from the client (usually through environment variables and standard input) and generate the appropriate output (usually by printing to standard output).
+
+Compile the C++ code into an executable binary. This can be done using a C++ compiler such as g++.
+Place the executable binary in the appropriate directory on your web server. This directory is usually called "cgi-bin" or something similar.
+Configure your web server to recognize and execute CGI programs. This will typically involve adding a directive to your server's configuration file (such as .htaccess on Apache) to tell the server which directories contain CGI programs, and how to execute them.
+Test your CGI program by accessing it through a web browser. The URL for the program will typically be in the form "http://yourserver/cgi-bin/yourprogram".
+It's important to note that CGI programs have some inherent security risks, as they allow users to execute arbitrary code on your server. It's important to carefully review and secure your CGI programs to ensure that they do not allow unauthorized access or compromise the security of your server.
+
+
+
+
+In the Common Gateway Interface (CGI) protocol, environment variables are used to pass information from the web server to the CGI program. They can contain information such as the client's IP address, the requested URL, the query string, and various other pieces of information.
+Here is a list of some common environment variables that may be set by the web server when executing a CGI program:
+
+	QUERY_STRING: The query string from the URL, if any.
+	REQUEST_METHOD: The HTTP method used to request the CGI program (e.g. "GET", "POST", etc.)
+	CONTENT_TYPE: The MIME type of the request body, if any.
+	CONTENT_LENGTH: The length of the request body, if any.
+	HTTP_USER_AGENT: The user agent string from the client's browser.
+	HTTP_REFERER: The URL of the page that referred the client to the CGI program.
+	REMOTE_ADDR: The IP address of the client.
+	SERVER_NAME: The hostname of the server.
+	SERVER_SOFTWARE: The name and version of the web server software.
+
+These environment variables can be accessed by the CGI program through the standard C library function getenv.
+It's important to note that environment variables are not a secure way to pass sensitive information, as they can be easily manipulated by malicious clients. For this reason, they should not be used to pass sensitive data such as passwords or other confidential information.
