@@ -162,7 +162,8 @@ Content-Type: text/html
 Content-Length: 348
 Date: Mon, 01 Jan 2018 00:00:00 GMT
 Connection: keep-alive
-
+```
+```html
 <html>
 <head>
   <title>Example Page</title>
@@ -171,6 +172,7 @@ Connection: keep-alive
   <h1>Hello, world!</h1>
 </body>
 </html>
+```
 
 ```
 
