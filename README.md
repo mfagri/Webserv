@@ -93,3 +93,22 @@ You can protect your web server in the following ways:
 - Keep only required services on your server. Having too many services on your web server can open portals. This can enable hacking activities in the long run. An additional benefit of removing unnecessary services is that it will improve the overall website functionality.
 - By having separate environments for development, testing, and production, you can reduce the risk of breach. Preferably, separate environments should be kept private.
 - Automate backups and install a firewall. A firewall will come in handy even if all your security systems are compromised. By automating backup daily, you can preserve data for the long run. This will be useful even when your system is compromised beyond repair.
+
+### HTTP request
+
+An HTTP request is a message sent by a client to a server to request specific information or resources from the server. HTTP stands for Hypertext Transfer Protocol, and it is the foundation of data communication on the World Wide Web.
+
+HTTP requests consist of a request line, headers, and an optional message body. The request line consists of three parts: the HTTP method, the requested resource, and the HTTP version. The headers contain additional information about the request, such as the type of content being requested or the user agent making the request. The message body, if present, contains the data being sent with the request.
+
+Here is an example of an HTTP request:
+```
+GET /index.html HTTP/1.1
+Host: www.example.com
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9
+Accept-Encoding: gzip, deflate, br
+Accept-Language: en-US,en;q=0.9
+```
+In this example, the HTTP method is GET, the requested resource is /index.html, and the HTTP version is HTTP/1.1. The headers include information about the host, user agent, accepted content types, and more.
+
+I hope this helps! Let me know if you have any questions.
