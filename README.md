@@ -112,3 +112,35 @@ Accept-Language: en-US,en;q=0.9
 In this example, the HTTP method is GET, the requested resource is /index.html, and the HTTP version is HTTP/1.1. The headers include information about the host, user agent, accepted content types, and more.
 
 I hope this helps! Let me know if you have any questions.
+
+
+### HTTP response
+
+An HTTP response is a message sent by a server to a client in response to an HTTP request. It consists of a status line, headers, and an optional message body.
+
+The status line consists of three parts: the HTTP version, a status code, and a reason phrase. The status code is a three-digit number that indicates the status of the request. The reason phrase is a brief description of the status code.
+
+Here is an example of an HTTP response:
+
+```
+HTTP/1.1 200 OK
+Content-Type: text/html
+Content-Length: 348
+Date: Mon, 01 Jan 2018 00:00:00 GMT
+Connection: keep-alive
+
+<html>
+<head>
+  <title>Example Page</title>
+</head>
+<body>
+  <h1>Hello, world!</h1>
+</body>
+</html>
+
+```
+
+In this example, the HTTP version is HTTP/1.1, the status code is 200, and the reason phrase is OK. The headers include information about the content type, length, date, and connection status. The message body contains the HTML code for the example page.
+
+I hope this helps! Let me know if you have any questions.
+
