@@ -115,6 +115,7 @@ In this example, the HTTP method is GET, the requested resource is /index.html, 
 	Request-Line   = Method SP Request-URI SP HTTP-Version CRLF
         Http verb,uri,http version number
 ### Exemple:
+
 	GET /home.html HTTP/1.1
 	POST /index.html HTTP/1.1
 	DELETE /query.html HTTP/1.1
@@ -122,6 +123,27 @@ In this example, the HTTP method is GET, the requested resource is /index.html, 
 	GET Request - Used when a client is asking a server for some data.
 	POST Request - Used when a client wants to send data to a server.
 	Ps: if data has been requested , the server will respond by sending the data to the client.
+### Request header
+
+Those are just some examples of the HTTP header parameters that you can use. Here’s what each line in that header means:
+
+	Host: This is the IP or URL of the server that you’re making the request to.
+	User-agent: This parameter contains information about the client and its Operating System (OS). Typically, this outlines the browser that 	  you’re using and its version.
+	Accept-language: This line tells the server what language the client prefers, in case there are multiple versions of the file that you’re 	  requesting.
+	Accept-encoding: This line indicates the type of encoding or compression that the client can process.
+	Connection: This parameter tells the server whether to keep the connection alive or set a timeout for it. If the connecti
+	
+### Exemple:
+
+	Host: website.com
+ 
+	User-Agent: Chrome/5.0 (Windows 10)
+ 
+	Accept-Language: en-US
+ 
+	Accept-Encoding: gzip, deflate
+ 
+	Connection: keep-alive</code.
 
 
 ## HTTP response
