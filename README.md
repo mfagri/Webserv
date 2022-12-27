@@ -162,8 +162,7 @@ Content-Type: text/html
 Content-Length: 348
 Date: Mon, 01 Jan 2018 00:00:00 GMT
 Connection: keep-alive
-```
-```html
+
 <html>
 <head>
   <title>Example Page</title>
@@ -172,13 +171,11 @@ Connection: keep-alive
   <h1>Hello, world!</h1>
 </body>
 </html>
-```
 
-```
 
 In this example, the HTTP version is HTTP/1.1, the status code is 200, and the reason phrase is OK. The headers include information about the content type, length, date, and connection status. The message body contains the HTML code for the example page.
 
-
+```
 
 ## CGI 
 
