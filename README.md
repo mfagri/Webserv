@@ -206,7 +206,7 @@ Here is a list of some common environment variables that may be set by the web s
 These environment variables can be accessed by the CGI program through the standard C library function getenv.
 It's important to note that environment variables are not a secure way to pass sensitive information, as they can be easily manipulated by malicious clients. For this reason, they should not be used to pass sensitive data such as passwords or other confidential information.
 
-###My CGI code:
+### My CGI code:
 
 ```
 std::string	get_cgistring(FILE *temp, int fdtemp)
