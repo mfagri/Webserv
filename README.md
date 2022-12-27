@@ -2,7 +2,7 @@
 http Webserv
 
 
-**what is a server?**
+## **what is a server?**
 
 ****Server****
  is a software or hardware device that accepts and responds to requests made over a network. The device that makes the request, and receives a response from the server, is called a [client](https://www.computerhope.com/jargon/c/client.htm)
@@ -94,7 +94,7 @@ You can protect your web server in the following ways:
 - By having separate environments for development, testing, and production, you can reduce the risk of breach. Preferably, separate environments should be kept private.
 - Automate backups and install a firewall. A firewall will come in handy even if all your security systems are compromised. By automating backup daily, you can preserve data for the long run. This will be useful even when your system is compromised beyond repair.
 
-### HTTP request
+## HTTP request
 
 An HTTP request is a message sent by a client to a server to request specific information or resources from the server. HTTP stands for Hypertext Transfer Protocol, and it is the foundation of data communication on the World Wide Web.
 
@@ -111,7 +111,7 @@ Accept-Language: en-US,en;q=0.9
 ```
 In this example, the HTTP method is GET, the requested resource is /index.html, and the HTTP version is HTTP/1.1. The headers include information about the host, user agent, accepted content types, and more.
 
-## Request line:
+### Request line:
 	Request-Line   = Method SP Request-URI SP HTTP-Version CRLF
         Http verb,uri,http version number
 ### Exemple:
@@ -124,7 +124,7 @@ In this example, the HTTP method is GET, the requested resource is /index.html, 
 	Ps: if data has been requested , the server will respond by sending the data to the client.
 
 
-### HTTP response
+## HTTP response
 
 An HTTP response is a message sent by a server to a client in response to an HTTP request. It consists of a status line, headers, and an optional message body.
 
@@ -154,7 +154,7 @@ In this example, the HTTP version is HTTP/1.1, the status code is 200, and the r
 
 
 
-### CGI 
+## CGI 
 
 To create a CGI (Common Gateway Interface) program using C++, you will need to follow these steps:
 Write the C++ code for your CGI program. This code should handle the input received from the client (usually through environment variables and standard input) and generate the appropriate output (usually by printing to standard output).
