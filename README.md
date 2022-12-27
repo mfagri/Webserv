@@ -210,7 +210,7 @@ It's important to note that environment variables are not a secure way to pass s
 
 ### My CGI code:
 
-```
+```cpp
 std::string	get_cgistring(FILE *temp, int fdtemp)
 {
 	char buff[4096];
