@@ -142,10 +142,10 @@ Connection: keep-alive
 
 In this example, the HTTP version is HTTP/1.1, the status code is 200, and the reason phrase is OK. The headers include information about the content type, length, date, and connection status. The message body contains the HTML code for the example page.
 
-*** Request line:
+*Request line:
 	Request-Line   = Method SP Request-URI SP HTTP-Version CRLF
   Http verb,uri,http version number
-***Exemple:
+Exemple:
 GET /home.html HTTP/1.1
 POST /index.html HTTP/1.1
 DELETE /query.html HTTP/1.1
