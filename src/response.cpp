@@ -6,7 +6,7 @@
 /*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/25 18:53:30 by mfagri            #+#    #+#             */
-/*   Updated: 2023/01/02 16:22:02 by mfagri           ###   ########.fr       */
+/*   Updated: 2023/01/02 18:17:04 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ Response::Response(Request &req, std::vector<ServerData> servers)
     std::string root = sv.getRoot();
     error_path = sv.getErrorPages();
     std::vector<std::string> v =  sv.getServerNames();
-    server_name = v[0];
+    server_name = "server";
     std::vector<std::map<std::string,std::string> > locations = sv.getLocations();
     uri = req.get_uri();
     std::string temp;
