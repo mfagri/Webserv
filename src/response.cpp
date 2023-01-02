@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/25 18:53:30 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/26 17:48:14 by mmardi           ###   ########.fr       */
+/*   Updated: 2023/01/02 16:22:02 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,10 +36,20 @@ Response::~Response()
 }
 Response::Response(Request &req, std::vector<ServerData> servers)
 {
+    if(req.b.length() < 10)
+    {
+        res = "HTTP/1.1 400 Bad request\nContent-Type: text/html\nContent-Length: 11\r\n\r\nBad request";
+        return;
+    }
     reqheaders = req.get_headers();
     status = req.get_status_code();
     ServerData sv;
     int port = atoi(reqheaders["Host"].substr(reqheaders["Host"].find(":")+1).c_str());
+    if(port == 0)
+    {
+        res = "HTTP/1.1 400 Bad request\nContent-Type: text/html\nContent-Length: 11\r\n\r\nBad request";
+        return;
+    }
     size_t k = 0;
     while(k < servers.size())
     {

@@ -6,7 +6,7 @@
 /*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:06:56 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/21 17:06:12 by mfagri           ###   ########.fr       */
+/*   Updated: 2023/01/02 16:22:51 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ class Request{
     //////////////////////////////////
     int status_code;
  public:
+   std::string b;
     Request();
     Request(std::string buf);
     ~Request();

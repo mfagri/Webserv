@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   response.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/25 18:53:17 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/23 17:30:57 by mmardi           ###   ########.fr       */
+/*   Updated: 2023/01/02 16:22:40 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ class Response{
         std::map<int,std::string>errormsg;
         std::vector <std::string>methodes;
     public:
+        
         Response();
         
         ~Response();

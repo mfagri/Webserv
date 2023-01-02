@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmardi <mmardi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: mfagri <mfagri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:06:24 by mfagri            #+#    #+#             */
-/*   Updated: 2022/12/26 18:19:46 by mmardi           ###   ########.fr       */
+/*   Updated: 2023/01/02 16:22:57 by mfagri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,12 @@ Request::Request()
 
 Request::Request(std::string buf)
 {
+    b = buf;
+    if(buf.length() <= 5)
+    {
+        puts("buf empty");
+        return;
+    }
     max_body = 5000000;
     status_code = 200;
     chunked = 0;
